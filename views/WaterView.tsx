@@ -147,7 +147,7 @@ export const WaterView: React.FC = () => {
               <ul className="list-disc list-inside text-xs space-y-1">
                 <li><strong>Capacità di Campo (FC):</strong> Il limite massimo che il suolo trattiene contro la gravità. L'eccesso drena via.</li>
                 <li><strong>Punto di Appassimento (WP):</strong> Il limite minimo sotto il quale la pianta non riesce più ad estrarre acqua.</li>
-                <li><strong>ARID (Indice di Aridità):</strong> Indice di stress (0-1). Se la pianta non riesce a soddisfare la domanda evapotraspirativa (ET_0), va in stress (ARID > 0).</li>
+                <li><strong>ARID (Indice di Aridità):</strong> Indice di stress (0-1). Se la pianta non riesce a soddisfare la domanda evapotraspirativa (ET_0), va in stress (ARID &gt; 0).</li>
               </ul>
             </div>
           </Card>
