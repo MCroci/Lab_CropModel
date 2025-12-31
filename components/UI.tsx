@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Download, ChevronDown } from 'lucide-react';
 
-export const Card: React.FC<{ title: string; children: React.ReactNode; className?: string, headerAction?: React.ReactNode }> = ({ title, children, className = "", headerAction }) => (
+export const Card: React.FC<{ title: string; children: React.ReactNode; className?: string, headerAction?: React.ReactNode }> = memo(({ title, children, className = "", headerAction }) => (
   <div className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden ${className}`}>
     <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
       <h3 className="font-semibold text-gray-800">{title}</h3>
@@ -11,20 +11,22 @@ export const Card: React.FC<{ title: string; children: React.ReactNode; classNam
       {children}
     </div>
   </div>
-);
+));
 
-export const DownloadAction: React.FC<{ data: any[], filename: string }> = ({ data, filename }) => {
+Card.displayName = 'Card';
+
+export const DownloadAction: React.FC<{ data: unknown[], filename: string }> = ({ data, filename }) => {
   const handleDownload = () => {
-    if (!data || !data.length) {
-      alert("Nessun dato da scaricare.");
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      console.warn("Nessun dato da scaricare.");
       return;
     }
-    const headers = Object.keys(data[0]);
+    const headers = Object.keys(data[0] as Record<string, unknown>);
     const csvContent = [
       headers.join(','),
       ...data.map(row => headers.map(header => {
-        const val = row[header];
-        return val === null || val === undefined ? '' : val;
+        const val = (row as Record<string, unknown>)[header];
+        return val === null || val === undefined ? '' : String(val);
       }).join(','))
     ].join('\n');
 
@@ -36,6 +38,7 @@ export const DownloadAction: React.FC<{ data: any[], filename: string }> = ({ da
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url); // Fix memory leak
   };
 
   return (

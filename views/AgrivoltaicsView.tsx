@@ -6,7 +6,8 @@ import { Sun, Zap, BookOpen } from 'lucide-react';
 import { simulateCrop, simulateSoilWater } from '../services/cropModel';
 
 export const AgrivoltaicsView: React.FC = () => {
-  const { dailyWeather, cropParams, soilParams, carbonParams, setCarbonParams, runSimulation } = useSimulation();
+  const { dailyWeather, cropParams, soilParams, carbonParams, setCarbonParams, runSimulation, getCurrentCropSowingDay } = useSimulation();
+  const sowingDay = getCurrentCropSowingDay();
 
   // Run simulation whenever params change
   useEffect(() => {
@@ -18,17 +19,26 @@ export const AgrivoltaicsView: React.FC = () => {
   const getAgrivoltaicsData = () => {
     if (dailyWeather.length === 0) return [];
 
+    // Filter weather from sowing day
+    const weatherFromSowing = dailyWeather.filter(w => w.day >= sowingDay);
+    if (weatherFromSowing.length === 0) return [];
+    
+    const adjustedWeather = weatherFromSowing.map((w, idx) => ({ ...w, day: idx + 1 }));
+
     // 1. Standard Simulation (0% Shading)
-    const baseCropRes = simulateCrop(dailyWeather, cropParams);
+    const baseCropRes = simulateCrop(adjustedWeather, cropParams);
     const baseLaiSeries = baseCropRes.map(r => r.LAI);
-    const baseWaterRes = simulateSoilWater(dailyWeather, soilParams, baseLaiSeries);
+    // For water, need full series with pre-sowing period
+    const fullLaiSeries = new Array(sowingDay - 1).fill(0).concat(baseLaiSeries);
+    const baseWaterRes = simulateSoilWater(dailyWeather, soilParams, fullLaiSeries);
+    const baseWaterFromSowing = baseWaterRes.filter((_, idx) => idx >= sowingDay - 1);
 
     // 2. Agrivoltaics Simulation (Current Shading)
     const radiationFactor = 1.0 - (carbonParams.agrivoltaicsShading / 100);
     // Agrivoltaics often reduces ET0 demand due to wind protection/shade. Heuristic: half the % of shading reduction applied to ET0
     const et0Factor = 1.0 - (carbonParams.agrivoltaicsShading / 100) * 0.3; 
 
-    const agrivoltaicsWeather = dailyWeather.map(w => ({
+    const agrivoltaicsWeather = adjustedWeather.map(w => ({
       ...w,
       SRAD: w.SRAD * radiationFactor
     }));
@@ -36,16 +46,18 @@ export const AgrivoltaicsView: React.FC = () => {
     
     const agriCropRes = simulateCrop(agrivoltaicsWeather, cropParams);
     const agriLaiSeries = agriCropRes.map(r => r.LAI);
-    const agriWaterRes = simulateSoilWater(agrivoltaicsWeather, agrivoltaicsSoilParams, agriLaiSeries);
+    const fullAgriLaiSeries = new Array(sowingDay - 1).fill(0).concat(agriLaiSeries);
+    const agriWaterRes = simulateSoilWater(dailyWeather, agrivoltaicsSoilParams, fullAgriLaiSeries);
+    const agriWaterFromSowing = agriWaterRes.filter((_, idx) => idx >= sowingDay - 1);
 
     return baseCropRes.map((base, i) => ({
-      day: base.day,
+      day: weatherFromSowing[i].day, // Original day number
       Biomassa_Standard: base.B,
       Biomassa_Agri: agriCropRes[i].B,
-      Acqua_Standard: baseWaterRes[i].W,
-      Acqua_Agri: agriWaterRes[i].W,
-      Stress_Standard: baseWaterRes[i].ARID,
-      Stress_Agri: agriWaterRes[i].ARID
+      Acqua_Standard: baseWaterFromSowing[i]?.W || 0,
+      Acqua_Agri: agriWaterFromSowing[i]?.W || 0,
+      Stress_Standard: baseWaterFromSowing[i]?.ARID || 0,
+      Stress_Agri: agriWaterFromSowing[i]?.ARID || 0
     }));
   };
 
@@ -117,7 +129,10 @@ export const AgrivoltaicsView: React.FC = () => {
             <ResponsiveContainer>
               <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: -5 }} />
+                <XAxis 
+                  dataKey="day" 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                />
                 <YAxis label={{ value: 'Biomassa (g/m²)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />
@@ -136,7 +151,10 @@ export const AgrivoltaicsView: React.FC = () => {
             <ResponsiveContainer>
               <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="day" />
+                <XAxis 
+                  dataKey="day" 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                />
                 <YAxis label={{ value: 'Acqua nel suolo (mm)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />

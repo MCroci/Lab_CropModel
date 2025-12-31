@@ -6,7 +6,8 @@ import { simulateCrop, simulateSoilWater } from '../services/cropModel';
 import { Zap, BookOpen } from 'lucide-react';
 
 export const ScenarioView: React.FC = () => {
-  const { cropParams, soilParams, simulationResults: baselineRes, waterResults: baselineWater } = useSimulation();
+  const { cropParams, soilParams, simulationResults: baselineRes, waterResults: baselineWater, getCurrentCropSowingDay } = useSimulation();
+  const sowingDay = getCurrentCropSowingDay();
 
   // Scenario Modifiers (1.0 = 100% of baseline)
   const [radFactor, setRadFactor] = useState(1.0);
@@ -63,10 +64,10 @@ export const ScenarioView: React.FC = () => {
         LAI_Base: base.LAI,
         LAI_Scen: scenCrop.LAI,
         // Water
-        W_Base: baselineWater[i].W,
+        W_Base: baselineWater[i]?.W || 0,
         W_Scen: scenWater.W,
         // Stress
-        ARID_Base: baselineWater[i].ARID,
+        ARID_Base: baselineWater[i]?.ARID || 0,
         ARID_Scen: scenWater.ARID
       };
     });
@@ -178,7 +179,10 @@ export const ScenarioView: React.FC = () => {
             <ResponsiveContainer>
               <LineChart data={scenarioData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="day" />
+                <XAxis 
+                  dataKey="day" 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                />
                 <YAxis label={{ value: 'Biomassa (g/m²)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />
@@ -194,7 +198,10 @@ export const ScenarioView: React.FC = () => {
             <ResponsiveContainer>
               <LineChart data={scenarioData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="day" />
+                <XAxis 
+                  dataKey="day" 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                />
                 <YAxis label={{ value: 'Acqua nel suolo (mm)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />

@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback, useRef } from 'react';
 import { WeatherParams, CropParams, SoilParams, SimulationStep, WaterStep, DailyWeather, CarbonParams, RothCResult, RotationType } from '../types';
 import { makeWeather, simulateCrop, simulateSoilWater } from '../services/cropModel';
 import { aggregateToMonthly, simulateLongTermCarbon } from '../services/rothC';
@@ -22,6 +22,10 @@ interface SimulationContextType {
   setCarbonParams: React.Dispatch<React.SetStateAction<CarbonParams>>;
   carbonResults: RothCResult[];
   baselineCarbonResults: RothCResult[];
+  // Sowing dates per coltura
+  sowingDays: Record<string, number>;
+  setSowingDays: React.Dispatch<React.SetStateAction<Record<string, number>>>;
+  getCurrentCropSowingDay: () => number;
 }
 
 const SimulationContext = createContext<SimulationContextType | undefined>(undefined);
@@ -103,6 +107,35 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
   const [carbonResults, setCarbonResults] = useState<RothCResult[]>([]);
   const [baselineCarbonResults, setBaselineCarbonResults] = useState<RothCResult[]>([]);
 
+  // Sowing dates per coltura (day of year, 1-based)
+  // Default: tutte le colture iniziano al giorno 1
+  const [sowingDays, setSowingDays] = useState<Record<string, number>>({
+    'generica': 1,
+    'mais': 1,
+    'frumento': 1,
+    'pomodoro': 1
+  });
+  
+  // Helper per ottenere la data di semina della coltura corrente
+  const getCurrentCropSowingDay = useCallback(() => {
+    // Identifica quale preset corrisponde ai parametri attuali
+    const cropPresets: Record<string, { Tbase: number; RUE: number; KPAR: number }> = {
+      'generica': { Tbase: 8, RUE: 2.5, KPAR: 0.6 },
+      'mais': { Tbase: 10, RUE: 3.8, KPAR: 0.65 },
+      'frumento': { Tbase: 0, RUE: 2.2, KPAR: 0.5 },
+      'pomodoro': { Tbase: 12, RUE: 2.0, KPAR: 0.7 }
+    };
+    
+    const currentPreset = Object.entries(cropPresets).find(([_, preset]) => {
+      return preset.Tbase === cropParams.Tbase && 
+             preset.RUE === cropParams.RUE &&
+             preset.KPAR === cropParams.KPAR;
+    });
+    
+    const cropId = currentPreset ? currentPreset[0] : 'generica';
+    return sowingDays[cropId] || sowingDays['generica'] || 1;
+  }, [cropParams, sowingDays]);
+
   // Initialize weather on mount
   useEffect(() => {
     generateWeather();
@@ -114,22 +147,50 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
     setCropParams(p => ({ ...p, Tmean: weatherParams.tmean }));
   }, [weatherParams.tmean]);
 
-  const generateWeather = () => {
+  const generateWeather = useCallback(() => {
     const newWeather = makeWeather(weatherParams);
     setDailyWeather(newWeather);
-  };
+  }, [weatherParams]);
 
-  const runSimulation = () => {
+  const runSimulation = useCallback(() => {
     if (dailyWeather.length === 0) return;
 
+    // Ottieni la data di semina per la coltura corrente
+    const currentSowingDay = getCurrentCropSowingDay();
+
+    // Filter weather data starting from sowing day
+    const weatherFromSowing = dailyWeather.filter(w => w.day >= currentSowingDay);
+    if (weatherFromSowing.length === 0) {
+      // If sowing day is beyond available weather, use all data
+      const cropRes = simulateCrop(dailyWeather, cropParams);
+      const laiSeries = cropRes.map(r => r.LAI);
+      const waterRes = simulateSoilWater(dailyWeather, soilParams, laiSeries);
+      setSimulationResults(cropRes);
+      setWaterResults(waterRes);
+      return;
+    }
+
     // 1. CROP SIMULATION (Single generic crop visualization)
-    const cropRes = simulateCrop(dailyWeather, cropParams);
+    // Adjust day numbers to start from 1 for the simulation
+    const adjustedWeather = weatherFromSowing.map((w, idx) => ({
+      ...w,
+      day: idx + 1 // Reset day counter from sowing
+    }));
+    const cropRes = simulateCrop(adjustedWeather, cropParams);
+    
+    // Restore original day numbers for display
+    const cropResWithOriginalDays = cropRes.map((r, idx) => ({
+      ...r,
+      day: weatherFromSowing[idx].day // Original day from weather data
+    }));
     
     // 2. WATER SIMULATION
     const laiSeries = cropRes.map(r => r.LAI);
-    const waterRes = simulateSoilWater(dailyWeather, soilParams, laiSeries);
+    // For water simulation, we need to account for pre-sowing period
+    const fullLaiSeries = new Array(currentSowingDay - 1).fill(0).concat(laiSeries);
+    const waterRes = simulateSoilWater(dailyWeather, soilParams, fullLaiSeries);
 
-    setSimulationResults(cropRes);
+    setSimulationResults(cropResWithOriginalDays);
     setWaterResults(waterRes);
 
     // 3. CARBON SIMULATION (Long term rotation)
@@ -152,24 +213,49 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
     // Scenario: User selected practices
     const scenC = simulateLongTermCarbon(20, soilParams, carbonParams, monthlyData, biomassSequence);
     setCarbonResults(scenC);
-  };
+  }, [dailyWeather, cropParams, soilParams, carbonParams, getCurrentCropSowingDay]);
 
-  // Trigger run when weather updates
+  // Debounced simulation trigger
+  const simulationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
   useEffect(() => {
-    runSimulation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyWeather]);
+    if (simulationTimeoutRef.current) {
+      clearTimeout(simulationTimeoutRef.current);
+    }
+    
+    simulationTimeoutRef.current = setTimeout(() => {
+      runSimulation();
+    }, 150); // 150ms debounce
+
+    return () => {
+      if (simulationTimeoutRef.current) {
+        clearTimeout(simulationTimeoutRef.current);
+      }
+    };
+  }, [dailyWeather, runSimulation]);
+
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    weatherParams, setWeatherParams, dailyWeather, setDailyWeather, generateWeather,
+    cropParams, setCropParams,
+    soilParams, setSoilParams,
+    simulationResults, waterResults,
+    runSimulation,
+    carbonParams, setCarbonParams,
+    carbonResults, baselineCarbonResults,
+    sowingDays, setSowingDays, getCurrentCropSowingDay
+  }), [
+    weatherParams, dailyWeather, generateWeather,
+    cropParams, soilParams,
+    simulationResults, waterResults,
+    runSimulation,
+    carbonParams,
+    carbonResults, baselineCarbonResults,
+    sowingDays, setSowingDays, getCurrentCropSowingDay
+  ]);
 
   return (
-    <SimulationContext.Provider value={{
-      weatherParams, setWeatherParams, dailyWeather, setDailyWeather, generateWeather,
-      cropParams, setCropParams,
-      soilParams, setSoilParams,
-      simulationResults, waterResults,
-      runSimulation,
-      carbonParams, setCarbonParams,
-      carbonResults, baselineCarbonResults
-    }}>
+    <SimulationContext.Provider value={contextValue}>
       {children}
     </SimulationContext.Provider>
   );

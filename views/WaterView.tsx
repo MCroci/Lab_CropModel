@@ -40,7 +40,8 @@ const SoilBucket: React.FC<{ currentW: number; maxW: number; wp: number; fc: num
 };
 
 export const WaterView: React.FC = () => {
-  const { soilParams, setSoilParams, waterResults, runSimulation } = useSimulation();
+  const { soilParams, setSoilParams, waterResults, runSimulation, getCurrentCropSowingDay } = useSimulation();
+  const sowingDay = getCurrentCropSowingDay();
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(-1);
 
   // Re-run on soil param change
@@ -86,7 +87,7 @@ export const WaterView: React.FC = () => {
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
                         <Clock size={16} className="text-brand-600"/>
-                        Giorno {currentStep.day}
+                        Giorno {currentStep.day} {sowingDay > 1 && <span className="text-xs font-normal text-gray-500">(Semina: {sowingDay})</span>}
                     </div>
                     <div className="text-xs text-gray-500">
                         Stress: <span className={currentStep.ARID > 0 ? "text-red-600 font-bold" : "text-green-600"}>{currentStep.ARID.toFixed(2)}</span>
@@ -160,7 +161,10 @@ export const WaterView: React.FC = () => {
               <ResponsiveContainer>
                 <LineChart data={waterResults} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: -5 }} />
+                  <XAxis 
+                    dataKey="day" 
+                    label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                  />
                   
                   {/* Asse Sinistro: Acqua (mm) */}
                   <YAxis yAxisId="left" label={{ value: 'Acqua (mm)', angle: -90, position: 'insideLeft' }} />

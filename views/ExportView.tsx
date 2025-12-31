@@ -4,14 +4,18 @@ import { useSimulation } from '../context/SimulationContext';
 import { Download } from 'lucide-react';
 
 export const ExportView: React.FC = () => {
-  const { simulationResults, waterResults } = useSimulation();
+  const { simulationResults, waterResults, getCurrentCropSowingDay } = useSimulation();
+  const sowingDay = getCurrentCropSowingDay();
 
-  const downloadCSV = (data: any[], filename: string) => {
-    if (!data.length) return;
-    const headers = Object.keys(data[0]);
+  const downloadCSV = (data: unknown[], filename: string) => {
+    if (!data || !Array.isArray(data) || data.length === 0) return;
+    const headers = Object.keys(data[0] as Record<string, unknown>);
     const csvContent = [
       headers.join(','),
-      ...data.map(row => headers.map(header => row[header]).join(','))
+      ...data.map(row => headers.map(header => {
+        const val = (row as Record<string, unknown>)[header];
+        return val === null || val === undefined ? '' : String(val);
+      }).join(','))
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -22,6 +26,7 @@ export const ExportView: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url); // Fix memory leak
   };
 
   return (

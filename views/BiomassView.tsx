@@ -5,7 +5,8 @@ import { useSimulation } from '../context/SimulationContext';
 import { BookOpen } from 'lucide-react';
 
 export const BiomassView: React.FC = () => {
-  const { cropParams, setCropParams, simulationResults, runSimulation } = useSimulation();
+  const { cropParams, setCropParams, simulationResults, runSimulation, getCurrentCropSowingDay } = useSimulation();
+  const sowingDay = getCurrentCropSowingDay();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -82,7 +83,10 @@ export const BiomassView: React.FC = () => {
             <ResponsiveContainer>
               <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: -5 }} />
+                <XAxis 
+                  dataKey="day" 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                />
                 <YAxis label={{ value: 'Biomassa (g/m²)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />
