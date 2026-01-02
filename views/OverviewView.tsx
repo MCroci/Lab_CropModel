@@ -102,19 +102,19 @@ export const OverviewView: React.FC = () => {
               <input
                 type="number"
                 min="1"
-                max={weatherParams.n_days}
+                max={365}
                 value={sowingDays[selectedPreset] || 1}
                 onChange={(e) => {
                   const day = parseInt(e.target.value) || 1;
                   setSowingDays(prev => ({
                     ...prev,
-                    [selectedPreset]: Math.max(1, Math.min(day, weatherParams.n_days))
+                    [selectedPreset]: Math.max(1, Math.min(day, 365))
                   }));
                 }}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Giorno {sowingDays[selectedPreset] || 1} di {weatherParams.n_days} disponibili. La simulazione inizierà da questo giorno.
+                Giorno {sowingDays[selectedPreset] || 1} di 365 disponibili. La simulazione è sempre di un anno completo (365 giorni).
               </p>
               <div className="mt-2 flex gap-2">
                 <button
@@ -124,13 +124,13 @@ export const OverviewView: React.FC = () => {
                   Giorno 1
                 </button>
                 <button
-                  onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: Math.floor(weatherParams.n_days * 0.1) }))}
+                  onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: Math.floor(365 * 0.1) }))}
                   className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
                 >
                   10% stagione
                 </button>
                 <button
-                  onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: Math.floor(weatherParams.n_days * 0.3) }))}
+                  onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: Math.floor(365 * 0.3) }))}
                   className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
                 >
                   30% stagione

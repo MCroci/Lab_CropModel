@@ -49,7 +49,7 @@ const ROTATION_DATA: Record<RotationType, number[]> = {
 
 export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [weatherParams, setWeatherParams] = useState<WeatherParams>({
-    n_days: 200,
+    n_days: 365, // Sempre 365 giorni
     tmean: 18,
     tamp: 8,
     srad: 18,

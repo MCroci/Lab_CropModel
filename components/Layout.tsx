@@ -19,6 +19,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     // === INTRODUZIONE ===
     { id: 'overview', label: 'Panoramica', icon: Compass },
     { id: 'learning_path', label: 'Percorso Didattico', icon: GraduationCap },
+    { id: 'exercises', label: 'Esercizi', icon: FileCheck },
     { id: 'concepts', label: 'Concetti Base', icon: BookOpen },
     
     // === INPUT E FONDAMENTI ===
@@ -37,17 +38,16 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     // === ANALISI E VALIDAZIONE ===
     { id: 'scenario', label: 'Analisi Scenario', icon: Sliders },
     { id: 'validation', label: 'Validazione', icon: CheckCircle2 },
-    { id: 'exercises', label: 'Esercizi', icon: FileCheck },
     
     // === APPLICAZIONI AVANZATE ===
     { id: 'agrivoltaics', label: 'Agrivoltaico (Semplice)', icon: Sun },
     { id: 'energy_balance', label: 'Bilancio Energetico', icon: Zap },
     
-    // === INFO E CREDITI ===
+    // === INFO ===
     { id: 'about', label: 'Info & Crediti', icon: Info },
     { id: 'functions', label: 'Logica & Codice', icon: Code },
     { id: 'bibliography', label: 'Bibliografia', icon: Library },
-    { id: 'export', label: 'Esporta Dati', icon: Download },
+    { id: 'export', label: 'Esportazione Dati', icon: Download },
   ];
 
   const handleTabClick = (id: string) => {
@@ -81,7 +81,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Introduzione
             </div>
-            {menuItems.filter(item => ['overview', 'learning_path', 'concepts'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'concepts'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
@@ -153,7 +153,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Analisi e Validazione
             </div>
-            {menuItems.filter(item => ['scenario', 'validation', 'exercises'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['scenario', 'validation'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
@@ -196,10 +196,10 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             })}
           </div>
 
-          {/* INFO E CREDITI */}
+          {/* INFO */}
           <div className="mb-4">
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              Info e Crediti
+              Info
             </div>
             {menuItems.filter(item => ['about', 'functions', 'bibliography', 'export'].includes(item.id)).map((item) => {
               const Icon = item.icon;

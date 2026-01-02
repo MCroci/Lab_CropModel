@@ -105,7 +105,7 @@ export const WeatherGeneratorView: React.FC = () => {
       // Update Context
       if (typeof setDailyWeather === 'function') {
          setDailyWeather(newWeather);
-         setWeatherParams(prev => ({ ...prev, n_days: newWeather.length }));
+         // n_days è sempre 365, non viene modificato
       }
 
     } catch (err: any) {
@@ -149,7 +149,7 @@ export const WeatherGeneratorView: React.FC = () => {
 
         if (newWeather.length > 0 && typeof setDailyWeather === 'function') {
            setDailyWeather(newWeather);
-           setWeatherParams(prev => ({ ...prev, n_days: newWeather.length }));
+           // n_days è sempre 365, non viene modificato
         }
       } catch (err) {
         setError("Errore parsing CSV. Assicurati che le colonne siano: DAY,TMIN,TMAX,RAIN,SRAD");
@@ -207,10 +207,11 @@ export const WeatherGeneratorView: React.FC = () => {
               label="Piovosità Media (mm/d)" value={weatherParams.rain_mean} min={0} max={10} step={0.2} unit="mm/d"
               onChange={v => setWeatherParams(p => ({...p, rain_mean: v}))}
             />
-            <Slider 
-              label="Durata Simulazione" value={weatherParams.n_days} min={100} max={365} step={10} unit="giorni"
-              onChange={v => setWeatherParams(p => ({...p, n_days: v}))}
-            />
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <strong>Durata Simulazione:</strong> La simulazione è sempre di <strong>365 giorni</strong> (anno completo).
+              </p>
+            </div>
 
             <div className="mt-6 pt-4 border-t">
               <Button onClick={generateWeather} className="w-full">

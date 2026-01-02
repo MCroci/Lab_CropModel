@@ -14,8 +14,9 @@ const generateRain = (mean: number): number => {
 };
 
 export const makeWeather = (params: WeatherParams): DailyWeather[] => {
-  const { n_days, tmean, tamp, srad, rain_mean } = params;
+  const { tmean, tamp, srad, rain_mean } = params;
   const weather: DailyWeather[] = [];
+  const n_days = 365; // Sempre 365 giorni
 
   for (let i = 1; i <= n_days; i++) {
     const doy = i;
