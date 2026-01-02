@@ -1,3 +1,47 @@
-/* Base styles for Crop Modeling Lab Dashboard */
-/* Additional custom styles can be added here if needed */
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  /* Improve touch targets */
+  button, a, input, select {
+    min-height: 44px;
+  }
+  
+  /* Prevent text size adjustment on iOS */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+  
+  /* Better scrolling on mobile */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent zoom on double tap */
+  button, a {
+    touch-action: manipulation;
+  }
+}
 
+/* Touch-friendly interactions */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Responsive charts */
+@media (max-width: 768px) {
+  .recharts-wrapper {
+    overflow-x: auto;
+  }
+  
+  .recharts-surface {
+    min-width: 600px;
+  }
+}
+
+/* Mobile menu improvements */
+@media (max-width: 768px) {
+  /* Ensure menu items are easily tappable */
+  nav button {
+    min-height: 48px;
+  }
+}

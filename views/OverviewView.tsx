@@ -118,7 +118,7 @@ export const OverviewView: React.FC = () => {
           <span className="text-sm text-blue-800">Simulazione in corso...</span>
         </div>
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
       <div className="lg:col-span-2">
         <Card title="Obiettivi di Apprendimento" className="h-full">
           <p className="text-gray-600 mb-4">

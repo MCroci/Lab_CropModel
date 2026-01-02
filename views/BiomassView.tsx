@@ -22,7 +22,7 @@ export const BiomassView: React.FC = () => {
   }));
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
       <div className="lg:col-span-1">
         <Card title="Parametri Biomassa (RUE)">
           <Slider 
@@ -79,8 +79,8 @@ export const BiomassView: React.FC = () => {
           title="Accumulo Biomassa"
           headerAction={<DownloadAction data={chartData} filename="biomassa.csv" />}
         >
-          <div className="h-[400px] w-full">
-            <ResponsiveContainer>
+          <div className="h-[250px] sm:h-[400px] w-full overflow-x-auto">
+            <ResponsiveContainer width="100%" minHeight={250}>
               <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                 <XAxis 

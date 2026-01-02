@@ -58,24 +58,37 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Mobile Header */}
-      <div className="md:hidden bg-brand-700 text-white p-4 flex justify-between items-center sticky top-0 z-50">
+      <div className="md:hidden bg-brand-700 text-white p-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
         <h1 className="font-bold text-lg">Crop mod lab</h1>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X /> : <Menu />}
+        <button 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="p-2 -mr-2 touch-manipulation"
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-slate-100 transition-transform transform 
+        fixed inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-900 text-slate-100 transition-transform transform 
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
         md:translate-x-0 md:static md:block
+        shadow-xl md:shadow-none
       `}>
-        <div className="p-6 border-b border-slate-700">
-          <h1 className="text-2xl font-bold text-brand-500">Crop mod lab</h1>
+        <div className="p-4 md:p-6 border-b border-slate-700">
+          <h1 className="text-xl md:text-2xl font-bold text-brand-500">Crop mod lab</h1>
           <p className="text-xs text-slate-400 mt-1">Modellistica delle colture erbacee</p>
         </div>
-        <nav className="mt-4 px-2 overflow-y-auto max-h-[calc(100vh-120px)]">
+        <nav className="mt-4 px-2 overflow-y-auto max-h-[calc(100vh-120px)] pb-4">
           {/* INTRODUZIONE */}
           <div className="mb-4">
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -89,12 +102,13 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
                   className={`
-                    w-full flex items-center space-x-3 px-4 py-3 mb-1 rounded-lg transition-colors
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}
+                    w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
+                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    min-h-[44px] text-left
                   `}
                 >
-                  <Icon size={18} />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon size={20} className="flex-shrink-0" />
+                  <span className="font-medium text-sm md:text-base">{item.label}</span>
                 </button>
               );
             })}
@@ -113,12 +127,13 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
                   className={`
-                    w-full flex items-center space-x-3 px-4 py-3 mb-1 rounded-lg transition-colors
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}
+                    w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
+                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    min-h-[44px] text-left
                   `}
                 >
-                  <Icon size={18} />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon size={20} className="flex-shrink-0" />
+                  <span className="font-medium text-sm md:text-base">{item.label}</span>
                 </button>
               );
             })}
@@ -137,12 +152,13 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
                   className={`
-                    w-full flex items-center space-x-3 px-4 py-3 mb-1 rounded-lg transition-colors
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}
+                    w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
+                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    min-h-[44px] text-left
                   `}
                 >
-                  <Icon size={18} />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon size={20} className="flex-shrink-0" />
+                  <span className="font-medium text-sm md:text-base">{item.label}</span>
                 </button>
               );
             })}
@@ -161,12 +177,13 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
                   className={`
-                    w-full flex items-center space-x-3 px-4 py-3 mb-1 rounded-lg transition-colors
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}
+                    w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
+                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    min-h-[44px] text-left
                   `}
                 >
-                  <Icon size={18} />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon size={20} className="flex-shrink-0" />
+                  <span className="font-medium text-sm md:text-base">{item.label}</span>
                 </button>
               );
             })}
@@ -185,12 +202,13 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
                   className={`
-                    w-full flex items-center space-x-3 px-4 py-3 mb-1 rounded-lg transition-colors
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}
+                    w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
+                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    min-h-[44px] text-left
                   `}
                 >
-                  <Icon size={18} />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon size={20} className="flex-shrink-0" />
+                  <span className="font-medium text-sm md:text-base">{item.label}</span>
                 </button>
               );
             })}
@@ -209,12 +227,13 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
                   className={`
-                    w-full flex items-center space-x-3 px-4 py-3 mb-1 rounded-lg transition-colors
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}
+                    w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
+                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    min-h-[44px] text-left
                   `}
                 >
-                  <Icon size={18} />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon size={20} className="flex-shrink-0" />
+                  <span className="font-medium text-sm md:text-base">{item.label}</span>
                 </button>
               );
             })}
@@ -223,8 +242,8 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 overflow-y-auto h-screen">
-        <div className="max-w-6xl mx-auto">
+      <main className="flex-1 p-3 sm:p-4 md:p-8 overflow-y-auto min-h-screen md:h-screen">
+        <div className="max-w-6xl mx-auto w-full">
           {children}
         </div>
       </main>
