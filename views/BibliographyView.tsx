@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '../components/UI';
 import { ExternalLink, Book, FileText, Globe } from 'lucide-react';
+import { useI18n } from '../i18n/I18nContext';
 
 interface Reference {
   id: string;
@@ -18,6 +19,7 @@ interface Reference {
 }
 
 export const BibliographyView: React.FC = () => {
+  const { t } = useI18n();
   const references: Reference[] = [
     {
       id: 'wallach2014',
@@ -254,14 +256,13 @@ export const BibliographyView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Card title="Bibliografia - Modellistica delle Colture Erbacee">
+      <Card title={t.bibliography.title}>
         <p className="text-gray-700 mb-4">
-          Riferimenti bibliografici essenziali per lo studio della modellistica delle colture erbacee.
-          Questa bibliografia copre i principali argomenti trattati nell'applicazione.
+          {t.bibliography.description}
         </p>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
           <p className="text-sm text-blue-800">
-            <strong>Nota:</strong> I riferimenti sono organizzati per categoria. Clicca sui link DOI o URL per accedere alle pubblicazioni originali.
+            <strong>{t.common.warning}:</strong> {t.bibliography.note}
           </p>
         </div>
       </Card>
@@ -325,16 +326,16 @@ export const BibliographyView: React.FC = () => {
       ))}
 
       {/* Note sulla Citazione */}
-      <Card title="Note sulla Citazione" className="bg-gray-50">
+      <Card title={t.bibliography.citationNotes} className="bg-gray-50">
         <div className="text-sm text-gray-700 space-y-2">
           <p>
-            <strong>Formato:</strong> Le citazioni seguono lo stile APA (American Psychological Association).
+            <strong>{t.bibliography.format.split(':')[0]}:</strong> {t.bibliography.format.split(':')[1]?.trim() || t.bibliography.format}
           </p>
           <p>
-            <strong>DOI:</strong> Digital Object Identifier - identificatore univoco per pubblicazioni scientifiche.
+            <strong>{t.bibliography.doi.split(':')[0]}:</strong> {t.bibliography.doi.split(':')[1]?.trim() || t.bibliography.doi}
           </p>
           <p>
-            <strong>Uso Accademico:</strong> Quando utilizzi questi riferimenti in relazioni o tesi, assicurati di seguire le linee guida del tuo ateneo per le citazioni bibliografiche.
+            <strong>{t.bibliography.academicUse.split(':')[0]}:</strong> {t.bibliography.academicUse.split(':')[1]?.trim() || t.bibliography.academicUse}
           </p>
         </div>
       </Card>

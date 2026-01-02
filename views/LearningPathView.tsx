@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Button } from '../components/UI';
 import { CheckCircle, Circle, BookOpen, Target, ArrowRight, Lock } from 'lucide-react';
+import { useI18n } from '../i18n/I18nContext';
 
 interface LearningPathViewProps {
   onNavigate?: (tab: string) => void;
@@ -18,6 +19,7 @@ interface Module {
 }
 
 export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }) => {
+  const { t } = useI18n();
   const [modules, setModules] = useState<Module[]>([
     {
       id: '1',
@@ -158,10 +160,10 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
   return (
     <div className="space-y-6">
       {/* Header con Progresso */}
-      <Card title="Percorso Didattico - Modellistica delle Colture Erbacee">
+      <Card title={t.learningPath.title}>
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">Progresso Complessivo</span>
+            <span className="text-sm font-medium text-gray-700">{t.learningPath.progress}</span>
             <span className="text-sm font-bold text-brand-600">{getProgress()}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
@@ -172,8 +174,7 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
           </div>
         </div>
         <p className="text-gray-600 text-sm">
-          Questo percorso ti guiderà attraverso i concetti fondamentali della modellistica delle colture erbacee.
-          Completa i moduli in sequenza per costruire una comprensione solida e progressiva.
+          {t.learningPath.description}
         </p>
       </Card>
 
@@ -214,7 +215,7 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2 mb-3">
                     <Target size={16} className="text-blue-600" />
-                    <h4 className="font-semibold text-blue-900">Obiettivi di Apprendimento</h4>
+                    <h4 className="font-semibold text-blue-900">{t.learningPath.objectives}</h4>
                   </div>
                   <ul className="space-y-2">
                     {module.objectives.map((obj, i) => (
@@ -230,11 +231,11 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
                   <div className="flex items-center gap-4 text-sm text-gray-600">
                     <div className="flex items-center gap-1">
                       <BookOpen size={14} />
-                      <span>{module.estimatedTime}</span>
+                      <span>{t.learningPath.estimatedTime}: {module.estimatedTime}</span>
                     </div>
                     {module.prerequisites.length > 0 && (
                       <div className="text-xs">
-                        Prerequisiti: Moduli {module.prerequisites.join(', ')}
+                        {t.learningPath.prerequisites}: {t.learningPath.module} {module.prerequisites.join(', ')}
                       </div>
                     )}
                   </div>
@@ -249,12 +250,12 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
                         {module.completed ? (
                           <>
                             <CheckCircle size={16} />
-                            Completato
+                            {t.learningPath.completed}
                           </>
                         ) : (
                           <>
                             <Circle size={16} />
-                            Segna come Completato
+                            {t.learningPath.markComplete}
                           </>
                         )}
                       </Button>
@@ -265,7 +266,7 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
                         variant="secondary"
                         className="text-sm"
                       >
-                        Inizia Modulo
+                        {t.learningPath.startModule}
                       </Button>
                     )}
                   </div>
@@ -278,12 +279,12 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
 
       {/* Riepilogo Finale */}
       {getProgress() === 100 && (
-        <Card title="🎉 Percorso Completato!" className="bg-green-50 border-green-200">
+        <Card title={t.learningPath.allComplete} className="bg-green-50 border-green-200">
           <p className="text-gray-700 mb-4">
-            Complimenti! Hai completato tutti i moduli del percorso didattico.
+            {t.learningPath.allCompleteMessage}
           </p>
           <p className="text-sm text-gray-600">
-            Ora sei pronto per applicare le conoscenze acquisite in esercizi pratici e casi studio avanzati.
+            {t.learningPath.allCompleteSubmessage}
           </p>
         </Card>
       )}

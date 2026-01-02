@@ -5,6 +5,7 @@ import { useSimulation } from '../context/SimulationContext';
 import { simulateCrop } from '../services/cropModel';
 import { CropParams } from '../types';
 import { CheckSquare, Square, TrendingUp, BarChart3, X } from 'lucide-react';
+import { useI18n } from '../i18n/I18nContext';
 
 // Preset Data - Completi con tutti i parametri necessari
 const CROP_PRESETS: Record<string, { label: string; params: Partial<CropParams>; color: string }> = {
@@ -65,6 +66,7 @@ interface ComparisonResult {
 
 export const CropComparisonView: React.FC = () => {
   const { dailyWeather, cropParams: baseCropParams, sowingDays } = useSimulation();
+  const { t } = useI18n();
   const [selectedCrops, setSelectedCrops] = useState<string[]>(['mais', 'frumento']);
 
   // Esegui simulazioni per tutte le colture selezionate
@@ -165,16 +167,15 @@ export const CropComparisonView: React.FC = () => {
 
   if (dailyWeather.length === 0) {
     return (
-      <Card title="Confronto Colture - Simulazioni Parallele">
+      <Card title={t.cropComparison.title}>
         <div className="text-center py-8">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md mx-auto">
-            <p className="text-yellow-800 font-medium mb-2">⚠️ Dati meteorologici mancanti</p>
+            <p className="text-yellow-800 font-medium mb-2">⚠️ {t.common.noData}</p>
             <p className="text-sm text-yellow-700 mb-4">
-              Per eseguire simulazioni parallele, devi prima generare i dati meteorologici.
+              {t.cropComparison.noWeatherData || 'Per eseguire simulazioni parallele, devi prima generare i dati meteorologici.'}
             </p>
             <p className="text-sm text-yellow-700">
-              Vai alla sezione <strong>Generatore Meteo</strong> nel menu laterale e genera i dati meteo.
-              Poi torna qui per confrontare le colture!
+              {t.cropComparison.goToWeatherGenerator || 'Vai alla sezione Generatore Meteo nel menu laterale e genera i dati meteo. Poi torna qui per confrontare le colture!'}
             </p>
           </div>
         </div>
@@ -184,19 +185,19 @@ export const CropComparisonView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Card title="Confronto Multi-Coltura - Simulazioni Parallele">
+      <Card title={t.cropComparison.title}>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-          <h3 className="font-semibold text-blue-900 mb-2">Come funziona:</h3>
+          <h3 className="font-semibold text-blue-900 mb-2">{t.cropComparison.howItWorks || 'Come funziona:'}</h3>
           <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
-            <li><strong>Seleziona le colture</strong> che vuoi confrontare usando le checkbox qui sotto</li>
-            <li>Le <strong>simulazioni vengono eseguite automaticamente in parallelo</strong> per tutte le colture selezionate</li>
-            <li>Ogni coltura usa le <strong>stesse condizioni meteorologiche</strong> (dalla sezione Generatore Meteo)</li>
-            <li>I risultati vengono mostrati <strong>sovrapposti nei grafici</strong> per un confronto diretto</li>
+            <li><strong>{t.cropComparison.selectCrops}</strong> {t.cropComparison.selectCropsDesc || 'che vuoi confrontare usando le checkbox qui sotto'}</li>
+            <li>{t.cropComparison.parallelSimulations || 'Le simulazioni vengono eseguite automaticamente in parallelo per tutte le colture selezionate'}</li>
+            <li>{t.cropComparison.sameWeather || 'Ogni coltura usa le stesse condizioni meteorologiche (dalla sezione Generatore Meteo)'}</li>
+            <li>{t.cropComparison.overlappedResults || 'I risultati vengono mostrati sovrapposti nei grafici per un confronto diretto'}</li>
           </ol>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
           <p className="text-sm text-blue-800">
-            <strong>Date di Semina:</strong> Ogni coltura può avere una data di semina diversa (configurabile nella sezione Panoramica).
+            <strong>{t.overview.sowingDate}:</strong> {t.overview.sowingDateNote}
             {selectedCrops.length > 0 && (
               <ul className="list-disc list-inside mt-2 text-xs">
                 {selectedCrops.map(cropId => {
@@ -224,13 +225,13 @@ export const CropComparisonView: React.FC = () => {
         {/* Selezione Colture */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">Seleziona Colture da Confrontare</h3>
+            <h3 className="font-semibold text-gray-900">{t.cropComparison.selectCrops}</h3>
             <div className="flex gap-2">
               <Button onClick={selectAll} variant="outline" className="text-sm">
-                Seleziona Tutte
+                {t.cropComparison.selectAll}
               </Button>
               <Button onClick={deselectAll} variant="outline" className="text-sm">
-                Deseleziona Tutte
+                {t.cropComparison.deselectAll}
               </Button>
             </div>
           </div>
@@ -275,8 +276,8 @@ export const CropComparisonView: React.FC = () => {
 
         {selectedCrops.length === 0 && (
           <div className="text-center py-8 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-yellow-800 font-medium mb-2">Nessuna coltura selezionata</p>
-            <p className="text-sm text-yellow-700">Clicca sulle card qui sopra per selezionare le colture da confrontare</p>
+            <p className="text-yellow-800 font-medium mb-2">{t.cropComparison.noCropsSelected}</p>
+            <p className="text-sm text-yellow-700">{t.cropComparison.selectCropsDesc || 'Clicca sulle card qui sopra per selezionare le colture da confrontare'}</p>
           </div>
         )}
 
@@ -296,7 +297,7 @@ export const CropComparisonView: React.FC = () => {
       {comparisonResults.length > 0 && (
         <>
           {/* Info Box Simulazioni */}
-          <Card title="Simulazioni Eseguite" className="bg-green-50 border-green-200">
+          <Card title={t.cropComparison.simulationsCompleted} className="bg-green-50 border-green-200">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
                 ✓
@@ -315,7 +316,7 @@ export const CropComparisonView: React.FC = () => {
           </Card>
 
           {/* Tabella Comparativa Parametri */}
-          <Card title="Parametri Comparativi">
+          <Card title={t.cropComparison.comparativeParams}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -358,7 +359,7 @@ export const CropComparisonView: React.FC = () => {
           </Card>
 
           {/* Risultati Finali Comparativi */}
-          <Card title="Risultati Finali della Simulazione">
+          <Card title={t.cropComparison.finalResults}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               {comparisonResults.map(result => (
                 <div
