@@ -4,7 +4,6 @@ import { useSimulation } from '../context/SimulationContext';
 import { CropParams } from '../types';
 import { GitCompare, Save, FolderOpen, Trash2, CheckCircle } from 'lucide-react';
 import { useToast } from '../components/Toast';
-import { useI18n } from '../i18n/I18nContext';
 
 // Preset Data - Completi con tutti i parametri necessari
 const CROP_PRESETS: Record<string, Partial<CropParams>> = {
@@ -45,7 +44,6 @@ export const OverviewView: React.FC = () => {
     isSimulating
   } = useSimulation();
   const { showToast } = useToast();
-  const { t, language } = useI18n();
   const [selectedPreset, setSelectedPreset] = useState<string>('generica');
   const [configName, setConfigName] = useState('');
   const [savedConfigs, setSavedConfigs] = useState(getAllSavedConfigurations());
@@ -76,7 +74,7 @@ export const OverviewView: React.FC = () => {
 
   const handleSaveConfiguration = () => {
     if (!configName.trim()) {
-      showToast(t.overview.enterConfigName, 'error');
+      showToast('Inserisci un nome per la configurazione', 'error');
       return;
     }
     try {
@@ -84,27 +82,27 @@ export const OverviewView: React.FC = () => {
       setSavedConfigs(getAllSavedConfigurations());
       setConfigName('');
       setShowSaveDialog(false);
-      showToast(t.toast.configSaved, 'success');
+      showToast('Configurazione salvata con successo!', 'success');
     } catch (error) {
-      showToast(t.toast.errorSaving, 'error');
+      showToast('Errore nel salvataggio', 'error');
     }
   };
 
   const handleLoadConfiguration = (id: string) => {
     if (loadSavedConfiguration(id)) {
-      showToast(t.toast.configLoaded, 'success');
+      showToast('Configurazione caricata con successo!', 'success');
       setSavedConfigs(getAllSavedConfigurations());
     } else {
-      showToast(t.toast.errorLoading, 'error');
+      showToast('Errore nel caricamento', 'error');
     }
   };
 
   const handleDeleteConfiguration = (id: string) => {
     if (deleteSavedConfiguration(id)) {
       setSavedConfigs(getAllSavedConfigurations());
-      showToast(t.toast.configDeleted, 'success');
+      showToast('Configurazione eliminata', 'success');
     } else {
-      showToast(t.toast.errorDeleting, 'error');
+      showToast('Errore nell\'eliminazione', 'error');
     }
   };
 
@@ -117,47 +115,48 @@ export const OverviewView: React.FC = () => {
       {isSimulating && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-3">
           <LoadingSpinner size="sm" />
-          <span className="text-sm text-blue-800">{t.overview.simulating}</span>
+          <span className="text-sm text-blue-800">Simulazione in corso...</span>
         </div>
       )}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
       <div className="lg:col-span-2">
-        <Card title={t.overview.learningObjectives} className="h-full">
+        <Card title="Obiettivi di Apprendimento" className="h-full">
           <p className="text-gray-600 mb-4">
-            {t.overview.title === 'Overview' ? 'This application is designed for educational exercises on herbaceous crop modeling.' : 'Questa applicazione è progettata per esercizi didattici sulla modellazione delle colture erbacee.'}
+            Questa applicazione è progettata per esercizi didattici sulla modellazione delle colture erbacee.
           </p>
           <ul className="list-disc list-inside space-y-2 text-gray-700 ml-2">
-            {t.overview.objectives.map((obj, i) => (
-              <li key={i} dangerouslySetInnerHTML={{ __html: obj }} />
-            ))}
+            <li>Distinguere tra <span className="font-semibold text-brand-600">variabili di stato</span>, <span className="font-semibold text-brand-600">variabili di flusso</span>, parametri e variabili forzanti.</li>
+            <li>Comprendere il ciclo giornaliero: Meteo → Fenologia → LAI → Intercettazione → Biomassa.</li>
+            <li>Introduzione all'accoppiamento con il bilancio idrico del suolo e gli indici di stress.</li>
+            <li>Visualizzare l'impatto dei parametri fisiologici (es. RUE, KPAR) sulla produttività.</li>
           </ul>
           <div className="mt-6 bg-yellow-50 p-4 rounded-lg border border-yellow-200">
             <p className="text-sm text-yellow-800">
-              <strong>{t.common.warning}:</strong> {t.overview.note}
+              <strong>Nota:</strong> Il modello implementato qui è semplificato a scopi didattici. Si concentra sui principi fisici fondamentali (Radiazione, Temperatura, Acqua) tralasciando aspetti complessi come i nutrienti o i parassiti.
             </p>
           </div>
         </Card>
       </div>
       <div className="lg:col-span-1">
-        <Card title={t.overview.quickConfig} className="h-full bg-blue-50 border-blue-100">
+        <Card title="Configurazione Rapida" className="h-full bg-blue-50 border-blue-100">
           <div className="mb-6">
             <Select 
-              label={t.overview.selectCrop}
+              label="Seleziona Coltura (Preset)"
               value={selectedPreset}
               options={[
-                { value: 'generica', label: language === 'it' ? 'Coltura Generica' : 'Generic Crop' },
+                { value: 'generica', label: 'Coltura Generica' },
                 { value: 'mais', label: 'Mais (C4)' },
                 { value: 'frumento', label: 'Frumento (C3)' },
-                { value: 'pomodoro', label: language === 'it' ? 'Pomodoro' : 'Tomato' },
+                { value: 'pomodoro', label: 'Pomodoro' },
               ]}
               onChange={handlePresetChange}
-              description={language === 'it' ? "Carica automaticamente un set di parametri fisiologici tipici per la coltura selezionata. I parametri includono fenologia, LAI, RUE e risposta alla temperatura." : "Automatically loads a set of typical physiological parameters for the selected crop. Parameters include phenology, LAI, RUE and temperature response."}
+              description="Carica automaticamente un set di parametri fisiologici tipici per la coltura selezionata. I parametri includono fenologia, LAI, RUE e risposta alla temperatura."
             />
 
             {/* Data di Semina/Trapianto per la coltura selezionata */}
             <div className="mt-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t.overview.sowingDate} - {CROP_PRESETS[selectedPreset] ? (language === 'it' ? ['Coltura Generica', 'Mais (C4)', 'Frumento (C3)', 'Pomodoro'] : ['Generic Crop', 'Maize (C4)', 'Wheat (C3)', 'Tomato'])[['generica', 'mais', 'frumento', 'pomodoro'].indexOf(selectedPreset)] : (language === 'it' ? 'Coltura Selezionata' : 'Selected Crop')}
+                Data di Semina/Trapianto - {CROP_PRESETS[selectedPreset] ? ['Coltura Generica', 'Mais (C4)', 'Frumento (C3)', 'Pomodoro'][['generica', 'mais', 'frumento', 'pomodoro'].indexOf(selectedPreset)] : 'Coltura Selezionata'}
               </label>
               <input
                 type="number"
@@ -174,37 +173,37 @@ export const OverviewView: React.FC = () => {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               />
               <p className="text-xs text-gray-500 mt-1">
-                {t.overview.day} {sowingDays[selectedPreset] || 1} {t.overview.of} 365 {t.overview.available}. {t.overview.simulationAlways365}
+                Giorno {sowingDays[selectedPreset] || 1} di 365 disponibili. La simulazione è sempre di un anno completo (365 giorni).
               </p>
               <div className="mt-2 flex gap-2">
                 <button
                   onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: 1 }))}
                   className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
                 >
-                  {t.overview.day1}
+                  Giorno 1
                 </button>
                 <button
                   onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: Math.floor(365 * 0.1) }))}
                   className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
                 >
-                  {t.overview.season10}
+                  10% stagione
                 </button>
                 <button
                   onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: Math.floor(365 * 0.3) }))}
                   className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
                 >
-                  {t.overview.season30}
+                  30% stagione
                 </button>
               </div>
               <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800">
-                <strong>{t.common.warning}:</strong> {t.overview.sowingDateNote}
+                <strong>Nota:</strong> Ogni coltura può avere una data di semina diversa. La data impostata qui si applica solo alla coltura selezionata.
               </div>
             </div>
             
             {/* Riepilogo Parametri Chiave */}
             {selectedPreset && CROP_PRESETS[selectedPreset] && (
               <div className="mt-4 bg-white border border-gray-200 rounded-lg p-3 text-xs">
-                <div className="font-semibold text-gray-900 mb-2">{t.overview.activeParams}</div>
+                <div className="font-semibold text-gray-900 mb-2">Parametri Chiave Attivi:</div>
                 <div className="grid grid-cols-2 gap-2 text-gray-700">
                   <div>
                     <span className="font-medium">RUE:</span> {CROP_PRESETS[selectedPreset].RUE} g/MJ
@@ -239,16 +238,17 @@ export const OverviewView: React.FC = () => {
             )}
           </div>
           <div className="pt-4 border-t border-blue-200">
-            <h4 className="font-semibold text-blue-900 mb-2">{t.overview.quickGuide}</h4>
+            <h4 className="font-semibold text-blue-900 mb-2">Guida Rapida</h4>
             <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
-              {t.overview.quickGuideSteps.map((step, i) => (
-                <li key={i} dangerouslySetInnerHTML={{ __html: step }} />
-              ))}
+              <li>Scegli un preset qui sopra.</li>
+              <li>Vai su <strong>Generatore Meteo</strong> per definire il clima.</li>
+              <li>Analizza la <strong>Biomassa</strong> per vedere l'accumulo.</li>
+              <li>Controlla <strong>Bilancio Idrico</strong> per lo stress (ARID).</li>
             </ol>
             <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
-              <p className="text-xs font-semibold text-purple-900 mb-1">{t.overview.compareCrops}</p>
+              <p className="text-xs font-semibold text-purple-900 mb-1">💡 Confronta più colture</p>
               <p className="text-xs text-purple-700">
-                {t.overview.compareCropsDesc}
+                Vuoi confrontare più colture contemporaneamente? Vai su <strong>Confronto Colture</strong> nel menu per eseguire simulazioni parallele!
               </p>
             </div>
           </div>
@@ -260,7 +260,7 @@ export const OverviewView: React.FC = () => {
                 className="flex-1 text-sm"
               >
                 <Save size={16} />
-                {t.overview.saveConfig}
+                Salva Configurazione
               </Button>
             </div>
             {showSaveDialog && (
@@ -269,45 +269,45 @@ export const OverviewView: React.FC = () => {
                   type="text"
                   value={configName}
                   onChange={(e) => setConfigName(e.target.value)}
-                  placeholder={t.overview.configName}
+                  placeholder="Nome configurazione..."
                   className="w-full border border-gray-300 rounded px-2 py-1 text-sm mb-2"
                   onKeyPress={(e) => e.key === 'Enter' && handleSaveConfiguration()}
                 />
                 <div className="flex gap-2">
                   <Button onClick={handleSaveConfiguration} variant="primary" className="flex-1 text-xs">
                     <CheckCircle size={14} />
-                    {t.common.save}
+                    Salva
                   </Button>
                   <Button onClick={() => { setShowSaveDialog(false); setConfigName(''); }} variant="outline" className="flex-1 text-xs">
-                    {t.common.cancel}
+                    Annulla
                   </Button>
                 </div>
               </div>
             )}
             {savedConfigs.length > 0 && (
               <div className="mt-3">
-                <h5 className="text-xs font-semibold text-blue-900 mb-2">{t.overview.savedConfigs}</h5>
+                <h5 className="text-xs font-semibold text-blue-900 mb-2">Configurazioni Salvate:</h5>
                 <div className="space-y-1 max-h-40 overflow-y-auto">
                   {savedConfigs.map((config) => (
                     <div key={config.id} className="flex items-center justify-between bg-white border border-gray-200 rounded px-2 py-1 text-xs">
                       <div className="flex-1">
                         <div className="font-medium text-gray-700">{config.name}</div>
                         <div className="text-gray-500 text-xs">
-                          {new Date(config.timestamp).toLocaleDateString(language === 'it' ? 'it-IT' : 'en-US')}
+                          {new Date(config.timestamp).toLocaleDateString('it-IT')}
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <button
                           onClick={() => handleLoadConfiguration(config.id)}
                           className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-                          title={t.common.load}
+                          title="Carica"
                         >
                           <FolderOpen size={14} />
                         </button>
                         <button
                           onClick={() => handleDeleteConfiguration(config.id)}
                           className="p-1 text-red-600 hover:bg-red-50 rounded"
-                          title={t.common.delete}
+                          title="Elimina"
                         >
                           <Trash2 size={14} />
                         </button>

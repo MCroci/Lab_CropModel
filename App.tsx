@@ -4,7 +4,6 @@ import { SimulationProvider } from './context/SimulationContext';
 import { Layout } from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToastProvider } from './components/Toast';
-import { I18nProvider } from './i18n/I18nContext';
 
 // Lazy load views for code-splitting
 const OverviewView = lazy(() => import('./views/OverviewView').then(m => ({ default: m.OverviewView })));
@@ -67,17 +66,15 @@ const App: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <I18nProvider>
-        <ToastProvider>
-          <SimulationProvider>
-            <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
-              <Suspense fallback={<LoadingFallback />}>
-                {renderContent()}
-              </Suspense>
-            </Layout>
-          </SimulationProvider>
-        </ToastProvider>
-      </I18nProvider>
+      <ToastProvider>
+        <SimulationProvider>
+          <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
+            <Suspense fallback={<LoadingFallback />}>
+              {renderContent()}
+            </Suspense>
+          </Layout>
+        </SimulationProvider>
+      </ToastProvider>
     </ErrorBoundary>
   );
 };

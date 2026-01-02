@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card } from '../components/UI';
 import { ExternalLink, Book, FileText, Globe } from 'lucide-react';
-import { useI18n } from '../i18n/I18nContext';
 
 interface Reference {
   id: string;
@@ -19,7 +18,6 @@ interface Reference {
 }
 
 export const BibliographyView: React.FC = () => {
-  const { t } = useI18n();
   const references: Reference[] = [
     {
       id: 'wallach2014',
@@ -256,13 +254,14 @@ export const BibliographyView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Card title={t.bibliography.title}>
+      <Card title="Bibliografia - Modellistica delle Colture Erbacee">
         <p className="text-gray-700 mb-4">
-          {t.bibliography.description}
+          Riferimenti bibliografici essenziali per lo studio della modellistica delle colture erbacee.
+          Questa bibliografia copre i principali argomenti trattati nell'applicazione.
         </p>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
           <p className="text-sm text-blue-800">
-            <strong>{t.common.warning}:</strong> {t.bibliography.note}
+            <strong>Nota:</strong> I riferimenti sono organizzati per categoria. Clicca sui link DOI o URL per accedere alle pubblicazioni originali.
           </p>
         </div>
       </Card>
@@ -326,16 +325,16 @@ export const BibliographyView: React.FC = () => {
       ))}
 
       {/* Note sulla Citazione */}
-      <Card title={t.bibliography.citationNotes} className="bg-gray-50">
+      <Card title="Note sulla Citazione" className="bg-gray-50">
         <div className="text-sm text-gray-700 space-y-2">
           <p>
-            <strong>{t.bibliography.format.split(':')[0]}:</strong> {t.bibliography.format.split(':')[1]?.trim() || t.bibliography.format}
+            <strong>Formato:</strong> Le citazioni seguono lo stile APA (American Psychological Association).
           </p>
           <p>
-            <strong>{t.bibliography.doi.split(':')[0]}:</strong> {t.bibliography.doi.split(':')[1]?.trim() || t.bibliography.doi}
+            <strong>DOI:</strong> Digital Object Identifier - identificatore univoco per pubblicazioni scientifiche.
           </p>
           <p>
-            <strong>{t.bibliography.academicUse.split(':')[0]}:</strong> {t.bibliography.academicUse.split(':')[1]?.trim() || t.bibliography.academicUse}
+            <strong>Uso Accademico:</strong> Quando utilizzi questi riferimenti in relazioni o tesi, assicurati di seguire le linee guida del tuo ateneo per le citazioni bibliografiche.
           </p>
         </div>
       </Card>

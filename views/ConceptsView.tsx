@@ -3,11 +3,9 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 import { Card, Slider, Button } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { Play, Pause, RotateCcw, Lightbulb, Target, ArrowRight } from 'lucide-react';
-import { useI18n } from '../i18n/I18nContext';
 
 export const ConceptsView: React.FC = () => {
   const { simulationResults } = useSimulation();
-  const { t } = useI18n();
   const [selectedConcept, setSelectedConcept] = useState<'state' | 'flow' | 'param' | 'forcing' | null>(null);
   const [simulationSpeed, setSimulationSpeed] = useState(500);
   const [isRunning, setIsRunning] = useState(false);
@@ -108,7 +106,7 @@ export const ConceptsView: React.FC = () => {
         
         {isSelected && (
           <div className="mt-4 space-y-2">
-            <div className="text-xs font-semibold text-gray-700 mb-2">{t.concepts.examples}</div>
+            <div className="text-xs font-semibold text-gray-700 mb-2">Esempi dal Modello:</div>
             {examples.map((ex, i) => (
               <div key={i} className="bg-gray-50 p-2 rounded text-sm">
                 <div className="flex justify-between items-center">
@@ -131,40 +129,40 @@ export const ConceptsView: React.FC = () => {
       {/* Glossario Interattivo */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ConceptCard
-          title={t.concepts.state}
+          title="Variabili di Stato (State)"
           type="state"
           color="#3b82f6"
-          description={t.concepts.stateDesc}
+          description="Descrivono lo stato del sistema in un dato momento. Si accumulano nel tempo."
           examples={variableClassification.state}
         />
         <ConceptCard
-          title={t.concepts.flow}
+          title="Variabili di Flusso (Rate)"
           type="flow"
           color="#ef4444"
-          description={t.concepts.flowDesc}
+          description="Rappresentano la velocità di cambiamento delle variabili di stato. Sono derivate giornaliere."
           examples={variableClassification.flow}
         />
         <ConceptCard
-          title={t.concepts.param}
+          title="Parametri"
           type="param"
           color="#22c55e"
-          description={t.concepts.paramDesc}
+          description="Proprietà costanti del sistema o della cultivar durante la simulazione."
           examples={variableClassification.param}
         />
         <ConceptCard
-          title={t.concepts.forcing}
+          title="Variabili Forzanti (Forcing)"
           type="forcing"
           color="#f59e0b"
-          description={t.concepts.forcingDesc}
+          description="Input esterni che guidano il sistema. Cambiano ogni giorno."
           examples={variableClassification.forcing}
         />
       </div>
 
       {/* Simulatore Interattivo */}
       {simulationResults.length > 0 && (
-        <Card title={t.concepts.interactiveSimulator}>
+        <Card title="Simulatore Interattivo: Stato vs Flusso">
           <p className="text-gray-600 text-sm mb-4">
-            {t.concepts.stateVsFlow}
+            Osserva come le variabili di <strong>stato</strong> (accumulano) si differenziano dalle variabili di <strong>flusso</strong> (variazioni giornaliere).
           </p>
           
           <div className="mb-4 flex items-center gap-4">
@@ -175,7 +173,7 @@ export const ConceptsView: React.FC = () => {
                 className="text-sm"
               >
                 {isRunning ? <Pause size={16} /> : <Play size={16} />}
-                {isRunning ? t.concepts.pause : t.concepts.play}
+                {isRunning ? 'Pausa' : 'Avvia'}
               </Button>
               <Button
                 onClick={resetSimulation}
@@ -183,23 +181,23 @@ export const ConceptsView: React.FC = () => {
                 className="text-sm"
               >
                 <RotateCcw size={16} />
-                {t.concepts.reset}
+                Reset
               </Button>
             </div>
             <div className="flex-1">
               <Slider
-                label={t.concepts.speed}
+                label="Velocità Simulazione"
                 value={simulationSpeed}
                 min={100}
                 max={2000}
                 step={100}
                 onChange={setSimulationSpeed}
                 unit="ms"
-                description={t.concepts.speedDesc}
+                description="Tempo tra un giorno e il successivo"
               />
             </div>
             <div className="text-sm font-semibold text-brand-600">
-              {t.concepts.day}: {currentDay + 1} / {exampleData.length}
+              Giorno: {currentDay + 1} / {exampleData.length}
             </div>
           </div>
 

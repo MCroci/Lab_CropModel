@@ -3,7 +3,6 @@ import { Card, Button } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { CheckCircle, XCircle, Lightbulb, Target, ArrowRight } from 'lucide-react';
 import { makeWeather, simulateCrop } from '../services/cropModel';
-import { useI18n } from '../i18n/I18nContext';
 
 interface Exercise {
   id: string;
@@ -23,7 +22,6 @@ interface Exercise {
 
 export const ExercisesView: React.FC = () => {
   const { weatherParams, cropParams, setCropParams, simulationResults, getCurrentCropSowingDay } = useSimulation();
-  const { t } = useI18n();
   const sowingDay = getCurrentCropSowingDay();
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [showSolution, setShowSolution] = useState<Record<string, boolean>>({});
@@ -220,28 +218,29 @@ export const ExercisesView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Card title={t.exercises.title}>
+      <Card title="Esercizi Pratici - Modellistica delle Colture Erbacee">
         <p className="text-gray-700 mb-4">
-          {t.exercises.description}
+          Questa sezione contiene esercizi pratici organizzati per difficoltà e modulo didattico.
+          Completa gli esercizi per consolidare la comprensione dei concetti teorici.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
             <div className="text-2xl font-bold text-blue-700">
               {exercises.filter(e => e.difficulty === 'base').length}
             </div>
-            <div className="text-sm text-blue-600">{t.exercises.base}</div>
+            <div className="text-sm text-blue-600">Esercizi Base</div>
           </div>
           <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
             <div className="text-2xl font-bold text-yellow-700">
               {exercises.filter(e => e.difficulty === 'intermedio').length}
             </div>
-            <div className="text-sm text-yellow-600">{t.exercises.intermediate}</div>
+            <div className="text-sm text-yellow-600">Esercizi Intermedi</div>
           </div>
           <div className="bg-red-50 p-4 rounded-lg border border-red-200">
             <div className="text-2xl font-bold text-red-700">
               {exercises.filter(e => e.difficulty === 'avanzato').length}
             </div>
-            <div className="text-sm text-red-600">{t.exercises.advanced}</div>
+            <div className="text-sm text-red-600">Esercizi Avanzati</div>
           </div>
         </div>
       </Card>
@@ -268,14 +267,14 @@ export const ExercisesView: React.FC = () => {
               <div>
                 <p className="text-gray-700 mb-2">{exercise.description}</p>
                 <div className="text-sm text-gray-600">
-                  <strong>{t.exercises.module}</strong> {exercise.module}
+                  <strong>Modulo:</strong> {exercise.module}
                 </div>
               </div>
 
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                 <div className="flex items-center gap-2 mb-3">
                   <Target size={16} className="text-blue-600" />
-                  <h4 className="font-semibold text-blue-900">{t.learningPath.objectives}</h4>
+                  <h4 className="font-semibold text-blue-900">Obiettivi di Apprendimento</h4>
                 </div>
                 <ul className="space-y-1">
                   {exercise.objectives.map((obj, i) => (
@@ -288,23 +287,23 @@ export const ExercisesView: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-semibold text-gray-900">{t.exercises.step === 'Step' ? 'Step by Step Procedure' : 'Procedura Step-by-Step'}</h4>
+                <h4 className="font-semibold text-gray-900">Procedura Step-by-Step</h4>
                 {exercise.steps.map((step, index) => (
                   <div key={index} className="border-l-4 border-brand-500 pl-4 py-2 bg-gray-50 rounded-r">
                     <div className="flex items-start gap-2 mb-2">
-                      <span className="font-bold text-brand-700">{t.exercises.step} {index + 1}:</span>
+                      <span className="font-bold text-brand-700">Step {index + 1}:</span>
                       <span className="text-gray-700 flex-1">{step.description}</span>
                     </div>
                     {step.hint && (
                       <div className="mt-2 flex items-start gap-2 text-sm text-gray-600 bg-yellow-50 p-2 rounded">
                         <Lightbulb size={14} className="mt-0.5 flex-shrink-0 text-yellow-600" />
-                        <span><strong>{t.exercises.hint}</strong> {step.hint}</span>
+                        <span><strong>Suggerimento:</strong> {step.hint}</span>
                       </div>
                     )}
                     {step.solution && (
                       <div className="mt-2">
                         <textarea
-                          placeholder={t.exercises.answer}
+                          placeholder="Inserisci la tua risposta qui..."
                           className="w-full p-2 border border-gray-300 rounded text-sm"
                           rows={2}
                           value={userAnswers[exercise.id]?.[index] || ''}
@@ -322,7 +321,7 @@ export const ExercisesView: React.FC = () => {
                   variant="outline"
                   className="text-sm"
                 >
-                  {showSolution[exercise.id] ? t.exercises.hideSolution : t.exercises.showSolution}
+                  {showSolution[exercise.id] ? 'Nascondi' : 'Mostra'} Soluzione
                 </Button>
                 <Button
                   onClick={() => {
@@ -333,7 +332,7 @@ export const ExercisesView: React.FC = () => {
                   className="text-sm"
                 >
                   <CheckCircle size={16} />
-                  {t.exercises.markComplete}
+                  Segna come Completato
                 </Button>
               </div>
 
@@ -341,7 +340,7 @@ export const ExercisesView: React.FC = () => {
                 <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <CheckCircle className="text-green-600" size={18} />
-                    <h5 className="font-semibold text-green-900">{t.exercises.solution}</h5>
+                    <h5 className="font-semibold text-green-900">Soluzione</h5>
                   </div>
                   <p className="text-green-800 text-sm">{exercise.solution}</p>
                 </div>

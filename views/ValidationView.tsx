@@ -3,7 +3,6 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 import { Card, Button, Slider } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { Download, TrendingUp, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { useI18n } from '../i18n/I18nContext';
 
 interface ValidationMetrics {
   rmse: number;
@@ -15,7 +14,6 @@ interface ValidationMetrics {
 
 export const ValidationView: React.FC = () => {
   const { simulationResults, cropParams, weatherParams, getCurrentCropSowingDay } = useSimulation();
-  const { t } = useI18n();
   const sowingDay = getCurrentCropSowingDay();
   const [selectedMetric, setSelectedMetric] = useState<'biomass' | 'lai'>('biomass');
   const [noiseLevel, setNoiseLevel] = useState(150);
@@ -73,16 +71,16 @@ export const ValidationView: React.FC = () => {
 
   const getMetricQuality = (metric: string, value: number): { color: string; label: string } => {
     if (metric === 'r2') {
-      if (value >= 0.9) return { color: 'text-green-600', label: t.validation.excellent };
-      if (value >= 0.7) return { color: 'text-yellow-600', label: t.validation.good };
-      if (value >= 0.5) return { color: 'text-orange-600', label: t.validation.acceptable };
-      return { color: 'text-red-600', label: t.validation.poor };
+      if (value >= 0.9) return { color: 'text-green-600', label: 'Eccellente' };
+      if (value >= 0.7) return { color: 'text-yellow-600', label: 'Buono' };
+      if (value >= 0.5) return { color: 'text-orange-600', label: 'Accettabile' };
+      return { color: 'text-red-600', label: 'Scarso' };
     }
     if (metric === 'nrmse') {
-      if (value <= 10) return { color: 'text-green-600', label: t.validation.excellent };
-      if (value <= 20) return { color: 'text-yellow-600', label: t.validation.good };
-      if (value <= 30) return { color: 'text-orange-600', label: t.validation.acceptable };
-      return { color: 'text-red-600', label: t.validation.poor };
+      if (value <= 10) return { color: 'text-green-600', label: 'Eccellente' };
+      if (value <= 20) return { color: 'text-yellow-600', label: 'Buono' };
+      if (value <= 30) return { color: 'text-orange-600', label: 'Accettabile' };
+      return { color: 'text-red-600', label: 'Scarso' };
     }
     return { color: 'text-gray-600', label: '-' };
   };
@@ -100,15 +98,16 @@ export const ValidationView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Card title={t.validation.title}>
+      <Card title="Validazione del Modello">
         <p className="text-gray-700 mb-4">
-          {t.validation.description}
+          Questa sezione permette di validare le simulazioni confrontandole con dati osservati.
+          I dati "osservati" sono generati sinteticamente aggiungendo rumore ai risultati simulati.
         </p>
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
           <div className="flex items-start gap-2">
             <AlertCircle className="text-yellow-600 mt-0.5" size={18} />
             <p className="text-sm text-yellow-800">
-              <strong>{t.common.warning}:</strong> {t.validation.note}
+              <strong>Nota:</strong> In un contesto reale, i dati osservati provengono da esperimenti di campo o letteratura scientifica.
             </p>
           </div>
         </div>
@@ -116,43 +115,43 @@ export const ValidationView: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Controlli */}
-        <Card title={t.validation.title}>
+        <Card title="Configurazione Validazione">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t.validation.variableToValidate}
+                Variabile da Validare
               </label>
               <select
                 value={selectedMetric}
                 onChange={(e) => setSelectedMetric(e.target.value as 'biomass' | 'lai')}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
               >
-                <option value="biomass">{t.validation.biomass} (kg/ha)</option>
+                <option value="biomass">Biomassa (kg/ha)</option>
                 <option value="lai">LAI (m²/m²)</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t.validation.noiseLevel}
+                Livello di Rumore (σ)
               </label>
               <Slider
-                label={t.validation.noiseLevel}
+                label="Rumore Osservazioni"
                 value={noiseLevel}
                 min={0}
                 max={500}
                 step={10}
                 onChange={setNoiseLevel}
                 unit="kg/ha"
-                description={t.validation.noiseLevel}
+                description="Simula l'incertezza nelle misurazioni sperimentali"
               />
             </div>
 
             <div className="pt-4 border-t">
-              <h4 className="font-semibold text-gray-900 mb-3">{t.validation.metrics}</h4>
+              <h4 className="font-semibold text-gray-900 mb-3">Metriche di Validazione</h4>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t.validation.rmse}</span>
+                  <span className="text-gray-600">RMSE:</span>
                   <span className="font-semibold">
                     {selectedMetric === 'biomass' 
                       ? `${metrics.rmse.toFixed(1)} kg/ha`
@@ -161,21 +160,21 @@ export const ValidationView: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t.validation.r2}</span>
+                  <span className="text-gray-600">R²:</span>
                   <span className={`font-semibold ${getMetricQuality('r2', metrics.r2).color}`}>
                     {metrics.r2.toFixed(3)} 
                     <span className="text-xs ml-1">({getMetricQuality('r2', metrics.r2).label})</span>
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t.validation.nrmse}</span>
+                  <span className="text-gray-600">nRMSE:</span>
                   <span className={`font-semibold ${getMetricQuality('nrmse', metrics.nrmse).color}`}>
                     {metrics.nrmse.toFixed(1)}%
                     <span className="text-xs ml-1">({getMetricQuality('nrmse', metrics.nrmse).label})</span>
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t.validation.mae}</span>
+                  <span className="text-gray-600">MAE:</span>
                   <span className="font-semibold">
                     {selectedMetric === 'biomass' 
                       ? `${metrics.mae.toFixed(1)} kg/ha`
@@ -184,7 +183,7 @@ export const ValidationView: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t.validation.bias}</span>
+                  <span className="text-gray-600">Bias:</span>
                   <span className={`font-semibold ${metrics.bias > 0 ? 'text-red-600' : 'text-green-600'}`}>
                     {selectedMetric === 'biomass' 
                       ? `${metrics.bias > 0 ? '+' : ''}${metrics.bias.toFixed(1)} kg/ha`
@@ -199,38 +198,38 @@ export const ValidationView: React.FC = () => {
 
         {/* Grafici */}
         <div className="lg:col-span-2 space-y-6">
-          <Card title={`${t.validation.temporalComparison} ${selectedMetric === 'biomass' ? t.validation.biomass : 'LAI'}`}>
+          <Card title={`Confronto Temporale: ${selectedMetric === 'biomass' ? 'Biomassa' : 'LAI'}`}>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="day" 
-                  label={{ value: `${t.validation.sowingDay} ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
                 />
-                <YAxis label={{ value: selectedMetric === 'biomass' ? `${t.validation.biomass} (kg/ha)` : 'LAI (m²/m²)', angle: -90, position: 'insideLeft' }} />
+                <YAxis label={{ value: selectedMetric === 'biomass' ? 'Biomassa (kg/ha)' : 'LAI (m²/m²)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey={t.validation.observed} stroke="#ef4444" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey={t.validation.simulated} stroke="#3b82f6" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Osservato" stroke="#ef4444" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Simulato" stroke="#3b82f6" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </Card>
 
-          <Card title={t.validation.scatterPlot}>
+          <Card title="Scatter Plot: Osservato vs Simulato">
             <ResponsiveContainer width="100%" height={300}>
               <ScatterChart>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   type="number" 
                   dataKey="osservato" 
-                  name={t.validation.observed}
-                  label={{ value: selectedMetric === 'biomass' ? `${t.validation.observed} ${t.validation.biomass} (kg/ha)` : `${t.validation.observed} LAI (m²/m²)`, position: 'insideBottom', offset: -5 }}
+                  name="Osservato"
+                  label={{ value: selectedMetric === 'biomass' ? 'Biomassa Osservata (kg/ha)' : 'LAI Osservato (m²/m²)', position: 'insideBottom', offset: -5 }}
                 />
                 <YAxis 
                   type="number" 
                   dataKey="simulato" 
-                  name={t.validation.simulated}
-                  label={{ value: selectedMetric === 'biomass' ? `${t.validation.simulated} ${t.validation.biomass} (kg/ha)` : `${t.validation.simulated} LAI (m²/m²)`, angle: -90, position: 'insideLeft' }}
+                  name="Simulato"
+                  label={{ value: selectedMetric === 'biomass' ? 'Biomassa Simulata (kg/ha)' : 'LAI Simulato (m²/m²)', angle: -90, position: 'insideLeft' }}
                 />
                 <Tooltip cursor={{ strokeDasharray: '3 3' }} />
                 <Scatter data={scatterData} fill="#3b82f6" />
@@ -246,37 +245,38 @@ export const ValidationView: React.FC = () => {
               </ScatterChart>
             </ResponsiveContainer>
             <p className="text-xs text-gray-500 mt-2">
-              {t.validation.scatterPlotDesc}
+              La linea rossa tratteggiata rappresenta la perfetta corrispondenza (1:1). 
+              I punti dovrebbero distribuirsi lungo questa linea per un buon adattamento.
             </p>
           </Card>
         </div>
       </div>
 
       {/* Interpretazione Metriche */}
-      <Card title={t.validation.interpretation} className="bg-blue-50 border-blue-200">
+      <Card title="Interpretazione delle Metriche" className="bg-blue-50 border-blue-200">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <h4 className="font-semibold text-blue-900 mb-2">RMSE (Root Mean Square Error)</h4>
             <p className="text-blue-800">
-              {t.validation.rmseDesc}
+              Misura l'errore medio tra osservazioni e simulazioni. Valori più bassi indicano migliore adattamento.
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-blue-900 mb-2">R² (Coefficiente di Determinazione)</h4>
             <p className="text-blue-800">
-              {t.validation.r2Desc}
+              Indica la proporzione di varianza spiegata dal modello. R² {'>'} 0.7 è generalmente considerato buono.
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-blue-900 mb-2">nRMSE (Normalized RMSE)</h4>
             <p className="text-blue-800">
-              {t.validation.nrmseDesc}
+              RMSE normalizzato rispetto alla media. nRMSE {'<'} 20% è generalmente accettabile per modelli colturali.
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-blue-900 mb-2">Bias</h4>
             <p className="text-blue-800">
-              {t.validation.biasDesc}
+              Differenza sistematica tra simulazioni e osservazioni. Bias positivo = sovrastima, negativo = sottostima.
             </p>
           </div>
         </div>
