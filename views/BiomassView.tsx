@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Card, Slider, DownloadAction } from '../components/UI';
+import { Card, Slider, DownloadAction, LoadingSpinner } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { BookOpen } from 'lucide-react';
 
 export const BiomassView: React.FC = () => {
-  const { cropParams, setCropParams, simulationResults, runSimulation, getCurrentCropSowingDay } = useSimulation();
+  const { cropParams, setCropParams, simulationResults, runSimulation, getCurrentCropSowingDay, isSimulating } = useSimulation();
   const sowingDay = getCurrentCropSowingDay();
 
   useEffect(() => {

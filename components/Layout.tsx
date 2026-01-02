@@ -40,7 +40,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     { id: 'validation', label: 'Validazione', icon: CheckCircle2 },
     
     // === APPLICAZIONI AVANZATE ===
-    { id: 'agrivoltaics', label: 'Agrivoltaico (Semplice)', icon: Sun },
+    { id: 'agrivoltaics', label: 'Riduzione Radiazione', icon: Sun },
     { id: 'energy_balance', label: 'Bilancio Energetico', icon: Zap },
     
     // === INFO ===

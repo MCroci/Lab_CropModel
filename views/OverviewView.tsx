@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Select, Button } from '../components/UI';
+import { Card, Select, Button, LoadingSpinner } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { CropParams } from '../types';
-import { GitCompare } from 'lucide-react';
+import { GitCompare, Save, FolderOpen, Trash2, CheckCircle } from 'lucide-react';
+import { useToast } from '../components/Toast';
 
 // Preset Data - Completi con tutti i parametri necessari
 const CROP_PRESETS: Record<string, Partial<CropParams>> = {
@@ -32,8 +33,21 @@ const CROP_PRESETS: Record<string, Partial<CropParams>> = {
 };
 
 export const OverviewView: React.FC = () => {
-  const { cropParams, setCropParams, sowingDays, setSowingDays, weatherParams } = useSimulation();
+  const { 
+    cropParams, setCropParams, 
+    sowingDays, setSowingDays, 
+    weatherParams,
+    saveConfiguration,
+    getAllSavedConfigurations,
+    loadSavedConfiguration,
+    deleteSavedConfiguration,
+    isSimulating
+  } = useSimulation();
+  const { showToast } = useToast();
   const [selectedPreset, setSelectedPreset] = useState<string>('generica');
+  const [configName, setConfigName] = useState('');
+  const [savedConfigs, setSavedConfigs] = useState(getAllSavedConfigurations());
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   // Rileva quale preset corrisponde ai parametri attuali (per mostrarlo nel Select)
   useEffect(() => {
@@ -58,8 +72,53 @@ export const OverviewView: React.FC = () => {
     }
   };
 
+  const handleSaveConfiguration = () => {
+    if (!configName.trim()) {
+      showToast('Inserisci un nome per la configurazione', 'error');
+      return;
+    }
+    try {
+      saveConfiguration(configName);
+      setSavedConfigs(getAllSavedConfigurations());
+      setConfigName('');
+      setShowSaveDialog(false);
+      showToast('Configurazione salvata con successo!', 'success');
+    } catch (error) {
+      showToast('Errore nel salvataggio', 'error');
+    }
+  };
+
+  const handleLoadConfiguration = (id: string) => {
+    if (loadSavedConfiguration(id)) {
+      showToast('Configurazione caricata con successo!', 'success');
+      setSavedConfigs(getAllSavedConfigurations());
+    } else {
+      showToast('Errore nel caricamento', 'error');
+    }
+  };
+
+  const handleDeleteConfiguration = (id: string) => {
+    if (deleteSavedConfiguration(id)) {
+      setSavedConfigs(getAllSavedConfigurations());
+      showToast('Configurazione eliminata', 'success');
+    } else {
+      showToast('Errore nell\'eliminazione', 'error');
+    }
+  };
+
+  useEffect(() => {
+    setSavedConfigs(getAllSavedConfigurations());
+  }, []);
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="space-y-6">
+      {isSimulating && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-3">
+          <LoadingSpinner size="sm" />
+          <span className="text-sm text-blue-800">Simulazione in corso...</span>
+        </div>
+      )}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2">
         <Card title="Obiettivi di Apprendimento" className="h-full">
           <p className="text-gray-600 mb-4">
@@ -193,7 +252,74 @@ export const OverviewView: React.FC = () => {
               </p>
             </div>
           </div>
+          <div className="pt-4 border-t border-blue-200 mt-4">
+            <div className="flex gap-2 mb-3">
+              <Button 
+                onClick={() => setShowSaveDialog(true)} 
+                variant="primary" 
+                className="flex-1 text-sm"
+              >
+                <Save size={16} />
+                Salva Configurazione
+              </Button>
+            </div>
+            {showSaveDialog && (
+              <div className="bg-white border border-gray-300 rounded-lg p-3 mb-3">
+                <input
+                  type="text"
+                  value={configName}
+                  onChange={(e) => setConfigName(e.target.value)}
+                  placeholder="Nome configurazione..."
+                  className="w-full border border-gray-300 rounded px-2 py-1 text-sm mb-2"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSaveConfiguration()}
+                />
+                <div className="flex gap-2">
+                  <Button onClick={handleSaveConfiguration} variant="primary" className="flex-1 text-xs">
+                    <CheckCircle size={14} />
+                    Salva
+                  </Button>
+                  <Button onClick={() => { setShowSaveDialog(false); setConfigName(''); }} variant="outline" className="flex-1 text-xs">
+                    Annulla
+                  </Button>
+                </div>
+              </div>
+            )}
+            {savedConfigs.length > 0 && (
+              <div className="mt-3">
+                <h5 className="text-xs font-semibold text-blue-900 mb-2">Configurazioni Salvate:</h5>
+                <div className="space-y-1 max-h-40 overflow-y-auto">
+                  {savedConfigs.map((config) => (
+                    <div key={config.id} className="flex items-center justify-between bg-white border border-gray-200 rounded px-2 py-1 text-xs">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-700">{config.name}</div>
+                        <div className="text-gray-500 text-xs">
+                          {new Date(config.timestamp).toLocaleDateString('it-IT')}
+                        </div>
+                      </div>
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => handleLoadConfiguration(config.id)}
+                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                          title="Carica"
+                        >
+                          <FolderOpen size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteConfiguration(config.id)}
+                          className="p-1 text-red-600 hover:bg-red-50 rounded"
+                          title="Elimina"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </Card>
+      </div>
       </div>
     </div>
   );
