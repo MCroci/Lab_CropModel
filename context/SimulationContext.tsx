@@ -209,7 +209,7 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, [weatherParams, cropParams, soilParams, carbonParams, sowingDays]);
+  }, [weatherParams, cropParams, soilParams, agrivoltaicsShading, sowingDays]);
 
   // Debounced simulation trigger
   const simulationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
