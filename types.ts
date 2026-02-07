@@ -99,34 +99,3 @@ export interface SensitivityResult {
   value: number;
   B_final: number;
 }
-
-export type RotationType = 
-  | 'Pomodoro - Frumento granella'
-  | 'Pomodoro - Frumento gr - Mais gr'
-  | 'Pomodoro - Frumento gr - Mais tr'
-  | 'Pomodoro - Frumento gr - Soia'
-  | 'Pomodoro - Frumento gr - Sorgo'
-  | 'Pomodoro - Frumento gr - Barbabietola'
-  | 'Pomodoro - Frumento - Medica (3y)';
-
-export interface CarbonParams {
-  rotation: RotationType;
-  isMinimumTillage: boolean;
-  hasCoverCrops: boolean;
-  incorporateResidues: boolean;
-  addManure: boolean;
-  agrivoltaicsShading: number;
-}
-
-export interface RothCResult {
-  month: number;
-  year: number;
-  DPM: number;
-  RPM: number;
-  BIO: number;
-  HUM: number;
-  IOM: number;
-  TotalSOC: number;
-  CO2_Emitted: number;
-  C_Input: number;
-}

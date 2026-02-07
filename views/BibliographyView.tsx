@@ -81,16 +81,6 @@ export const BibliographyView: React.FC = () => {
       description: 'Modello biochimico classico della fotosintesi per piante C3, ancora ampiamente utilizzato.'
     },
     {
-      id: 'rothamsted1999',
-      authors: 'Coleman, K., Jenkinson, D.S.',
-      year: 1999,
-      title: 'RothC-26.3 - A Model for the turnover of carbon in soil',
-      journal: 'Rothamsted Research',
-      type: 'report',
-      category: 'Carbonio nel Suolo',
-      description: 'Documentazione del modello RothC per la simulazione del turnover del carbonio organico nel suolo.'
-    },
-    {
       id: 'penman1948',
       authors: 'Penman, H.L.',
       year: 1948,

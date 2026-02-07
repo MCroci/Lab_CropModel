@@ -7,7 +7,7 @@ export interface SavedConfiguration {
   weatherParams: any;
   cropParams: any;
   soilParams: any;
-  carbonParams: any;
+  agrivoltaicsShading: number;
   sowingDays: Record<string, number>;
 }
 
@@ -19,7 +19,7 @@ export const saveCurrentConfiguration = (
   weatherParams: any,
   cropParams: any,
   soilParams: any,
-  carbonParams: any,
+  agrivoltaicsShading: number,
   sowingDays: Record<string, number>
 ) => {
   try {
@@ -27,7 +27,7 @@ export const saveCurrentConfiguration = (
       weatherParams,
       cropParams,
       soilParams,
-      carbonParams,
+      agrivoltaicsShading,
       sowingDays,
       timestamp: Date.now()
     };
@@ -56,7 +56,7 @@ export const saveNamedConfiguration = (
   weatherParams: any,
   cropParams: any,
   soilParams: any,
-  carbonParams: any,
+  agrivoltaicsShading: number,
   sowingDays: Record<string, number>
 ): string => {
   try {
@@ -68,7 +68,7 @@ export const saveNamedConfiguration = (
       weatherParams,
       cropParams,
       soilParams,
-      carbonParams,
+      agrivoltaicsShading: agrivoltaicsShading ?? 0,
       sowingDays
     };
     configs.push(newConfig);

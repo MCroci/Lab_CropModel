@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '../components/UI';
-import { Code, CloudRain, Sun, Droplet, Sprout, Recycle, Calendar, Zap } from 'lucide-react';
+import { Code, CloudRain, Sun, Droplet, Sprout, Calendar, Zap } from 'lucide-react';
 
 const CodeBlock: React.FC<{ title: string; code: string; icon?: React.ReactNode; description: string }> = ({ title, code, icon, description }) => (
   <Card title={title} headerAction={icon}>
@@ -148,32 +148,6 @@ export const simulateSoilWater = (weather, soilPar, laiSeries) => {
   }
 };`;
 
-  const CODE_ROTHC = `// Decomposizione Carbonio (Modello RothC Semplificato)
-// C(t+1) = C(t) * exp(-k * Modificatori * dt)
-
-export const runRothCStep = (pools, inputs, modifiers) => {
-  const tstep = 1 / 12; // Passo mensile
-  
-  // Modificatori ambientali combinati
-  // Temp: aumenta decomposizione col caldo
-  // Moisture: rallenta se troppo secco
-  // Cover: rallenta se c'è copertura vegetale (suolo meno esposto)
-  const combinedMod = modifiers.temp * modifiers.moisture * modifiers.cover;
-
-  // Funzione di decadimento primo ordine per ogni pool (DPM, RPM, BIO, HUM)
-  const decompose = (poolName, amount) => {
-    const rate = RATE_CONSTANTS[poolName]; // es. DPM=10, HUM=0.02
-    
-    // Calcolo quantità decomposta
-    const decomposed = amount * (1 - Math.exp(-rate * combinedMod * tstep));
-    return decomposed;
-  };
-
-  // ... logica di ripartizione tra CO2, BIO e HUM basata sull'argilla ...
-  
-  return updatedPools; // Restituisce i nuovi valori di C nel suolo
-};`;
-
   const CODE_ENERGY = `// Bilancio Energetico (Penman-Monteith & Aerodinamica)
 // Simulazione oraria che risolve temperatura di chioma e suolo.
 
@@ -270,15 +244,6 @@ do {
             description="Risolve l'equazione del bilancio energetico (Penman-Monteith) considerando la resistenza aerodinamica e stomatica."
             code={CODE_ENERGY} 
           />
-
-          <div className="xl:col-span-2">
-            <CodeBlock 
-              title="7. Dinamica del Carbonio (RothC)" 
-              icon={<Recycle className="text-emerald-500"/>}
-              description="La logica 'core' del modello RothC. Mostra come i pool di carbonio decadono nel tempo basandosi su cinetiche di primo ordine modificate dal clima."
-              code={CODE_ROTHC} 
-            />
-          </div>
        </div>
     </div>
   );

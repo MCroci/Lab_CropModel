@@ -245,12 +245,6 @@ export const OverviewView: React.FC = () => {
               <li>Analizza la <strong>Biomassa</strong> per vedere l'accumulo.</li>
               <li>Controlla <strong>Bilancio Idrico</strong> per lo stress (ARID).</li>
             </ol>
-            <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
-              <p className="text-xs font-semibold text-purple-900 mb-1">💡 Confronta più colture</p>
-              <p className="text-xs text-purple-700">
-                Vuoi confrontare più colture contemporaneamente? Vai su <strong>Confronto Colture</strong> nel menu per eseguire simulazioni parallele!
-              </p>
-            </div>
           </div>
           <div className="pt-4 border-t border-blue-200 mt-4">
             <div className="flex gap-2 mb-3">

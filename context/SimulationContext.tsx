@@ -1,8 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback, useRef } from 'react';
-import { WeatherParams, CropParams, SoilParams, SimulationStep, WaterStep, DailyWeather, CarbonParams, RothCResult, RotationType } from '../types';
+import { WeatherParams, CropParams, SoilParams, SimulationStep, WaterStep, DailyWeather } from '../types';
 import { makeWeather, simulateCrop, simulateSoilWater } from '../services/cropModel';
-import { aggregateToMonthly, simulateLongTermCarbon } from '../services/rothC';
 import { saveCurrentConfiguration, loadCurrentConfiguration, saveNamedConfiguration, getAllSavedConfigurations, loadConfiguration, deleteConfiguration, SavedConfiguration } from '../services/storageService';
 
 interface SimulationContextType {
@@ -18,11 +17,8 @@ interface SimulationContextType {
   simulationResults: SimulationStep[];
   waterResults: WaterStep[];
   runSimulation: () => void;
-  // Carbon
-  carbonParams: CarbonParams;
-  setCarbonParams: React.Dispatch<React.SetStateAction<CarbonParams>>;
-  carbonResults: RothCResult[];
-  baselineCarbonResults: RothCResult[];
+  agrivoltaicsShading: number;
+  setAgrivoltaicsShading: React.Dispatch<React.SetStateAction<number>>;
   // Sowing dates per coltura
   sowingDays: Record<string, number>;
   setSowingDays: React.Dispatch<React.SetStateAction<Record<string, number>>>;
@@ -42,17 +38,6 @@ export const useSimulation = () => {
   const context = useContext(SimulationContext);
   if (!context) throw new Error("useSimulation must be used within a SimulationProvider");
   return context;
-};
-
-// Typical Total Dry Biomass (Mg/ha) for rotation components (Approximation)
-const ROTATION_DATA: Record<RotationType, number[]> = {
-  'Pomodoro - Frumento granella': [8, 14],
-  'Pomodoro - Frumento gr - Mais gr': [8, 14, 22],
-  'Pomodoro - Frumento gr - Mais tr': [8, 14, 20],
-  'Pomodoro - Frumento gr - Soia': [8, 14, 8],
-  'Pomodoro - Frumento gr - Sorgo': [8, 14, 16],
-  'Pomodoro - Frumento gr - Barbabietola': [8, 14, 18],
-  'Pomodoro - Frumento - Medica (3y)': [8, 14, 12, 12, 12]
 };
 
 export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -101,19 +86,10 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
     clay_percent: 25
   });
 
-  const [carbonParams, setCarbonParams] = useState<CarbonParams>({
-    rotation: 'Pomodoro - Frumento granella',
-    isMinimumTillage: false,
-    hasCoverCrops: false,
-    incorporateResidues: true,
-    addManure: false,
-    agrivoltaicsShading: 0
-  });
+  const [agrivoltaicsShading, setAgrivoltaicsShading] = useState(0);
 
   const [simulationResults, setSimulationResults] = useState<SimulationStep[]>([]);
   const [waterResults, setWaterResults] = useState<WaterStep[]>([]);
-  const [carbonResults, setCarbonResults] = useState<RothCResult[]>([]);
-  const [baselineCarbonResults, setBaselineCarbonResults] = useState<RothCResult[]>([]);
   const [isSimulating, setIsSimulating] = useState(false);
 
   // Sowing dates per coltura (day of year, 1-based)
@@ -152,7 +128,8 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
       if (saved.weatherParams) setWeatherParams(saved.weatherParams);
       if (saved.cropParams) setCropParams(saved.cropParams);
       if (saved.soilParams) setSoilParams(saved.soilParams);
-      if (saved.carbonParams) setCarbonParams(saved.carbonParams);
+      if (saved.agrivoltaicsShading !== undefined) setAgrivoltaicsShading(saved.agrivoltaicsShading);
+      else if ((saved as any).carbonParams?.agrivoltaicsShading !== undefined) setAgrivoltaicsShading((saved as any).carbonParams.agrivoltaicsShading);
       if (saved.sowingDays) setSowingDays(saved.sowingDays);
     }
     generateWeather();
@@ -211,30 +188,9 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
 
     setSimulationResults(cropResWithOriginalDays);
     setWaterResults(waterRes);
-
-    // 3. CARBON SIMULATION (Long term rotation)
-    const monthlyData = aggregateToMonthly(dailyWeather, cropRes);
-    
-    // Use the predefined biomass sequence for the selected rotation
-    const biomassSequence = ROTATION_DATA[carbonParams.rotation];
-
-    // Baseline: Same rotation, but standard practices (Tillage, No Cover, etc.)
-    const baselineP: CarbonParams = {
-        ...carbonParams,
-        isMinimumTillage: false,
-        hasCoverCrops: false,
-        addManure: false,
-        incorporateResidues: true 
-    };
-    const baseC = simulateLongTermCarbon(20, soilParams, baselineP, monthlyData, biomassSequence);
-    setBaselineCarbonResults(baseC);
-
-    // Scenario: User selected practices
-    const scenC = simulateLongTermCarbon(20, soilParams, carbonParams, monthlyData, biomassSequence);
-    setCarbonResults(scenC);
     
     setIsSimulating(false);
-  }, [dailyWeather, cropParams, soilParams, carbonParams, getCurrentCropSowingDay]);
+  }, [dailyWeather, cropParams, soilParams, getCurrentCropSowingDay]);
 
   // Auto-save configuration (debounced)
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -245,7 +201,7 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
     }
     
     saveTimeoutRef.current = setTimeout(() => {
-      saveCurrentConfiguration(weatherParams, cropParams, soilParams, carbonParams, sowingDays);
+      saveCurrentConfiguration(weatherParams, cropParams, soilParams, agrivoltaicsShading, sowingDays);
     }, 1000); // Save after 1 second of inactivity
 
     return () => {
@@ -276,8 +232,8 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
 
   // Storage functions
   const saveConfiguration = useCallback((name: string): string => {
-    return saveNamedConfiguration(name, weatherParams, cropParams, soilParams, carbonParams, sowingDays);
-  }, [weatherParams, cropParams, soilParams, carbonParams, sowingDays]);
+    return saveNamedConfiguration(name, weatherParams, cropParams, soilParams, agrivoltaicsShading, sowingDays);
+  }, [weatherParams, cropParams, soilParams, agrivoltaicsShading, sowingDays]);
 
   const loadSavedConfiguration = useCallback((id: string): boolean => {
     const config = loadConfiguration(id);
@@ -285,7 +241,8 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
       setWeatherParams(config.weatherParams);
       setCropParams(config.cropParams);
       setSoilParams(config.soilParams);
-      setCarbonParams(config.carbonParams);
+      if (config.agrivoltaicsShading !== undefined) setAgrivoltaicsShading(config.agrivoltaicsShading);
+      else if ((config as any).carbonParams?.agrivoltaicsShading !== undefined) setAgrivoltaicsShading((config as any).carbonParams.agrivoltaicsShading);
       setSowingDays(config.sowingDays);
       generateWeather();
       return true;
@@ -300,8 +257,7 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
     soilParams, setSoilParams,
     simulationResults, waterResults,
     runSimulation,
-    carbonParams, setCarbonParams,
-    carbonResults, baselineCarbonResults,
+    agrivoltaicsShading, setAgrivoltaicsShading,
     sowingDays, setSowingDays, getCurrentCropSowingDay,
     saveConfiguration,
     loadSavedConfiguration,
@@ -313,8 +269,7 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
     cropParams, soilParams,
     simulationResults, waterResults,
     runSimulation,
-    carbonParams,
-    carbonResults, baselineCarbonResults,
+    agrivoltaicsShading,
     sowingDays, setSowingDays, getCurrentCropSowingDay,
     saveConfiguration, loadSavedConfiguration,
     isSimulating

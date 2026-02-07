@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { 
   Compass, BookOpen, Calendar, Leaf, Activity, Droplet, 
   Download, Info, Menu, X, CloudRain, Code, Sun, Sliders, Zap, Microscope, Sprout,
-  GraduationCap, FileCheck, CheckCircle2, Library, Database, GitCompare, Merge
+  GraduationCap, FileCheck, CheckCircle2, Library, Database
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -27,7 +27,6 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     { id: 'weather_management', label: 'Gestione Dati Meteo', icon: Database },
     
             // === PROCESSI FISIOLOGICI (Ordine del percorso didattico) ===
-            { id: 'crop_comparison', label: 'Confronto Colture', icon: GitCompare },
             { id: 'emergence', label: 'Emergenza Plantula', icon: Sprout },
     { id: 'phenology', label: 'Fenologia', icon: Calendar },
     { id: 'lai', label: 'LAI & Radiazione', icon: Leaf },
@@ -38,7 +37,6 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     // === ANALISI E VALIDAZIONE ===
     { id: 'scenario', label: 'Analisi Scenario', icon: Sliders },
     { id: 'validation', label: 'Validazione', icon: CheckCircle2 },
-    { id: 'data_assimilation', label: 'Data Assimilation', icon: Merge },
     
     // === APPLICAZIONI AVANZATE ===
     { id: 'agrivoltaics', label: 'Riduzione Radiazione', icon: Sun },
@@ -145,7 +143,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Processi Fisiologici
             </div>
-            {menuItems.filter(item => ['crop_comparison', 'emergence', 'phenology', 'lai', 'biomass', 'water', 'photosynthesis'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['emergence', 'phenology', 'lai', 'biomass', 'water', 'photosynthesis'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
@@ -170,7 +168,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Analisi e Validazione
             </div>
-            {menuItems.filter(item => ['scenario', 'validation', 'data_assimilation'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['scenario', 'validation'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (

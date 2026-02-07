@@ -24,11 +24,8 @@ const SeedEmergenceView = lazy(() => import('./views/SeedEmergenceView').then(m 
 const LearningPathView = lazy(() => import('./views/LearningPathView').then(m => ({ default: m.LearningPathView })));
 const ExercisesView = lazy(() => import('./views/ExercisesView').then(m => ({ default: m.ExercisesView })));
 const ValidationView = lazy(() => import('./views/ValidationView').then(m => ({ default: m.ValidationView })));
-const DataAssimilationView = lazy(() => import('./views/DataAssimilationView').then(m => ({ default: m.DataAssimilationView })));
 const BibliographyView = lazy(() => import('./views/BibliographyView').then(m => ({ default: m.BibliographyView })));
 const WeatherDataManagementView = lazy(() => import('./views/WeatherDataManagementView').then(m => ({ default: m.WeatherDataManagementView })));
-const CropComparisonView = lazy(() => import('./views/CropComparisonView').then(m => ({ default: m.CropComparisonView })));
-
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-64">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600"></div>
@@ -44,7 +41,6 @@ const App: React.FC = () => {
       case 'weather': return <WeatherGeneratorView />;
       case 'weather_management': return <WeatherDataManagementView />; 
       case 'concepts': return <ConceptsView />;
-      case 'crop_comparison': return <CropComparisonView />;
       case 'functions': return <FunctionsView />;
       case 'emergence': return <SeedEmergenceView />;
       case 'phenology': return <PhenologyView />;
@@ -59,7 +55,6 @@ const App: React.FC = () => {
       case 'learning_path': return <LearningPathView onNavigate={setActiveTab} />;
       case 'exercises': return <ExercisesView />;
       case 'validation': return <ValidationView />;
-      case 'data_assimilation': return <DataAssimilationView />;
       case 'bibliography': return <BibliographyView />;
       case 'about': return <AboutView />;
       default: return <OverviewView />;

@@ -7,14 +7,14 @@ import { Sun, Zap, BookOpen } from 'lucide-react';
 import { simulateCrop, simulateSoilWater } from '../services/cropModel';
 
 export const AgrivoltaicsView: React.FC = () => {
-  const { dailyWeather, cropParams, soilParams, carbonParams, setCarbonParams, runSimulation, getCurrentCropSowingDay } = useSimulation();
+  const { dailyWeather, cropParams, soilParams, agrivoltaicsShading, setAgrivoltaicsShading, runSimulation, getCurrentCropSowingDay } = useSimulation();
   const sowingDay = getCurrentCropSowingDay();
 
   // Run simulation whenever params change
   useEffect(() => {
     runSimulation();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [carbonParams.agrivoltaicsShading]);
+  }, [agrivoltaicsShading]);
 
   // We need to calculate the COMPARISON data locally for this view
   const getAgrivoltaicsData = () => {
@@ -35,9 +35,9 @@ export const AgrivoltaicsView: React.FC = () => {
     const baseWaterFromSowing = baseWaterRes.filter((_, idx) => idx >= sowingDay - 1);
 
     // 2. Agrivoltaics Simulation (Current Shading)
-    const radiationFactor = 1.0 - (carbonParams.agrivoltaicsShading / 100);
+    const radiationFactor = 1.0 - (agrivoltaicsShading / 100);
     // Agrivoltaics often reduces ET0 demand due to wind protection/shade. Heuristic: half the % of shading reduction applied to ET0
-    const et0Factor = 1.0 - (carbonParams.agrivoltaicsShading / 100) * 0.3; 
+    const et0Factor = 1.0 - (agrivoltaicsShading / 100) * 0.3; 
 
     const agrivoltaicsWeather = adjustedWeather.map(w => ({
       ...w,
@@ -84,8 +84,8 @@ export const AgrivoltaicsView: React.FC = () => {
            
            <Slider 
               label="Ombreggiamento (%)" 
-              value={carbonParams.agrivoltaicsShading} min={0} max={60} step={5} 
-              onChange={(v) => setCarbonParams({...carbonParams, agrivoltaicsShading: v})} 
+              value={agrivoltaicsShading} min={0} max={60} step={5} 
+              onChange={(v) => setAgrivoltaicsShading(v)} 
               unit="%"
               description="Percentuale di radiazione solare intercettata dai pannelli e sottratta alla coltura."
            />

@@ -9,7 +9,7 @@ import { simulateEmergence, GerminationParams } from '../services/emergenceModel
 import { Sprout, Sun, Droplet, Thermometer, BookOpen, GitCompare } from 'lucide-react';
 
 export const SeedEmergenceView: React.FC = () => {
-  const { dailyWeather, soilParams, carbonParams } = useSimulation();
+  const { dailyWeather, soilParams, agrivoltaicsShading } = useSimulation();
 
   // Germination Parameters State
   const [germParams, setGermParams] = useState<GerminationParams>({
@@ -21,7 +21,7 @@ export const SeedEmergenceView: React.FC = () => {
     theta_opt_frac: 0.35
   });
 
-  const [shading, setShading] = useState(carbonParams.agrivoltaicsShading > 0 ? carbonParams.agrivoltaicsShading : 30);
+  const [shading, setShading] = useState(agrivoltaicsShading > 0 ? agrivoltaicsShading : 30);
 
   // --- Run Simulation on the fly ---
   const data = useMemo(() => {
