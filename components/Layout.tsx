@@ -28,7 +28,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     
             // === PROCESSI FISIOLOGICI (Ordine del percorso didattico) ===
             { id: 'crop_comparison', label: 'Confronto Colture', icon: GitCompare },
-            { id: 'emergence', label: 'Emergenza Seme', icon: Sprout },
+            { id: 'emergence', label: 'Emergenza Plantula', icon: Sprout },
     { id: 'phenology', label: 'Fenologia', icon: Calendar },
     { id: 'lai', label: 'LAI & Radiazione', icon: Leaf },
     { id: 'biomass', label: 'Biomassa', icon: Activity },
