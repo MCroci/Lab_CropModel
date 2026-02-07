@@ -200,6 +200,16 @@ export const BibliographyView: React.FC = () => {
       description: 'Dimostra i benefici reciproci dell\'agrivoltaico nel nexus cibo-energia-acqua, con particolare attenzione alle zone aride.'
     },
     {
+      id: 'zhao2019',
+      authors: 'Zhao, C. et al.',
+      year: 2019,
+      title: 'A SIMPLE crop model',
+      journal: 'PASE/DEAL, University of Liège',
+      type: 'report',
+      category: 'Modelli Specifici',
+      description: 'Modello colturale semplificato con stress termico (fHeat) e idrico (fWater), fSolar sigmoidale, utilizzato in LUEr per data assimilation.'
+    },
+    {
       id: 'soltani2012',
       authors: 'Soltani, A., Sinclair, T.R.',
       year: 2012,

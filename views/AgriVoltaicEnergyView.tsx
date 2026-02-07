@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, DownloadAction } from '../components/UI';
 import { runEnergySimulation } from '../services/energyBalanceModel';
 import { Zap, Sun, Thermometer, Droplet, BookOpen } from 'lucide-react';
@@ -145,10 +146,10 @@ export const AgriVoltaicEnergyView: React.FC = () => {
           <Card title="1. Radiazione Solare Incidente (W/m²)">
             <div className="h-[200px] w-full">
               <ResponsiveContainer>
-                <AreaChart data={simulationData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <AreaChart data={simulationData} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="time" unit="d" type="number" domain={[0, days]} allowDecimals={false} />
-                  <YAxis />
+                  <XAxis dataKey="time" unit="d" type="number" domain={[0, days]} allowDecimals={false} label={{ value: 'Tempo (giorni)', position: 'insideBottom', offset: 0 }} />
+                  <YAxis label={{ value: 'Radiazione (W/m²)', angle: -90, position: 'insideLeft' }} />
                   <Tooltip labelFormatter={(label) => `Giorno ${Math.floor(Number(label))} - Ore ${(Number(label)%1*24).toFixed(0)}:00`} />
                   <Legend />
                   <Area type="monotone" dataKey="Rad_Base" stroke="#f59e0b" fill="#fef3c7" name="Pieno Campo" />
@@ -162,10 +163,10 @@ export const AgriVoltaicEnergyView: React.FC = () => {
           <Card title="2. Temperature Chioma vs Aria (°C)" headerAction={<DownloadAction data={simulationData} filename="temp_energy_balance.csv" />}>
             <div className="h-[300px] w-full">
               <ResponsiveContainer>
-                <LineChart data={simulationData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <LineChart data={simulationData} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="time" unit="d" type="number" domain={[0, days]} allowDecimals={false} />
-                  <YAxis domain={['auto', 'auto']} />
+                  <XAxis dataKey="time" unit="d" type="number" domain={[0, days]} allowDecimals={false} label={{ value: 'Tempo (giorni)', position: 'insideBottom', offset: 0 }} />
+                  <YAxis domain={['auto', 'auto']} label={{ value: 'Temperatura (°C)', angle: -90, position: 'insideLeft' }} />
                   <Tooltip labelFormatter={(label) => `Giorno ${Math.floor(Number(label))} - Ore ${(Number(label)%1*24).toFixed(0)}:00`} />
                   <Legend />
                   <Line type="monotone" dataKey="Temp_Air" stroke="#000" strokeWidth={2} dot={false} name="Temp. Aria" />
@@ -180,10 +181,10 @@ export const AgriVoltaicEnergyView: React.FC = () => {
           <Card title="3. Evapotraspirazione Oraria (mm/h)">
             <div className="h-[200px] w-full">
               <ResponsiveContainer>
-                <LineChart data={simulationData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <LineChart data={simulationData} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="time" unit="d" type="number" domain={[0, days]} allowDecimals={false} />
-                  <YAxis />
+                  <XAxis dataKey="time" unit="d" type="number" domain={[0, days]} allowDecimals={false} label={{ value: 'Tempo (giorni)', position: 'insideBottom', offset: 0 }} />
+                  <YAxis label={{ value: 'ET (mm/h)', angle: -90, position: 'insideLeft' }} />
                   <Tooltip />
                   <Legend />
                   <Line type="monotone" dataKey="ET_Base" stroke="#0ea5e9" strokeWidth={2} dot={false} name="ET Pieno Campo" />

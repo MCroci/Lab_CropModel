@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, DownloadAction, LoadingSpinner } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { BookOpen } from 'lucide-react';
@@ -71,6 +72,7 @@ export const BiomassView: React.FC = () => {
               <li><strong>RUE (Radiation Use Efficiency):</strong> L'efficienza di conversione dell'energia in materia secca (g/MJ).</li>
               <li><strong>PAR:</strong> Photosynthetically Active Radiation (~48% della radiazione globale).</li>
               <li><strong>f(T):</strong> Fattore di limitazione termica (0-1) che riduce la fotosintesi se fa troppo freddo o troppo caldo.</li>
+              <li><strong>f(Heat):</strong> Stress termico (SIMPLE, Zhao et al. 2019): riduce la crescita quando Tmax supera 35°C, azzerandosi sopra ~45°C.</li>
             </ul>
           </div>
         </Card>
@@ -81,11 +83,11 @@ export const BiomassView: React.FC = () => {
         >
           <div className="h-[250px] sm:h-[400px] w-full overflow-x-auto">
             <ResponsiveContainer width="100%" minHeight={250}>
-              <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <LineChart data={chartData} margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                 <XAxis 
                   dataKey="day" 
-                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: 0 }} 
                 />
                 <YAxis label={{ value: 'Biomassa (g/m²)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />

@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { CHART_MARGIN_DUAL_Y } from '../utils/chartMargins';
 import { Card, Slider, Button, DownloadAction } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { Play, BookOpen } from 'lucide-react';
@@ -78,11 +79,11 @@ export const PhenologyView: React.FC = () => {
         >
           <div className="h-[350px] w-full">
             <ResponsiveContainer>
-              <LineChart data={simulationResults} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <LineChart data={simulationResults} margin={CHART_MARGIN_DUAL_Y}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                 <XAxis 
                   dataKey="day" 
-                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: 0 }} 
                 />
                 
                 {/* Asse Sinistro per CTU */}

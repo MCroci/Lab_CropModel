@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Button, Slider } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { DailyWeather } from '../types';
@@ -370,9 +371,9 @@ export const WeatherDataManagementView: React.FC = () => {
 
         <Card title="Pioggia">
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={chartData}>
+            <BarChart data={chartData} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
+              <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
               <YAxis label={{ value: 'Pioggia (mm)', angle: -90, position: 'insideLeft' }} />
               <Tooltip />
               <Bar dataKey="RAIN" fill="#3b82f6" name="Pioggia" />
@@ -382,9 +383,9 @@ export const WeatherDataManagementView: React.FC = () => {
 
         <Card title="Radiazione Solare" className="lg:col-span-2">
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={chartData}>
+            <LineChart data={chartData} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
+              <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
               <YAxis label={{ value: 'Radiazione (MJ/m²)', angle: -90, position: 'insideLeft' }} />
               <Tooltip />
               <Legend />

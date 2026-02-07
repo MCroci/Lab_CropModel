@@ -1,5 +1,16 @@
 import { WeatherParams, CropParams, SoilParams, DailyWeather, SimulationStep, WaterStep } from '../types';
 
+/**
+ * Heat stress factor (SIMPLE model - Zhao et al. 2019).
+ * Growth is reduced when Tmax exceeds threshold; zero above Text.
+ * @see simple_get_fheat in LUEr/simple_crop.R
+ */
+const fHeat = (tmax: number, tmaxThresh: number, text: number): number => {
+  if (tmax < tmaxThresh) return 1;
+  if (tmax >= text) return 0;
+  return 1 - (tmax - tmaxThresh) / (text - tmaxThresh);
+};
+
 // Utility Helpers
 const clamp = (x: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, x));
 
@@ -103,8 +114,11 @@ export const simulateCrop = (weather: DailyWeather[], params: CropParams): Simul
     const { lai: newLAI } = laiStep(LAI, NDS, p);
     LAI = newLAI;
 
-    // Biomass
-    let dB = ddmp(w.SRAD, LAI, p.KPAR, p.RUE, tf);
+    // Biomass: RUE temp response (tf) × heat stress (SIMPLE-style, Tmax-based)
+    const tmaxHeat = (p as CropParams & { TmaxHeat?: number }).TmaxHeat ?? 35;
+    const textHeat = (p as CropParams & { TextHeat?: number }).TextHeat ?? 45;
+    const heatFactor = fHeat(w.TMAX, tmaxHeat, textHeat);
+    let dB = ddmp(w.SRAD, LAI, p.KPAR, p.RUE, tf * heatFactor);
     if (NDS >= 1) dB = 0;
     B += dB;
 

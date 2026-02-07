@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, DownloadAction } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { Sprout, Tractor, Leaf, RotateCcw, Settings, BookOpen } from 'lucide-react';
@@ -201,9 +202,9 @@ export const CarbonView: React.FC = () => {
         >
           <div className="h-[300px] w-full">
             <ResponsiveContainer>
-              <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
+              <LineChart data={chartData} margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="year" type="number" domain={['auto', 'auto']} label={{ value: 'Anno', position: 'insideBottom', offset: -5 }} />
+                <XAxis dataKey="year" type="number" domain={['auto', 'auto']} label={{ value: 'Anno', position: 'insideBottom', offset: 0 }} />
                 <YAxis label={{ value: 'SOC (Mg C/ha)', angle: -90, position: 'insideLeft' }} domain={['auto', 'auto']} />
                 <Tooltip 
                   formatter={(value: number) => value.toFixed(2)}
@@ -223,9 +224,9 @@ export const CarbonView: React.FC = () => {
         <Card title="Dinamica Pool Carbonio (Scenario)">
           <div className="h-[300px] w-full">
             <ResponsiveContainer>
-              <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
+              <AreaChart data={chartData} margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="year" />
+                <XAxis dataKey="year" label={{ value: 'Anno', position: 'insideBottom', offset: 0 }} />
                 <YAxis label={{ value: 'Mg C/ha', angle: -90, position: 'insideLeft' }} />
                 <Tooltip formatter={(value: number) => value.toFixed(2)} />
                 <Legend />

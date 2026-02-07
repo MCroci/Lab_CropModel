@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, Button } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { simulateCrop, simulateSoilWater } from '../services/cropModel';
@@ -177,11 +178,11 @@ export const ScenarioView: React.FC = () => {
         <Card title="Confronto Biomassa">
           <div className="h-[300px] w-full">
             <ResponsiveContainer>
-              <LineChart data={scenarioData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <LineChart data={scenarioData} margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                 <XAxis 
                   dataKey="day" 
-                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: 0 }} 
                 />
                 <YAxis label={{ value: 'Biomassa (g/m²)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
@@ -196,11 +197,11 @@ export const ScenarioView: React.FC = () => {
         <Card title="Dinamica Idrica">
           <div className="h-[300px] w-full">
             <ResponsiveContainer>
-              <LineChart data={scenarioData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <LineChart data={scenarioData} margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                 <XAxis 
                   dataKey="day" 
-                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: 0 }} 
                 />
                 <YAxis label={{ value: 'Acqua nel suolo (mm)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />

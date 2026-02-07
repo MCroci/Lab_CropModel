@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ScatterChart, Scatter } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Button, Slider } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { Download, TrendingUp, AlertCircle, CheckCircle2 } from 'lucide-react';
@@ -200,11 +201,11 @@ export const ValidationView: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           <Card title={`Confronto Temporale: ${selectedMetric === 'biomass' ? 'Biomassa' : 'LAI'}`}>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={chartData}>
+              <LineChart data={chartData} margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="day" 
-                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: -5 }} 
+                  label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: 0 }} 
                 />
                 <YAxis label={{ value: selectedMetric === 'biomass' ? 'Biomassa (kg/ha)' : 'LAI (m²/m²)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
@@ -217,13 +218,13 @@ export const ValidationView: React.FC = () => {
 
           <Card title="Scatter Plot: Osservato vs Simulato">
             <ResponsiveContainer width="100%" height={300}>
-              <ScatterChart>
+              <ScatterChart margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   type="number" 
                   dataKey="osservato" 
                   name="Osservato"
-                  label={{ value: selectedMetric === 'biomass' ? 'Biomassa Osservata (kg/ha)' : 'LAI Osservato (m²/m²)', position: 'insideBottom', offset: -5 }}
+                  label={{ value: selectedMetric === 'biomass' ? 'Biomassa Osservata (kg/ha)' : 'LAI Osservato (m²/m²)', position: 'insideBottom', offset: 0 }}
                 />
                 <YAxis 
                   type="number" 

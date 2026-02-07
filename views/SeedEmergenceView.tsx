@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, Area, AreaChart } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, Button } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { simulateSoilWater } from '../services/cropModel';
@@ -177,9 +178,9 @@ export const SeedEmergenceView: React.FC = () => {
           </div>
           <div className="h-[250px] w-full">
             <ResponsiveContainer>
-              <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+              <LineChart data={data} margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: -5 }} />
+                <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
                 <YAxis label={{ value: 'Accumulo Termico', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />
@@ -195,9 +196,9 @@ export const SeedEmergenceView: React.FC = () => {
         <Card title="Effetto Agrivoltaico (Solo Modello 2)" headerAction={<Sun className="text-orange-400"/>}>
           <div className="h-[250px] w-full">
             <ResponsiveContainer>
-              <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+              <LineChart data={data} margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: -5 }} />
+                <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
                 <YAxis label={{ value: 'ETT Cumulato', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Legend />
@@ -216,9 +217,9 @@ export const SeedEmergenceView: React.FC = () => {
         <Card title="Fattori Ambientali (Dettaglio Modello 2)">
           <div className="h-[200px] w-full">
              <ResponsiveContainer>
-                <AreaChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+                <AreaChart data={data} margin={CHART_MARGIN}>
                    <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                   <XAxis dataKey="day" />
+                   <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
                    <YAxis label={{ value: 'Acqua (mm)', angle: -90, position: 'insideLeft' }} />
                    <Tooltip />
                    <Area type="monotone" dataKey="W_Base" stroke="#3b82f6" fill="#bfdbfe" name="Acqua Suolo" />

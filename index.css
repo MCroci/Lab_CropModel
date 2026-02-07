@@ -27,10 +27,20 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Responsive charts */
+/* Responsive charts - evita taglio titoli assi */
+.recharts-wrapper {
+  overflow: visible;
+}
+
+.recharts-cartesian-axis-tick-value,
+.recharts-label {
+  overflow: visible;
+}
+
 @media (max-width: 768px) {
   .recharts-wrapper {
     overflow-x: auto;
+    overflow-y: visible;
   }
   
   .recharts-surface {

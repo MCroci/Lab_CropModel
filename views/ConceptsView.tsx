@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, Button } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { Play, Pause, RotateCcw, Lightbulb, Target, ArrowRight } from 'lucide-react';
@@ -205,10 +206,10 @@ export const ConceptsView: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             <Card title="Stato: Accumulo Cumulativo" className="bg-blue-50 border-blue-200">
               <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={exampleData.slice(0, currentDay + 1)}>
+                <LineChart data={exampleData.slice(0, currentDay + 1)} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
+                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
+                  <YAxis label={{ value: 'Valore', angle: -90, position: 'insideLeft' }} />
                   <Tooltip />
                   <Legend />
                   <Line 
@@ -236,10 +237,10 @@ export const ConceptsView: React.FC = () => {
 
             <Card title="Flusso: Variazioni Giornaliere" className="bg-red-50 border-red-200">
               <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={exampleData.slice(0, currentDay + 1)}>
+                <BarChart data={exampleData.slice(0, currentDay + 1)} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
+                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
+                  <YAxis label={{ value: 'Flusso', angle: -90, position: 'insideLeft' }} />
                   <Tooltip />
                   <Legend />
                   <Bar dataKey="DTU_Flow" fill="#ef4444" name="DTU (Flusso)" />

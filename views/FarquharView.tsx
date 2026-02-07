@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, DownloadAction } from '../components/UI';
 import { generateCO2Response, generateLightResponse } from '../services/farquharModel';
 import { Microscope, BookOpen } from 'lucide-react';
@@ -62,9 +63,9 @@ export const FarquharView: React.FC = () => {
           <Card title="Risposta alla CO₂ (Curva A/Ci)" headerAction={<DownloadAction data={co2Data} filename="farquhar_co2.csv" />}>
             <div className="h-[250px] w-full">
               <ResponsiveContainer>
-                <LineChart data={co2Data} margin={{ top: 10, right: 30, left: 10, bottom: 20 }}>
+                <LineChart data={co2Data} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="x" label={{ value: 'Intercellular CO₂ (ppm)', position: 'insideBottom', offset: -10 }} />
+                  <XAxis dataKey="x" label={{ value: 'Intercellular CO₂ (ppm)', position: 'insideBottom', offset: 0 }} />
                   <YAxis label={{ value: 'An (µmol/m²/s)', angle: -90, position: 'insideLeft' }} />
                   <Tooltip labelFormatter={(v) => `${v} ppm`} formatter={(v: number) => [v.toFixed(2), 'An']} />
                   <Line type="monotone" dataKey="y" stroke="#10b981" strokeWidth={3} dot={false} name="A_net" />
@@ -76,9 +77,9 @@ export const FarquharView: React.FC = () => {
           <Card title="Risposta alla Luce (Curva A/PAR)" headerAction={<DownloadAction data={lightData} filename="farquhar_light.csv" />}>
             <div className="h-[250px] w-full">
               <ResponsiveContainer>
-                <LineChart data={lightData} margin={{ top: 10, right: 30, left: 10, bottom: 20 }}>
+                <LineChart data={lightData} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                  <XAxis dataKey="x" label={{ value: 'PPFD (µmol fotoni/m²/s)', position: 'insideBottom', offset: -10 }} />
+                  <XAxis dataKey="x" label={{ value: 'PPFD (µmol fotoni/m²/s)', position: 'insideBottom', offset: 0 }} />
                   <YAxis label={{ value: 'An (µmol/m²/s)', angle: -90, position: 'insideLeft' }} />
                   <Tooltip labelFormatter={(v) => `${v} PPFD`} formatter={(v: number) => [v.toFixed(2), 'An']} />
                   <Line type="monotone" dataKey="y" stroke="#059669" strokeWidth={3} dot={false} name="A_net" />

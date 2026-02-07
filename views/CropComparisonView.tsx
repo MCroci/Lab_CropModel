@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
+import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Button } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { simulateCrop } from '../services/cropModel';
@@ -397,9 +398,9 @@ export const CropComparisonView: React.FC = () => {
                 Accumulo di Biomassa
               </h4>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartData}>
+                <LineChart data={chartData} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: -5 }} />
+                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
                   <YAxis label={{ value: 'Biomassa (kg/ha)', angle: -90, position: 'insideLeft' }} />
                   <Tooltip />
                   <Legend />
@@ -425,9 +426,9 @@ export const CropComparisonView: React.FC = () => {
                 Sviluppo Area Fogliare (LAI)
               </h4>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartData}>
+                <LineChart data={chartData} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: -5 }} />
+                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
                   <YAxis label={{ value: 'LAI (m²/m²)', angle: -90, position: 'insideLeft' }} />
                   <Tooltip />
                   <Legend />
@@ -450,9 +451,9 @@ export const CropComparisonView: React.FC = () => {
             <div>
               <h4 className="font-semibold text-gray-900 mb-3">Sviluppo Fenologico (NDS)</h4>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartData}>
+                <LineChart data={chartData} margin={CHART_MARGIN}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: -5 }} />
+                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
                   <YAxis label={{ value: 'NDS (0-1)', angle: -90, position: 'insideLeft' }} />
                   <Tooltip />
                   <Legend />
@@ -478,10 +479,10 @@ export const CropComparisonView: React.FC = () => {
               <div>
                 <h4 className="font-semibold text-gray-900 mb-3">Biomassa Finale (kg/ha)</h4>
                 <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={comparisonResults}>
+                  <BarChart data={comparisonResults} margin={CHART_MARGIN}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
-                    <YAxis />
+                    <XAxis dataKey="label" label={{ value: 'Coltura', position: 'insideBottom', offset: 0 }} />
+                    <YAxis label={{ value: 'Biomassa (kg/ha)', angle: -90, position: 'insideLeft' }} />
                     <Tooltip />
                     <Bar dataKey="finalBiomass" fill="#3b82f6" name="Biomassa Finale" />
                   </BarChart>
@@ -490,10 +491,10 @@ export const CropComparisonView: React.FC = () => {
               <div>
                 <h4 className="font-semibold text-gray-900 mb-3">Durata Ciclo (giorni)</h4>
                 <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={comparisonResults}>
+                  <BarChart data={comparisonResults} margin={CHART_MARGIN}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
-                    <YAxis />
+                    <XAxis dataKey="label" label={{ value: 'Coltura', position: 'insideBottom', offset: 0 }} />
+                    <YAxis label={{ value: 'Giorni', angle: -90, position: 'insideLeft' }} />
                     <Tooltip />
                     <Bar dataKey="maturityDay" fill="#22c55e" name="Giorni a Maturità" />
                   </BarChart>

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { CHART_MARGIN, CHART_MARGIN_DUAL_Y } from '../utils/chartMargins';
 import { Card, Slider, Button, DownloadAction } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { RefreshCw, CloudRain, Globe, Upload, MapPin, AlertCircle, Loader2 } from 'lucide-react';
@@ -307,9 +308,9 @@ export const WeatherGeneratorView: React.FC = () => {
         >
           <div className="h-[300px] w-full">
             <ResponsiveContainer>
-              <LineChart data={dailyWeather} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <LineChart data={dailyWeather} margin={CHART_MARGIN_DUAL_Y}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: -5 }} />
+                <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
                 <YAxis yAxisId="left" label={{ value: 'Temp (°C)', angle: -90, position: 'insideLeft' }} />
                 <YAxis yAxisId="right" orientation="right" label={{ value: 'Radiazione (MJ)', angle: 90, position: 'insideRight' }} />
                 <Tooltip />
@@ -325,9 +326,9 @@ export const WeatherGeneratorView: React.FC = () => {
         <Card title="Distribuzione Precipitazioni">
           <div className="h-[250px] w-full">
             <ResponsiveContainer>
-              <BarChart data={dailyWeather} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <BarChart data={dailyWeather} margin={CHART_MARGIN}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-                <XAxis dataKey="day" />
+                <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
                 <YAxis label={{ value: 'Pioggia (mm)', angle: -90, position: 'insideLeft' }} />
                 <Tooltip />
                 <Bar dataKey="RAIN" fill="#60a5fa" name="Precipitazioni Giornaliere" />
