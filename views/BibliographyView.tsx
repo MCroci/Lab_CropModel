@@ -190,6 +190,30 @@ export const BibliographyView: React.FC = () => {
       description: 'Dimostra i benefici reciproci dell\'agrivoltaico nel nexus cibo-energia-acqua, con particolare attenzione alle zone aride.'
     },
     {
+      id: 'goudriaan1990',
+      authors: 'Goudriaan, J., Monteith, J.L.',
+      year: 1990,
+      title: 'A mathematical function for crop growth based on light interception and leaf area expansion',
+      journal: 'Annals of Botany',
+      volume: '66',
+      pages: '695-701',
+      type: 'article',
+      category: 'Crescita',
+      description: 'Introduce la funzione expolinear che combina crescita esponenziale e lineare, fondamentale per modellare il passaggio tra le due fasi.'
+    },
+    {
+      id: 'arnold1960',
+      authors: 'Arnold, C.Y.',
+      year: 1960,
+      title: 'Maximum-minimum temperatures as a basis for computing heat units',
+      journal: 'Proceedings of the American Society for Horticultural Science',
+      volume: '76',
+      pages: '682-692',
+      type: 'article',
+      category: 'Fenologia',
+      description: 'Lavoro di riferimento per il calcolo delle unità termiche (GDD) con metodo (Tmax+Tmin)/2 - Tbase.'
+    },
+    {
       id: 'zhao2019',
       authors: 'Zhao, C. et al.',
       year: 2019,

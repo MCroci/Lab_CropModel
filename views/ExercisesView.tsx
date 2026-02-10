@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Card, Button } from '../components/UI';
+import { Card, Button, Slider } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
-import { CheckCircle, XCircle, Lightbulb, Target, ArrowRight } from 'lucide-react';
-import { makeWeather, simulateCrop } from '../services/cropModel';
+import { CheckCircle, Lightbulb, Target, ArrowRight } from 'lucide-react';
 
 interface Exercise {
   id: string;
@@ -20,10 +19,48 @@ interface Exercise {
   completed: boolean;
 }
 
+const RHO_S = 2650; // kg/m³ densità particelle
+const RHO_L = 1000; // kg/m³ densità acqua
+
+const PorosityCalculator: React.FC = () => {
+  const [rhoB, setRhoB] = useState(1200);
+  const [w, setW] = useState(0.20);
+  const [hPrism, setHPrism] = useState(2);
+  const phi = 1 - rhoB / RHO_S;
+  const theta = w * (rhoB / RHO_L);
+  const hW = theta * hPrism * 1000; // mm
+  return (
+    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+      <h4 className="font-semibold text-amber-900 mb-3">Calcolatore interattivo: Porosità e Acqua nel Pedon</h4>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Slider label="ρ_b (kg/m³)" value={rhoB} min={800} max={1800} step={50} onChange={setRhoB} description="Densità apparente" />
+        <Slider label="w (gravimetrico)" value={w} min={0.05} max={0.45} step={0.01} onChange={setW} description="0-1" />
+        <Slider label="h_prism (m)" value={hPrism} min={0.5} max={3} step={0.1} onChange={setHPrism} description="Profondità prisma" />
+      </div>
+      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+        <div className="bg-white p-2 rounded border border-amber-200">
+          <div className="text-amber-700 font-medium">φ (porosità)</div>
+          <div className="text-lg font-bold text-amber-900">{(phi * 100).toFixed(1)}%</div>
+        </div>
+        <div className="bg-white p-2 rounded border border-amber-200">
+          <div className="text-amber-700 font-medium">θ (volumetrico)</div>
+          <div className="text-lg font-bold text-amber-900">{(theta * 100).toFixed(1)}%</div>
+        </div>
+        <div className="bg-white p-2 rounded border border-amber-200">
+          <div className="text-amber-700 font-medium">h_w (mm)</div>
+          <div className="text-lg font-bold text-amber-900">{hW.toFixed(0)}</div>
+        </div>
+        <div className="bg-white p-2 rounded border border-amber-200 col-span-2 sm:col-span-1">
+          <div className="text-amber-700 font-medium">Aria (φ-θ)</div>
+          <div className="text-lg font-bold text-amber-900">{((phi - theta) * 100).toFixed(1)}%</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const ExercisesView: React.FC = () => {
-  const { weatherParams, cropParams, setCropParams, simulationResults, getCurrentCropSowingDay } = useSimulation();
-  const sowingDay = getCurrentCropSowingDay();
-  const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
+  const { cropParams, setCropParams, simulationResults } = useSimulation();
   const [showSolution, setShowSolution] = useState<Record<string, boolean>>({});
   const [userAnswers, setUserAnswers] = useState<Record<string, Record<number, string>>>({});
 
@@ -157,6 +194,210 @@ export const ExercisesView: React.FC = () => {
       completed: false
     },
     {
+      id: 'ex5a',
+      title: 'Bilancio di Massa: Stato = Precedente + Ingressi - Uscite',
+      description: 'Applica l\'equazione di bilancio di massa a diversi processi (acqua, biomassa, CTU).',
+      difficulty: 'base',
+      module: 'Concetti Fondamentali',
+      objectives: [
+        'Scrivere l\'equazione di bilancio per diversi serbatoi',
+        'Identificare ingressi e uscite',
+        'Applicare la logica al ciclo di simulazione'
+      ],
+      steps: [
+        {
+          description: 'Per il bilancio idrico: W(t+1) = W(t) + ? - ? - ? - ?. Completa con i termini mancanti.',
+          solution: 'Pioggia, Ruscellamento, ET_reale, Drenaggio (o analoghi)'
+        },
+        {
+          description: 'Per la biomassa: B(t+1) = B(t) + ?. Qual è il termine di flusso?',
+          solution: 'Delta B (produzione giornaliera di biomassa)'
+        },
+        {
+          description: 'Per CTU: CTU(t) = CTU(t-1) + ?. Quale flusso giornaliero?',
+          solution: 'DTU (unità termiche giornaliere)'
+        },
+        {
+          description: 'Nella vista Concetti Base, avvia il simulatore. Verifica che CTU[N] = CTU[N-1] + DTU[N] per un giorno a scelta.',
+          hint: 'Usa il confronto Stato vs Flusso nel simulatore'
+        }
+      ],
+      solution: 'L\'equazione di bilancio Stato = Precedente + Ingressi - Uscite è universale. Per l\'acqua: ingressi = pioggia+irrigazione, uscite = ET+drenaggio+ruscellamento. Per biomassa: ingresso = produzione fotosintetica. Per CTU: ingresso = DTU.',
+      completed: false
+    },
+    {
+      id: 'ex5b',
+      title: 'Funzione Expolinear: Parametri e Curve',
+      description: 'Esplora come i parametri r_m, C_m e t_b influenzano la curva di crescita expolinear.',
+      difficulty: 'base',
+      module: 'Concetti Fondamentali',
+      objectives: [
+        'Comprendere il passaggio da fase esponenziale a lineare',
+        'Identificare l\'effetto di r_m, C_m e t_b sulla curva',
+        'Collegare i parametri alla fisiologia della coltura'
+      ],
+      steps: [
+        {
+          description: 'Nella vista Concetti Base, usa la demo Expolinear. Con r_m=0.1, C_m=20, t_b=20: a che giorno la curva inizia a diventare lineare?',
+          hint: 'Osserva quando la pendenza (dW/dt) smette di aumentare e diventa costante'
+        },
+        {
+          description: 'Raddoppia r_m (0.2). Come cambia la forma della curva?',
+          hint: 'r_m più alto accelera la transizione alla fase lineare'
+        },
+        {
+          description: 'Aumenta t_b a 40. Cosa succede alla fase esponenziale?',
+          solution: 'La fase esponenziale si prolunga; la transizione alla fase lineare avviene più tardi'
+        },
+        {
+          description: 'Quale parametro determina la pendenza della fase lineare?',
+          solution: 'C_m (tasso di crescita massimo) determina la pendenza della fase lineare'
+        }
+      ],
+      solution: 'r_m controlla la velocità della transizione; C_m determina la pendenza della fase lineare (g/m² al giorno); t_b ritarda l\'inizio della fase lineare. In campo, C_m dipende dalla radiazione intercettata, r_m dalle caratteristiche della cultivar.',
+      completed: false
+    },
+    {
+      id: 'ex5c',
+      title: 'Fillocrono e Sviluppo dei Nodi',
+      description: 'Analizza come il Fillocrono (PHYL) influenza lo sviluppo del numero di nodi in modelli basati sull\'architettura.',
+      difficulty: 'base',
+      module: 'Fenologia',
+      objectives: [
+        'Comprendere l\'equazione INODE = INODE + DTU/PHYL',
+        'Valutare l\'effetto di PHYL sul numero di nodi',
+        'Collegare nodi e sviluppo fogliare'
+      ],
+      steps: [
+        {
+          description: 'Vai alla vista Fenologia. Genera meteo e osserva la demo Fillocrono. Con PHYL=50°C·d, quanti nodi ha la pianta al giorno 100?',
+          hint: 'Usa la demo interattiva con lo slider PHYL'
+        },
+        {
+          description: 'Riduci PHYL a 30. Come cambia il numero di nodi?',
+          hint: 'PHYL più basso = più nodi per unità di tempo termico'
+        },
+        {
+          description: 'Perché colture con fillocrono basso sviluppano più nodi a parità di gradi giorno?',
+          solution: 'PHYL rappresenta i °C·d necessari per ogni nuovo nodo; valori bassi significano che la pianta \"consuma\" meno gradi giorno per nodo'
+        }
+      ],
+      solution: 'Il fillocrono (PHYL) è l\'intervallo termico tra nodi successivi. Piante con PHYL basso (es. leguminose) sviluppano nodi più rapidamente. La relazione PLA = PLACON·MSNN^PLAPOW lega i nodi all\'area fogliare.',
+      completed: false
+    },
+    {
+      id: 'ex5d',
+      title: 'FTSW e Stress Idrico',
+      description: 'Interpreta la Frazione di Acqua Traspirabile (FTSW) e il suo legame con l\'indice ARID.',
+      difficulty: 'intermedio',
+      module: 'Bilancio Idrico',
+      objectives: [
+        'Calcolare FTSW da W, W_wp, W_fc',
+        'Interpretare soglie critiche di FTSW',
+        'Collegare FTSW e ARID'
+      ],
+      steps: [
+        {
+          description: 'FTSW = (W - W_wp)/(W_fc - W_wp). Se W=120 mm, W_wp=80, W_fc=200: qual è FTSW?',
+          solution: 'FTSW = (120-80)/(200-80) = 40/120 = 0.33'
+        },
+        {
+          description: 'A quale valore di FTSW si considera critico lo stress idrico per molte colture?',
+          hint: 'Soglie tipiche: 0.2-0.3'
+        },
+        {
+          description: 'Come si relaziona ARID con FTSW?',
+          solution: 'ARID = 1 - T_act/ET0 riflette lo stress; quando FTSW è basso, T_act diminuisce e ARID aumenta'
+        }
+      ],
+      solution: 'FTSW < 0.2-0.3 indica stress idrico significativo. ARID elevato coincide con FTSW bassa perché la pianta non riesce a soddisfare la domanda evapotraspirativa quando l\'acqua transpirabile è scarsa.',
+      completed: false
+    },
+    {
+      id: 'ex6a',
+      title: 'Analisi della Macroporosità negli Aggregati tramite Box Counting',
+      description: 'La struttura del suolo e la presenza di macropori sono fondamentali per la crescita delle radici e per il drenaggio. La teoria è spiegata nella sezione Suolo e Aggregati. Questo esercizio modella la geometria dei pori tra gli aggregati (peds) usando la dimensione frattale.',
+      difficulty: 'avanzato',
+      module: 'Fisica del Suolo',
+      objectives: [
+        'Utilizzare la tecnica del box counting per determinare la dimensione frattale (D)',
+        'Identificare la frazione di superficie occupata dai pori',
+        'Collegare la lavorazione del terreno alla porosità'
+      ],
+      steps: [
+        {
+          description: 'Caricare un\'immagine di una sezione di suolo (es. soil_image.jpg) e impostare una soglia RGB (es. 128) per distinguere i pori (chiari) dalla matrice solida (scura).',
+          hint: 'Vedi sezione Suolo e Aggregati per la teoria. Soglie tipiche: valori > soglia = pori, < soglia = solido'
+        },
+        {
+          description: 'Calcolare come varia il numero di "box" occupati dai pori al diminuire della dimensione del box (L). La relazione N(L) ∝ L^(-D) fornisce la dimensione frattale D.',
+          hint: 'D = -log(N2/N1) / log(L2/L1) per due scale L1, L2'
+        },
+        {
+          description: 'Se una lavorazione del terreno (es. aratura) frammenta i macro-aggregati aumentando la dimensione frattale dei pori, come cambierà la percentuale di porosità totale?',
+          solution: 'La frammentazione aumenta la complessità della rete di pori (D più alto) e tipicamente aumenta la porosità totale accessibile alle scale di misura, migliorando drenaggio e aerazione ma anche rischio di compattazione successiva.'
+        }
+      ],
+      solution: 'Il box counting stima D dalla pendenza di log(N) vs log(1/L). Un suolo lavorato di fresco ha aggregati più piccoli e una rete di pori più ramificata (D più alto). La porosità totale calcolata aumenta perché si "vedono" più pori alle scale fini.',
+      completed: false
+    },
+    {
+      id: 'ex6b',
+      title: 'Modellizzazione del "Bundle of Capillaries" (Fascio di Capillari)',
+      description: 'Per simulare come l\'acqua viene trattenuta e resa disponibile per le colture, il suolo viene modellato come un insieme di tubi capillari con raggi distribuiti casualmente. Vedi la sezione Suolo e Aggregati per la teoria.',
+      difficulty: 'avanzato',
+      module: 'Fisica del Suolo',
+      objectives: [
+        'Generare un modello stocastico di pori capillari',
+        'Rappresentare la rete idraulica di un aggregato di suolo',
+        'Modificare il modello per suoli compattati'
+      ],
+      steps: [
+        {
+          description: 'Generare n=250 capillari con raggi (r) e posizioni (x,z) casuali. Implementare un controllo per evitare sovrapposizioni e mantenere i capillari entro un raggio definito (aggregato cilindrico o prismatico).',
+          hint: 'Vedi sezione Suolo e Aggregati per la teoria. Verifica distanza tra centri: sqrt((x1-x2)²+(z1-z2)²) > r1+r2'
+        },
+        {
+          description: 'Visualizzare la distribuzione (es. con VPython: visual.cylinder per ogni poro).',
+          hint: 'Ogni capillare è un cilindro con raggio r e altezza dell\'aggregato'
+        },
+        {
+          description: 'In un suolo compattato da macchinari agricoli, i raggi dei pori più grandi vengono ridotti. Come modificare la generazione dei raggi per riflettere una riduzione della macroporosità?',
+          solution: 'Usare una distribuzione dei raggi più "stretta" (es. solo raggi piccoli) o una distribuzione troncata: r_max ridotto, oppure una distribuzione log-normale con media più bassa. La macroporosità (pori > 75 μm) diminuisce drasticamente.'
+        }
+      ],
+      solution: 'Nel modello a fascio di capillari, la compattazione si simula riducendo la variabilità e il massimo dei raggi. La legge di Jurin (h ∝ 1/r) mostra che i capillari più piccoli trattengono acqua a tensioni più alte; un suolo compattato ha meno macropori e più ritenzione idrica ma minore drenaggio.',
+      completed: false
+    },
+    {
+      id: 'ex6c',
+      title: 'Porosità e Indice dei Vuoti in un Prisma di Suolo (Pedon)',
+      description: 'La densità apparente (ρ_b) è un indicatore chiave della salute del suolo. Suoli lavorati di fresco hanno densità basse; suoli compattati ostacolano lo sviluppo radicale. Usa il calcolatore nella sezione Suolo e Aggregati per verificare i risultati.',
+      difficulty: 'intermedio',
+      module: 'Fisica del Suolo',
+      objectives: [
+        'Calcolare porosità totale, contenuto d\'acqua volumetrico e altezza equivalente',
+        'Confrontare suolo tilled vs compattato',
+        'Determinare l\'acqua disponibile per l\'irrigazione'
+      ],
+      steps: [
+        {
+          description: 'Definire ρ_s = 2650 kg/m³ (densità particelle) e ρ_l = 1000 kg/m³ (acqua). Scrivere computePorosity(ρ_b, w) che calcola: φ = 1 - (ρ_b/ρ_s), θ = w·(ρ_b/ρ_l), h_w = θ·h_prism.',
+          hint: 'Usa il calcolatore nella sezione Suolo e Aggregati. φ = porosità totale; θ = contenuto volumetrico; h_prism = profondità del prisma (es. 2 m)'
+        },
+        {
+          description: 'Esempio: suolo tilled ρ_b = 1000 kg/m³, suolo compattato ρ_b = 1600 kg/m³. Calcola la differenza nella porosità totale disponibile per lo scambio gassoso.',
+          solution: 'φ_tilled = 1 - 1000/2650 = 0.62; φ_compattato = 1 - 1600/2650 = 0.40. Differenza = 0.22 (22% in meno di spazio per aria/acqua nel suolo compattato).'
+        },
+        {
+          description: 'Per un prisma di 2 m, w = 0.20 (20% gravimetrico) e ρ_b = 1200 kg/m³: qual è l\'altezza equivalente dell\'acqua (h_w)?',
+          solution: 'θ = 0.20·(1200/1000) = 0.24; h_w = 0.24·2 = 0.48 m = 480 mm'
+        }
+      ],
+      solution: 'φ = 1 - ρ_b/ρ_s indica lo spazio totale per fluidi. θ = w·(ρ_b/ρ_l) converte il contenuto gravimetrico in volumetrico. h_w (mm) è utile per il bilancio idrico e l\'irrigazione. Suoli compattati hanno φ più bassa e minore aerazione radicale.',
+      completed: false
+    },
+    {
       id: 'ex5',
       title: 'Confronto Varietà: Mais vs Frumento',
       description: 'Confronta le performance di mais (C4) e frumento (C3) in termini di produttività e uso dell\'acqua.',
@@ -285,6 +526,8 @@ export const ExercisesView: React.FC = () => {
                   ))}
                 </ul>
               </div>
+
+              {exercise.id === 'ex6c' && <PorosityCalculator />}
 
               <div className="space-y-3">
                 <h4 className="font-semibold text-gray-900">Procedura Step-by-Step</h4>

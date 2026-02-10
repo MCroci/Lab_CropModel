@@ -1,6 +1,6 @@
 # Manuale di Teoria – Modellistica delle Colture Erbacee
 
-**Crop mod lab** – Documento completo sulla teoria contenuta nell'applicazione
+**CropModel Lab** – Documento completo sulla teoria contenuta nell'applicazione
 
 ---
 
@@ -19,6 +19,7 @@
 11. [Agrivoltaico e Development–Growth Decoupling](#11-agrivoltaico-e-developmentgrowth-decoupling)
 12. [Calibrazione e Validazione](#12-calibrazione-e-validazione)
 13. [Riferimenti Bibliografici](#13-riferimenti-bibliografici)
+14. [Dinamica dell'Azoto (Approfondimento)](#14-dinamica-dellazoto-approfondimento)
 
 ---
 
@@ -32,6 +33,28 @@ Questa applicazione è progettata per l'apprendimento della **modellistica delle
 - Comprendere il ciclo giornaliero: Meteo → Fenologia → LAI → Intercettazione → Biomassa
 - Introdurre l'accoppiamento con il bilancio idrico del suolo e gli indici di stress
 - Valutare l'impatto dei parametri fisiologici (es. RUE, KPAR) sulla produttività
+
+### 1.1 Funzione Expolinear (Goudriaan e Monteith, 1990)
+
+La funzione **expolinear** descrive il passaggio dalla crescita **esponenziale** (pianta piccola, copertura incompleta) alla crescita **lineare** (intercettazione massima della luce).
+
+- **Fase esponenziale** (LAI basso, luce non limitante):
+\[
+\frac{dW}{dt} = r_m \cdot W
+\]
+con \(r_m\) = tasso di crescita relativo (es. 0.1 g g⁻¹ d⁻¹).
+
+- **Fase lineare** (LAI elevato, radiazione limitante):
+\[
+\frac{dW}{dt} = C_m
+\]
+con \(C_m\) = tasso di crescita massimo (determinato dalla radiazione intercettata).
+
+- **Equazione expolinear** (forma integrata):
+\[
+W = \frac{C_m}{r_m} \cdot \ln\left\{1 + \exp\left[r_m \cdot (t - t_b)\right]\right\}
+\]
+ dove \(t_b\) è il tempo di base (momento in cui la fase lineare inizierebbe se non ci fosse l'esponenziale).
 
 ---
 
@@ -89,6 +112,19 @@ Proprietà **costanti** del sistema o della cultivar durante la simulazione.
 
 **Relazione fondamentale**: Lo stato al giorno N = Stato al giorno N-1 + Flusso al giorno N
 
+### 2.6 Bilancio di Massa
+
+Molti processi (acqua, azoto, carbonio) sono simulati tramite l'equazione generale:
+
+\[
+\text{Stato attuale} = \text{Stato precedente} + \text{Ingressi} - \text{Uscite}
+\]
+
+Esempi:
+- **Acqua nel suolo**: \(W(t+1) = W(t) + \text{Pioggia} - ET - \text{Drenaggio} - \text{Ruscellamento}\)
+- **Biomassa**: \(B(t+1) = B(t) + \Delta B\) (dove \(\Delta B\) è la produzione giornaliera)
+- **CTU**: \(CTU(t) = CTU(t-1) + DTU(t)\)
+
 ---
 
 ## 3. Input Meteorologici
@@ -144,6 +180,26 @@ NDS = \min\left(\frac{CTU}{tu_{HAR}}, 1\right)
 - NDS = 1: maturità fisiologica (raccolta)
 - **tuHAR**: somma termica necessaria per la raccolta (°C·d)
 
+### 4.5 Funzione Beta (Temperature Cardinali)
+
+Nei modelli avanzati (DSSAT, GECROS) si usa spesso una **funzione Beta** per descrivere risposte non lineari alla temperatura, con tre temperature cardinali: base (\(T_{base}\)), ottimale (\(T_{opt}\)), massima (\(T_{max}\)):
+
+\[
+f(T) = R_{max} \cdot \left(\frac{T - T_{base}}{T_{opt} - T_{base}}\right) \cdot \left(\frac{T_{max} - T}{T_{max} - T_{opt}}\right)^{\frac{T_{opt}-T_{base}}{T_{max}-T_{opt}}} \cdot c
+\]
+
+dove \(c\) è un parametro di curvatura. Questa curva è più realistica delle soglie lineari quando \(T\) è vicina ai limiti.
+
+### 4.6 Sviluppo di Nodi e Fillocrono (PHYL)
+
+Per colture con architettura a nodi (es. leguminose, cereali), l'**incremento giornaliero del numero di nodi** è:
+
+\[
+INODE_i = INODE_{i-1} + \frac{DTU}{PHYL}
+\]
+
+Il **fillocrono** (PHYL) è l'intervallo termico (°C·d) necessario per la comparsa di un nuovo nodo sul fusto principale.
+
 ---
 
 ## 5. Area Fogliare (LAI) e Intercettazione Radiativa
@@ -180,6 +236,32 @@ Il coefficiente **k** (KPAR) dipende dall'architettura della pianta:
 - Foglie erette (es. cereali): k ≈ 0.5
 - Foglie planofile (es. soia): k ≈ 0.7
 
+### 5.4 SLA (Specific Leaf Area)
+
+Lo **SLA** (Specific Leaf Area) è il rapporto tra area fogliare e peso secco fogliare (m²/g). È fondamentale per convertire la biomassa allocata alle foglie in area fogliare: \(LAI \propto B_{foglie} \cdot SLA\).
+
+### 5.5 Espansione PLA per Pianta (Modello Allometrico)
+
+In modelli basati sulla singola pianta, l'area fogliare per pianta (PLA) può essere calcolata con relazioni **allometriche** basate sul numero di nodi (MSNN):
+
+\[
+PLA_i = PLACON \cdot MSNN_i^{PLAPOW}
+\]
+
+dove PLACON e PLAPOW sono costanti. Da PLA e densità di piante si ottiene il LAI.
+
+### 5.6 Senescenza da Ombreggiamento
+
+Quando il LAI supera una soglia critica (LAICR), l'ombreggiamento eccessivo induce senescenza. Il tasso di decadimento è:
+
+\[
+LDRSH = 0.03 \cdot \frac{LAI - LAICR}{LAICR} \quad \text{se } LAI > LAICR
+\]
+
+\[
+DLAI_{SH} = LAI \cdot LDRSH
+\]
+
 ---
 
 ## 6. Accumulo di Biomassa
@@ -211,6 +293,16 @@ Funzione **trapezoidale**:
 
 Quando T_max supera una soglia (~35°C), la crescita si riduce linearmente fino ad azzerarsi sopra ~45°C (modello SIMPLE).
 
+### 6.4 Effetto della CO₂ sulla RUE
+
+La concentrazione atmosferica di CO₂ influisce sull'efficienza fotosintetica. L'effetto sulla RUE può essere modellato come:
+
+\[
+RUE_x = RUE_0 \left[1 + b \cdot \ln\left(\frac{C_x}{C_0}\right)\right]
+\]
+
+dove \(C_x\) è la concentrazione attuale, \(C_0\) quella di riferimento (es. 360 ppm). Il parametro \(b\) è circa 0.4 per piante C4 e 0.8 per piante C3.
+
 ---
 
 ## 7. Bilancio Idrico del Suolo
@@ -219,6 +311,11 @@ Quando T_max supera una soglia (~35°C), la crescita si riduce linearmente fino 
 
 \[
 W(t+1) = W(t) + Pioggia - Ruscellamento - ET_{reale} - Drenaggio
+\]
+
+In forma dettagliata per il primo strato:
+\[
+ATSW_1(t+1) = ATSW_1(t) + RAIN + IRRIG - DRAIN - RUNOFF - E_{suolo} - TR_1
 \]
 
 ### 7.2 Parametri Idrologici
@@ -243,6 +340,16 @@ ARID = 1 - \frac{T_{act}}{ET_0}
 
 - ARID = 0: nessuno stress
 - ARID = 1: stress totale
+
+### 7.5 FTSW (Frazione di Acqua Traspirabile)
+
+La **FTSW** (Fraction of Transpirable Soil Water) è il principale indicatore di stress idrico per la pianta:
+
+\[
+FTSW = \frac{ATSW}{TTSW}
+\]
+
+dove ATSW = acqua transpirabile attuale (W - W_wp nello strato radicale), TTSW = acqua transpirabile totale (W_fc - W_wp). Il fattore di stress \(F_w\) è legato all'ARID: \(F_w = T_{act}/T_{pot}\), quindi ARID = 1 - F_w.
 
 ---
 
@@ -310,9 +417,13 @@ Sotto pannelli fotovoltaici:
 
 ### 10.1 Equazione di Penman-Monteith
 
-L'evapotraspirazione di riferimento (ET0) combina:
-- Termine radiativo (energia netta)
-- Termine aerodinamico (vapore pressione, vento)
+L'evapotraspirazione di riferimento (ET₀) combina termine radiativo e aerodinamico:
+
+\[
+ET_0 = \frac{0.408\Delta(R_n - G) + \gamma\frac{900}{T+273}u_2(e_s - e_a)}{\Delta + \gamma(1 + 0.34 u_2)}
+\]
+
+dove: \(\Delta\) = pendenza della curva di saturazione, \(R_n\) = radiazione netta, \(G\) = flusso di calore nel suolo, \(\gamma\) = costante psicrometrica, \(u_2\) = vento a 2 m, \(e_s - e_a\) = deficit di pressione di vapore.
 
 ### 10.2 Resistenza Aerodinamica (r_a)
 
@@ -404,9 +515,33 @@ Confronto tra configurazioni diverse: baseline vs scenario con modifiche climati
 | Marrou et al. | 2013 | Microclimate under agrivoltaic systems | Agrivoltaico |
 | Dupraz et al. | 2011 | Combining solar photovoltaic panels and food crops | Agrivoltaico |
 | Zhao et al. | 2019 | SIMPLE crop model | Modelli Specifici |
+| Goudriaan & Monteith | 1990 | A mathematical function for crop growth | Crescita Expolinear |
+| Arnold | 1960 | Maximum-minimum temperatures as a basis for computing heat units | Fenologia (GDD) |
 
 Per i riferimenti completi e i DOI, consultare la sezione **Bibliografia** nell'applicazione.
 
 ---
 
-*Manuale redatto per Crop mod lab – Laboratorio di Modellistica delle Colture Erbacee*
+## 14. Dinamica dell'Azoto (Approfondimento)
+
+*Questa sezione presenta concetti usati in modelli avanzati (DSSAT, GECROS); l'app non include il bilancio dell'azoto.*
+
+L'azoto limita spesso la produzione insieme all'acqua. La **domanda giornaliera** (NUP) è:
+
+\[
+NUP = (GLAI \cdot SLNG) + (GST \cdot SNCG)
+\]
+
+dove SLNG = N specifico target nelle foglie (g N m⁻²), SNCG = concentrazione target negli steli (g N g⁻¹).
+
+**Bilancio nel suolo** (ingressi/uscite):
+- **Mineralizzazione netta**: \(NMIN = MNORG \cdot K_N \cdot R_N\)
+- **Volatilizzazione**: \(NVOL = VOLF \cdot NFERT\)
+- **Lisciviazione**: \(NLEACH = NSOL \cdot \frac{DRAIN1}{WAT1 + DRAIN1}\)
+- **Denitrificazione**: \(NDNIT = \min(NCON, 0.0004) \cdot (1 - e^{-KDNIT})\)
+
+In carenza di N, i modelli applicano una **priorità**: si riduce la concentrazione negli steli fino a un minimo; se non basta, si inibisce l'espansione fogliare; in casi gravi si induce senescenza fogliare per mobilizzare N verso i sink.
+
+---
+
+*Manuale redatto per CropModel Lab – Laboratorio di Modellistica delle Colture Erbacee*

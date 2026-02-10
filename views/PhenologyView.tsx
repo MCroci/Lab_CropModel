@@ -1,7 +1,6 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { CHART_MARGIN_DUAL_Y } from '../utils/chartMargins';
+import { CHART_MARGIN, CHART_MARGIN_DUAL_Y } from '../utils/chartMargins';
 import { Card, Slider, Button, DownloadAction } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { Play, BookOpen } from 'lucide-react';
@@ -9,6 +8,16 @@ import { Play, BookOpen } from 'lucide-react';
 export const PhenologyView: React.FC = () => {
   const { cropParams, setCropParams, simulationResults, runSimulation, getCurrentCropSowingDay } = useSimulation();
   const sowingDay = getCurrentCropSowingDay();
+  const [phyl, setPhyl] = useState(50);
+
+  // Calcolo INODE per demo Fillocrono: INODE_i = INODE_{i-1} + DTU/PHYL
+  const fillocronoData = useMemo(() => {
+    let inode = 0;
+    return simulationResults.map((row, i) => {
+      inode += row.DTU / phyl;
+      return { day: row.day, DTU: row.DTU, CTU: row.CTU, INODE: Math.round(inode * 100) / 100 };
+    });
+  }, [simulationResults, phyl]);
 
   // Re-run simulation when params change
   useEffect(() => {
@@ -69,9 +78,34 @@ export const PhenologyView: React.FC = () => {
                 Lo stadio di sviluppo (<strong>NDS</strong>) è una frazione: NDS = CTU / tuHAR. 
                 Quando NDS = 1, la pianta è matura.
               </li>
+              <li>
+                <strong>Fillocrono (PHYL):</strong> In modelli basati sui nodi, INODE<sub>i</sub> = INODE<sub>i-1</sub> + DTU/PHYL, dove PHYL è l'intervallo termico (°C·d) per un nuovo nodo.
+              </li>
             </ul>
           </div>
         </Card>
+
+        {/* Demo interattiva Fillocrono */}
+        {simulationResults.length > 0 && (
+          <Card title="Demo Fillocrono: Sviluppo Nodi" className="border-l-4 border-l-orange-500 bg-orange-50/30">
+            <p className="text-sm text-gray-700 mb-3">
+              Varia il Fillocrono (PHYL) per vedere come cambia il numero di nodi nel tempo. INODE aumenta di DTU/PHYL ogni giorno.
+            </p>
+            <Slider label="PHYL (°C·d per nodo)" value={phyl} min={20} max={100} step={5} unit="°C·d" onChange={setPhyl} description="Gradi giorno necessari per un nuovo nodo" />
+            <div className="h-[320px] mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={fillocronoData} margin={CHART_MARGIN}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" label={{ value: 'Giorno', position: 'insideBottom', offset: 0 }} />
+                  <YAxis label={{ value: 'Nodi (INODE)', angle: -90, position: 'insideLeft' }} />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="INODE" stroke="#ea580c" strokeWidth={2} name="Numero nodi" dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+        )}
 
         <Card 
           title="Traiettoria Fenologica"

@@ -95,6 +95,21 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
       locked: false
     },
     {
+      id: '5b',
+      title: 'Suolo e Aggregati',
+      description: 'Struttura del suolo, porosità, densità apparente. Box counting per macroporosità e modello a fascio di capillari.',
+      objectives: [
+        'Comprendere aggregati e classi di pori (macro, meso, micro)',
+        'Calcolare porosità φ e contenuto volumetrico θ',
+        'Introduzione a box counting e dimensione frattale',
+        'Modello a fascio di capillari per ritenzione idrica'
+      ],
+      estimatedTime: '2 ore',
+      prerequisites: ['5'],
+      completed: false,
+      locked: false
+    },
+    {
       id: '6',
       title: 'Calibrazione e Validazione',
       description: 'Metodi per calibrare i parametri del modello e validare le simulazioni.',
@@ -144,6 +159,7 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
     '3': 'lai',            // LAI & Radiazione
     '4': 'biomass',        // Biomassa
     '5': 'water',          // Bilancio Idrico
+    '5b': 'soil',          // Suolo e Aggregati
     '6': 'validation',     // Calibrazione e Validazione
     '7': 'scenario'        // Analisi Scenario
   };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Select, Button, LoadingSpinner } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { CropParams } from '../types';
-import { GitCompare, Save, FolderOpen, Trash2, CheckCircle } from 'lucide-react';
+import { GitCompare, Save, FolderOpen, Trash2, CheckCircle, BookOpen, Leaf, Activity, Droplet, Code, Library, Calendar, Layers } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 // Preset Data - Completi con tutti i parametri necessari
@@ -32,7 +32,11 @@ const CROP_PRESETS: Record<string, Partial<CropParams>> = {
   }
 };
 
-export const OverviewView: React.FC = () => {
+interface OverviewViewProps {
+  onNavigate?: (tab: string) => void;
+}
+
+export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
   const { 
     cropParams, setCropParams, 
     sowingDays, setSowingDays, 
@@ -118,6 +122,95 @@ export const OverviewView: React.FC = () => {
           <span className="text-sm text-blue-800">Simulazione in corso...</span>
         </div>
       )}
+
+      {/* Guida ai nuovi concetti teorici */}
+      <Card title="Nuovi concetti teorici" className="border-l-4 border-l-cyan-500 bg-cyan-50/30">
+        <p className="text-gray-700 mb-4">
+          Sono stati aggiunti nuovi concetti ed equazioni in diverse sezioni. Clicca sui link per esplorarli:
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {onNavigate ? (
+            <>
+              <button onClick={() => onNavigate('concepts')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <BookOpen size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">Concetti Base</div>
+                  <div className="text-xs text-gray-600">Expolinear, Bilancio di Massa</div>
+                </div>
+              </button>
+              <button onClick={() => onNavigate('phenology')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <Calendar size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">Fenologia</div>
+                  <div className="text-xs text-gray-600">Fillocrono (PHYL, INODE)</div>
+                </div>
+              </button>
+              <button onClick={() => onNavigate('lai')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <Leaf size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">LAI & Radiazione</div>
+                  <div className="text-xs text-gray-600">SLA, modello allometrico PLA</div>
+                </div>
+              </button>
+              <button onClick={() => onNavigate('biomass')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <Activity size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">Biomassa</div>
+                  <div className="text-xs text-gray-600">Effetto CO₂ sulla RUE</div>
+                </div>
+              </button>
+              <button onClick={() => onNavigate('water')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <Droplet size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">Bilancio Idrico</div>
+                  <div className="text-xs text-gray-600">FTSW (frazione acqua transpirabile)</div>
+                </div>
+              </button>
+              <button onClick={() => onNavigate('soil')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <Layers size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">Suolo e Aggregati</div>
+                  <div className="text-xs text-gray-600">Porosità, box counting, capillari</div>
+                </div>
+              </button>
+              <button onClick={() => onNavigate('functions')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <Code size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">Logica & Codice</div>
+                  <div className="text-xs text-gray-600">Funzione Expolinear</div>
+                </div>
+              </button>
+              <button onClick={() => onNavigate('bibliography')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <Library size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">Bibliografia</div>
+                  <div className="text-xs text-gray-600">Goudriaan & Monteith, Arnold</div>
+                </div>
+              </button>
+              <button onClick={() => onNavigate('manuale')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <BookOpen size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">Manuale Teoria</div>
+                  <div className="text-xs text-gray-600">Documento completo con tutte le equazioni</div>
+                </div>
+              </button>
+            </>
+          ) : (
+            <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+              <li>Concetti Base: Expolinear, Bilancio di Massa</li>
+              <li>Fenologia: Fillocrono (PHYL, INODE)</li>
+              <li>LAI & Radiazione: SLA, modello allometrico PLA</li>
+              <li>Biomassa: Effetto CO₂ sulla RUE</li>
+              <li>Bilancio Idrico: FTSW</li>
+              <li>Suolo e Aggregati: Porosità, box counting, capillari</li>
+              <li>Logica & Codice: Funzione Expolinear</li>
+              <li>Bibliografia: Goudriaan & Monteith, Arnold</li>
+              <li>Manuale Teoria: documento completo con tutte le equazioni</li>
+            </ul>
+          )}
+        </div>
+      </Card>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
       <div className="lg:col-span-2">
         <Card title="Obiettivi di Apprendimento" className="h-full">

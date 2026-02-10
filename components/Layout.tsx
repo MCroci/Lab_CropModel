@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import { 
-  Compass, BookOpen, Calendar, Leaf, Activity, Droplet, 
+  Compass, BookOpen, Calendar, Leaf, Activity, Droplet, Layers,
   Download, Info, Menu, X, CloudRain, Code, Sun, Sliders, Zap, Microscope, Sprout,
-  GraduationCap, FileCheck, CheckCircle2, Library, Database
+  GraduationCap, FileCheck, CheckCircle2, Library, Database, FileText
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -21,6 +21,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     { id: 'learning_path', label: 'Percorso Didattico', icon: GraduationCap },
     { id: 'exercises', label: 'Esercizi', icon: FileCheck },
     { id: 'concepts', label: 'Concetti Base', icon: BookOpen },
+    { id: 'manuale', label: 'Manuale Teoria', icon: FileText },
     
     // === INPUT E FONDAMENTI ===
     { id: 'weather', label: 'Generatore Meteo', icon: CloudRain },
@@ -32,6 +33,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     { id: 'lai', label: 'LAI & Radiazione', icon: Leaf },
     { id: 'biomass', label: 'Biomassa', icon: Activity },
     { id: 'water', label: 'Bilancio Idrico', icon: Droplet },
+    { id: 'soil', label: 'Suolo e Aggregati', icon: Layers },
     { id: 'photosynthesis', label: 'Fotosintesi (Farquhar)', icon: Microscope },
     
     // === ANALISI E VALIDAZIONE ===
@@ -58,7 +60,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       {/* Mobile Header */}
       <div className="md:hidden bg-brand-700 text-white p-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
-        <h1 className="font-bold text-lg">Crop mod lab</h1>
+        <h1 className="font-bold text-lg">CropModel Lab</h1>
         <button 
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 -mr-2 touch-manipulation"
@@ -84,7 +86,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
         shadow-xl md:shadow-none
       `}>
         <div className="p-4 md:p-6 border-b border-slate-700">
-          <h1 className="text-xl md:text-2xl font-bold text-brand-500">Crop mod lab</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-brand-500">CropModel Lab</h1>
           <p className="text-xs text-slate-400 mt-1">Modellistica delle colture erbacee</p>
         </div>
         <nav className="mt-4 px-2 overflow-y-auto max-h-[calc(100vh-120px)] pb-4">
@@ -93,7 +95,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Introduzione
             </div>
-            {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'concepts'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'concepts', 'manuale'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
@@ -143,7 +145,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Processi Fisiologici
             </div>
-            {menuItems.filter(item => ['emergence', 'phenology', 'lai', 'biomass', 'water', 'photosynthesis'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['emergence', 'phenology', 'lai', 'biomass', 'water', 'soil', 'photosynthesis'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (

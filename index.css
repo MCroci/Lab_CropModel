@@ -1,3 +1,5 @@
+@import 'katex/dist/katex.min.css';
+
 /* Mobile optimizations */
 @media (max-width: 640px) {
   /* Improve touch targets */
@@ -35,6 +37,16 @@
 .recharts-cartesian-axis-tick-value,
 .recharts-label {
   overflow: visible;
+}
+
+/* KaTeX math overflow */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+}
+.katex {
+  font-size: 1.05em;
 }
 
 @media (max-width: 768px) {

@@ -5,6 +5,52 @@ import { Card, Slider, Button } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { Play, Pause, RotateCcw, Lightbulb, Target, ArrowRight } from 'lucide-react';
 
+const expolinear = (t: number, r_m: number, C_m: number, t_b: number) => {
+  const arg = r_m * (t - t_b);
+  return (C_m / r_m) * Math.log(1 + Math.exp(arg));
+};
+
+const ExpolinearDemo: React.FC = () => {
+  const [r_m, setR_m] = useState(0.1);
+  const [C_m, setC_m] = useState(20);
+  const [t_b, setT_b] = useState(20);
+  const chartData = useMemo(() => {
+    return Array.from({ length: 120 }, (_, i) => {
+      const t = i;
+      const W = expolinear(t, r_m, C_m, t_b);
+      const dW = t > 0 ? expolinear(t, r_m, C_m, t_b) - expolinear(t - 1, r_m, C_m, t_b) : 0;
+      return { t, W: Math.round(W * 10) / 10, dW: Math.round(dW * 100) / 100 };
+    });
+  }, [r_m, C_m, t_b]);
+  return (
+    <Card title="Funzione Expolinear (Goudriaan e Monteith, 1990)" className="border-l-4 border-l-cyan-500 bg-cyan-50/30">
+      <p className="text-sm text-gray-700 mb-3">
+        La crescita della biomassa passa da una fase <strong>esponenziale</strong> (pianta piccola) a una fase <strong>lineare</strong> (intercettazione massima). Modifica i parametri per vedere l'effetto sulla curva.
+      </p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        <Slider label="r_m (tasso relativo)" value={r_m} min={0.02} max={0.25} step={0.01} onChange={setR_m} description="g g⁻¹ d⁻¹" />
+        <Slider label="C_m (tasso max)" value={C_m} min={5} max={50} step={1} onChange={setC_m} description="g/m² d" />
+        <Slider label="t_b (tempo base)" value={t_b} min={0} max={60} step={5} onChange={setT_b} description="giorni" />
+      </div>
+      <div className="bg-white p-3 rounded border border-cyan-200 text-sm mb-4" style={{ fontFamily: 'serif' }}>
+        W = (C<sub>m</sub>/r<sub>m</sub>) · ln&#123;1 + exp[r<sub>m</sub>·(t − t<sub>b</sub>)]&#125;
+      </div>
+      <div className="h-[240px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData} margin={CHART_MARGIN}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="t" label={{ value: 'Giorni (t)', position: 'insideBottom', offset: 0 }} />
+            <YAxis label={{ value: 'Biomassa W (g/m²)', angle: -90, position: 'insideLeft' }} />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="W" stroke="#0891b2" strokeWidth={2} name="Biomassa W" dot={false} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </Card>
+  );
+};
+
 export const ConceptsView: React.FC = () => {
   const { simulationResults } = useSimulation();
   const [selectedConcept, setSelectedConcept] = useState<'state' | 'flow' | 'param' | 'forcing' | null>(null);
@@ -127,6 +173,9 @@ export const ConceptsView: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Funzione Expolinear - Demo interattiva */}
+      <ExpolinearDemo />
+
       {/* Glossario Interattivo */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ConceptCard
@@ -292,7 +341,8 @@ export const ConceptsView: React.FC = () => {
               </div>
             </div>
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800">
-              <strong>Nota:</strong> Lo stato al giorno N = Stato al giorno N-1 + Flusso al giorno N
+              <strong>Bilancio di Massa:</strong> Lo stato al giorno N = Stato al giorno N-1 + Flusso al giorno N.
+              In generale: <strong>Stato attuale = Stato precedente + Ingressi - Uscite</strong> (es. acqua, biomassa, CTU).
             </div>
           </Card>
         </Card>

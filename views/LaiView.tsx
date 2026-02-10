@@ -87,6 +87,12 @@ export const LaiView: React.FC = () => {
               <li>
                 Il coefficiente k dipende dall'architettura della pianta (foglie erette vs planofile).
               </li>
+              <li>
+                <strong>SLA (Specific Leaf Area):</strong> Rapporto area fogliare/peso secco (m²/g). Converte biomassa fogliare in LAI.
+              </li>
+              <li>
+                <strong>Modello allometrico:</strong> In modelli a livello pianta, PLA = PLACON · MSNN^PLAPOW (MSNN = numero nodi).
+              </li>
             </ul>
           </div>
         </Card>

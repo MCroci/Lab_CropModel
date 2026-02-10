@@ -9,11 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "katex": "^0.16.28",
+    "leaflet": "1.9.4",
+    "lucide-react": "^0.561.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "lucide-react": "^0.561.0",
+    "react-markdown": "^10.1.0",
     "recharts": "^3.6.0",
-    "leaflet": "1.9.4"
+    "rehype-katex": "^7.0.1",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

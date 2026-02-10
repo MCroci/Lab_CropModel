@@ -73,6 +73,7 @@ export const BiomassView: React.FC = () => {
               <li><strong>PAR:</strong> Photosynthetically Active Radiation (~48% della radiazione globale).</li>
               <li><strong>f(T):</strong> Fattore di limitazione termica (0-1) che riduce la fotosintesi se fa troppo freddo o troppo caldo.</li>
               <li><strong>f(Heat):</strong> Stress termico (SIMPLE, Zhao et al. 2019): riduce la crescita quando Tmax supera 35°C, azzerandosi sopra ~45°C.</li>
+              <li><strong>Effetto CO₂:</strong> In modelli avanzati, RUE_x = RUE_0[1 + b·ln(C_x/C_0)] con b≈0.4 (C4) o 0.8 (C3).</li>
             </ul>
           </div>
         </Card>

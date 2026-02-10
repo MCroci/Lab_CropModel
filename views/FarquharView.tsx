@@ -4,6 +4,7 @@ import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, DownloadAction } from '../components/UI';
 import { generateCO2Response, generateLightResponse } from '../services/farquharModel';
 import { Microscope, BookOpen } from 'lucide-react';
+import { MathFormula } from '../components/MathFormula';
 
 export const FarquharView: React.FC = () => {
   // Parameters (Defaults from R script)
@@ -100,25 +101,19 @@ export const FarquharView: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
             <div className="bg-white p-3 rounded border border-gray-200 text-center">
               <div className="font-bold text-xs text-gray-500 mb-1">Rubisco Limited (w_c)</div>
-              <div className="font-mono text-sm">
-                 {'$w_c = \\frac{V_{max}(c_i - \\Gamma^*)}{c_i + K_c(1 + O_i/K_o)}$'}
-              </div>
+              <MathFormula formula="w_c = \\frac{V_{\\mathrm{max}}(c_i - \\Gamma^*)}{c_i + K_c(1 + O_i/K_o)}" className="text-sm" />
               <div className="text-xs text-gray-400 mt-1">Limitata da bassa CO₂</div>
             </div>
 
             <div className="bg-white p-3 rounded border border-gray-200 text-center">
                <div className="font-bold text-xs text-gray-500 mb-1">Light Limited (w_j)</div>
-               <div className="font-mono text-sm">
-                 {'$w_j = \\frac{J(c_i - \\Gamma^*)}{4(c_i + 2\\Gamma^*)}$'}
-               </div>
+               <MathFormula formula="w_j = \\frac{J(c_i - \\Gamma^*)}{4(c_i + 2\\Gamma^*)}" className="text-sm" />
                <div className="text-xs text-gray-400 mt-1">Limitata da bassa Luce</div>
             </div>
 
             <div className="bg-white p-3 rounded border border-gray-200 text-center">
                <div className="font-bold text-xs text-gray-500 mb-1">Sink Limited (w_s)</div>
-               <div className="font-mono text-sm">
-                 {'$w_s = \\frac{V_{max}}{2}$'}
-               </div>
+               <MathFormula formula="w_s = \\frac{V_{\\mathrm{max}}}{2}" className="text-sm" />
                <div className="text-xs text-gray-400 mt-1">Utilizzo Triosi Fosfati (TPU)</div>
             </div>
           </div>

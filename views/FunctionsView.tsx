@@ -1,12 +1,14 @@
 import React from 'react';
 import { Card } from '../components/UI';
-import { Code, CloudRain, Sun, Droplet, Sprout, Calendar, Zap } from 'lucide-react';
+import { TrendingUp, CloudRain, Sun, Droplet, Sprout, Calendar, Zap } from 'lucide-react';
 
-const CodeBlock: React.FC<{ title: string; code: string; icon?: React.ReactNode; description: string }> = ({ title, code, icon, description }) => (
+const CodeBlock: React.FC<{ title: string; code: string; icon?: React.ReactNode; description?: string }> = ({ title, code, icon, description }) => (
   <Card title={title} headerAction={icon}>
-    <p className="text-sm text-gray-600 mb-4 italic border-l-2 border-brand-300 pl-3">
-      {description}
-    </p>
+    {description && (
+      <p className="text-sm text-gray-600 mb-4 italic border-l-2 border-brand-300 pl-3">
+        {description}
+      </p>
+    )}
     <div className="bg-slate-900 rounded-lg p-4 overflow-x-auto">
       <pre className="text-xs md:text-sm font-mono text-blue-100 leading-relaxed">
         <code>{code}</code>
@@ -17,6 +19,21 @@ const CodeBlock: React.FC<{ title: string; code: string; icon?: React.ReactNode;
 
 export const FunctionsView: React.FC = () => {
   
+  const CODE_EXPOLINEAR = `// Crescita Expolinear (Goudriaan & Monteith, 1990)
+// Combina fase esponenziale (pianta piccola) e lineare (LAI elevato)
+
+const expolinear = (t: number, r_m: number, C_m: number, t_b: number): number => {
+  // W = (C_m/r_m) * ln{1 + exp[r_m * (t - t_b)]}
+  const arg = r_m * (t - t_b);
+  return (C_m / r_m) * Math.log(1 + Math.exp(arg));
+};
+
+// r_m: tasso di crescita relativo (g g⁻¹ d⁻¹)
+// C_m: tasso di crescita massimo (g/m² d)
+// t_b: tempo base (inizio fase lineare)
+// Per t << t_b: crescita ~ esponenziale
+// Per t >> t_b: crescita ~ lineare (pendenza C_m)`;
+
   const CODE_WEATHER = `// Generatore Meteo Stocastico (Semplificato)
 // Simula l'andamento stagionale sinusoidale per T e Radiazione.
 
@@ -203,6 +220,12 @@ do {
        </div>
 
        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          <CodeBlock 
+            title="0. Crescita Expolinear" 
+            icon={<TrendingUp className="text-cyan-500"/>}
+            description="Funzione che descrive il passaggio da crescita esponenziale a lineare."
+            code={CODE_EXPOLINEAR} 
+          />
           <CodeBlock 
             title="1. Generatore Meteo" 
             icon={<CloudRain className="text-blue-500"/>}
