@@ -91,7 +91,10 @@ export const WaterView: React.FC = () => {
                         Giorno {currentStep.day} {sowingDay > 1 && <span className="text-xs font-normal text-gray-500">(Semina: {sowingDay})</span>}
                     </div>
                     <div className="text-xs text-gray-500">
-                        Stress: <span className={currentStep.ARID > 0 ? "text-red-600 font-bold" : "text-green-600"}>{currentStep.ARID.toFixed(2)}</span>
+                        ARID: <span className={currentStep.ARID > 0 ? "text-red-600 font-bold" : "text-green-600"}>{currentStep.ARID.toFixed(2)}</span>
+                        {(currentStep as { FTSW?: number }).FTSW != null && (
+                          <> · FTSW: <span className="text-blue-600">{(currentStep as { FTSW: number }).FTSW.toFixed(2)}</span></>
+                        )}
                     </div>
                 </div>
                 <input 
@@ -131,6 +134,11 @@ export const WaterView: React.FC = () => {
             <Slider 
               label="ET0 (Evapotraspirazione)" value={soilParams.ET0} min={1} max={8} step={0.2} unit="mm/d"
               onChange={v => setSoilParams(p => ({...p, ET0: v}))} 
+            />
+            <Slider 
+              label="Curve Number (CN) SCS" value={soilParams.CN ?? 70} min={50} max={95} step={5}
+              onChange={v => setSoilParams(p => ({...p, CN: v}))} 
+              description="Runoff metodo SCS (Eq. 14.14). Suoli nudi ~90, copertura ~70."
             />
           </Card>
         </div>
@@ -185,7 +193,10 @@ export const WaterView: React.FC = () => {
                   <Line yAxisId="left" type="monotone" dataKey="DRAIN" stroke="#9ca3af" strokeWidth={1} dot={false} name="Drenaggio" strokeDasharray="3 3" />
                   
                   {/* Linea ARID mappata sull'asse destro */}
-                  <Line yAxisId="right" type="monotone" dataKey="ARID" stroke="#ef4444" strokeDasharray="3 3" strokeWidth={2} name="Indice Stress (ARID)" dot={false} />
+                  <Line yAxisId="right" type="monotone" dataKey="ARID" stroke="#ef4444" strokeDasharray="3 3" strokeWidth={2} name="ARID" dot={false} />
+                  {waterResults.some((r: { FTSW?: number }) => r.FTSW != null) && (
+                    <Line yAxisId="right" type="monotone" dataKey="FTSW" stroke="#3b82f6" strokeWidth={1} name="FTSW" dot={false} />
+                  )}
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -211,6 +222,7 @@ export const WaterView: React.FC = () => {
                 <th className="px-4 py-2">Drenaggio</th>
                 <th className="px-4 py-2">W (mm)</th>
                 <th className="px-4 py-2">ARID</th>
+                <th className="px-4 py-2">FTSW</th>
               </tr>
             </thead>
             <tbody>
@@ -225,6 +237,7 @@ export const WaterView: React.FC = () => {
                   <td className="px-4 py-2">{row.DRAIN.toFixed(1)}</td>
                   <td className="px-4 py-2 font-medium text-blue-600">{row.W.toFixed(1)}</td>
                   <td className="px-4 py-2">{row.ARID.toFixed(2)}</td>
+                  <td className="px-4 py-2">{(row as { FTSW?: number }).FTSW?.toFixed(2) ?? '-'}</td>
                 </tr>
               ))}
             </tbody>

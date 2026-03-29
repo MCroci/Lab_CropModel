@@ -63,16 +63,19 @@ export const makeWeather = (params: WeatherParams): DailyWeather[] => {
   return weather;
 };`;
 
-  const CODE_PHENOLOGY = `// Tempo Termico (GDD - Growing Degree Days)
-// Misura "l'orologio biologico" della pianta basato sulla temperatura.
+  const CODE_PHENOLOGY = `// Tempo Termico con tempfun (Eq. 6.1-6.2)
+// DTU usa funzione trapezoidale su temperature cardinali.
 
-// 1. Calcolo Unità Termiche Giornaliere (DTU)
-const dtt = (tmin: number, tmax: number, tbase: number) => {
-  const tavg = (tmin + tmax) / 2;
-  // Se la temperatura media è sopra la base, accumula gradi giorno
-  // Se è sotto, la crescita si arresta (0)
-  return Math.max(tavg - tbase, 0);
+// 1. tempfun: risposta normalizzata (0-1)
+const tempfun = (tavg, TBD, TP1D, TP2D, TCD) => {
+  if (tavg <= TBD) return 0;
+  if (tavg < TP1D) return (tavg - TBD) / (TP1D - TBD);
+  if (tavg <= TP2D) return 1;
+  if (tavg < TCD) return (TCD - tavg) / (TCD - TP2D);
+  return 0;
 };
+// 2. DTU = (TP1D - TBD) × tempfun
+const DTU = (TP1D - TBD) * tempfun((tmin+tmax)/2, TBD, TP1D, TP2D, TCD);
 
 // 2. Accumulo nel ciclo (CTU)
 // Eseguito ogni giorno nel loop di simulazione:
@@ -114,19 +117,19 @@ const laiStep = (lai: number, nds: number, p: CropParams) => {
   return Math.max(lai + dlai, 0);
 };`;
 
-  const CODE_BIOMASS = `// Accumulo Biomassa (Radiation Use Efficiency)
-// B = RUE * Radiazione Intercettata * Fattore Temperatura
+  const CODE_BIOMASS = `// Accumulo Biomassa (RUE) - Eq. 10.1, 15.4
+// DDMP = PAR × FINT × RUE × TCFRUE × WSFG × fHeat
 
-// 1. Legge di Beer-Lambert per l'intercettazione
-const fint = (lai: number, k: number) => 1 - Math.exp(-k * lai);
+// 1. Legge di Beer-Lambert
+const fint = (lai, k) => 1 - Math.exp(-k * lai);
 
-// 2. Calcolo crescita giornaliera (Delta Dry Matter Production)
-const ddmp = (srad: number, lai: number, k: number, rue: number, tempFactor = 1) => {
-  // 0.48 è la frazione di radiazione fotosinteticamente attiva (PAR)
-  return srad * 0.48 * fint(lai, k) * rue * tempFactor;
-};
+// 2. WSFG: stress idrico (Eq. 15.3)
+const wsfg = (ftsw, wssg) => ftsw >= wssg ? 1 : ftsw / wssg;
 
-// Nota: tempFactor è 0 se T < Tbase o T > Tmax, e 1 se T è ottimale.`;
+// 3. DDMP con tutti i fattori
+const ddmp = (srad, lai, k, rue, tempFactor, waterFactor = 1) =>
+  srad * 0.48 * fint(lai, k) * rue * tempFactor * waterFactor;
+// TCFRUE = tempfun per RUE; waterFactor = WSFG`;
 
   const CODE_WATER = `// Bilancio Idrico del Suolo ("Tipping Bucket")
 // W(t+1) = W(t) + Pioggia - Ruscellamento - Evap - Drenaggio
@@ -151,8 +154,9 @@ export const simulateSoilWater = (weather, soilPar, laiSeries) => {
     const Tact = Math.min(Tpot, soilPar.alpha * aw); 
     const Eact = Math.min(Epot, soilPar.gamma * aw);
 
-    // 3. Ingressi e Uscite
-    const RO = Math.max(w.RAIN - soilPar.inf_cap, 0); // Ruscellamento
+    // 3. Ruscellamento: SCS (Eq. 14.14) se CN>0, altrimenti inf_cap
+    // S = 254*(100/CN-1); RO = (P-0.2*S)²/(P+0.8*S) se P > 0.2*S
+    const RO = Math.max(w.RAIN - soilPar.inf_cap, 0); // versione semplificata
     const D = Math.max(W - soilPar.W_fc, 0) * soilPar.beta; // Drenaggio profondo
 
     // 4. Aggiornamento Stato

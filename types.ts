@@ -11,6 +11,12 @@ export interface CropParams {
   // Phenology
   Tbase: number;
   tuHAR: number;
+  // Temperature cardinali per tempfun/DTU (Eq. 6.1) - se assenti si usa TP1RUE/TP2RUE/TCRUE
+  TP1D?: number;
+  TP2D?: number;
+  TCD?: number;
+  // Water stress: soglia FTSW per crescita (Eq. 15.3)
+  WSSG?: number;
   // LAI
   LAI0: number;
   LAIMX: number;
@@ -27,7 +33,7 @@ export interface CropParams {
   TCRUE: number;
   // Initials calculated/constant
   B0: number;
-  Tmean?: number; // Used for RUE temp response check
+  Tmean?: number;
 }
 
 export interface SoilParams {
@@ -42,7 +48,8 @@ export interface SoilParams {
   inf_cap: number;
   LAI_full_cover: number;
   soil_depth: number; // cm
-  // Carbon specific fields
+  /** Curve Number SCS (0-100) per runoff Eq. 14.14; se assente usa inf_cap */
+  CN?: number;
   initial_soc: number;
   clay_percent: number;
 }
@@ -62,6 +69,10 @@ export interface SimulationStep extends DailyWeather {
   LAI: number;
   dB: number;
   B: number;
+  /** FTSW (0-1) - Fraction Transpirable Soil Water */
+  FTSW?: number;
+  /** WSFG (0-1) - Water Stress Factor for Growth */
+  WSFG?: number;
 }
 
 export interface WaterStep extends DailyWeather {
@@ -72,6 +83,8 @@ export interface WaterStep extends DailyWeather {
   DRAIN: number;
   W: number;
   ARID: number;
+  /** FTSW = ATSW/TTSW (Eq. 14.7) */
+  FTSW?: number;
 }
 
 export interface EmergenceStep {

@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback, useRef } from 'react';
 import { WeatherParams, CropParams, SoilParams, SimulationStep, WaterStep, DailyWeather } from '../types';
-import { makeWeather, simulateCrop, simulateSoilWater } from '../services/cropModel';
+import { makeWeather, simulateCrop, simulateCropAndWater, simulateSoilWater } from '../services/cropModel';
 import { saveCurrentConfiguration, loadCurrentConfiguration, saveNamedConfiguration, getAllSavedConfigurations, loadConfiguration, deleteConfiguration, SavedConfiguration } from '../services/storageService';
 
 interface SimulationContextType {
@@ -82,6 +82,7 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
     inf_cap: 25,
     LAI_full_cover: 3,
     soil_depth: 30,
+    CN: 70,
     initial_soc: 50,
     clay_percent: 25
   });
@@ -154,39 +155,15 @@ export const SimulationProvider: React.FC<{ children: ReactNode }> = ({ children
     // Ottieni la data di semina per la coltura corrente
     const currentSowingDay = getCurrentCropSowingDay();
 
-    // Filter weather data starting from sowing day
-    const weatherFromSowing = dailyWeather.filter(w => w.day >= currentSowingDay);
-    if (weatherFromSowing.length === 0) {
-      // If sowing day is beyond available weather, use all data
-      const cropRes = simulateCrop(dailyWeather, cropParams);
-      const laiSeries = cropRes.map(r => r.LAI);
-      const waterRes = simulateSoilWater(dailyWeather, soilParams, laiSeries);
-      setSimulationResults(cropRes);
-      setWaterResults(waterRes);
-      return;
-    }
+    const safeSowingDay = Math.min(Math.max(1, currentSowingDay), dailyWeather.length || 1);
+    const { crop: cropRes, water: waterRes } = simulateCropAndWater(
+      dailyWeather,
+      cropParams,
+      soilParams,
+      safeSowingDay
+    );
 
-    // 1. CROP SIMULATION (Single generic crop visualization)
-    // Adjust day numbers to start from 1 for the simulation
-    const adjustedWeather = weatherFromSowing.map((w, idx) => ({
-      ...w,
-      day: idx + 1 // Reset day counter from sowing
-    }));
-    const cropRes = simulateCrop(adjustedWeather, cropParams);
-    
-    // Restore original day numbers for display
-    const cropResWithOriginalDays = cropRes.map((r, idx) => ({
-      ...r,
-      day: weatherFromSowing[idx].day // Original day from weather data
-    }));
-    
-    // 2. WATER SIMULATION
-    const laiSeries = cropRes.map(r => r.LAI);
-    // For water simulation, we need to account for pre-sowing period
-    const fullLaiSeries = new Array(currentSowingDay - 1).fill(0).concat(laiSeries);
-    const waterRes = simulateSoilWater(dailyWeather, soilParams, fullLaiSeries);
-
-    setSimulationResults(cropResWithOriginalDays);
+    setSimulationResults(cropRes);
     setWaterResults(waterRes);
     
     setIsSimulating(false);

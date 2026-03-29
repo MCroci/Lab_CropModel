@@ -17,6 +17,7 @@ const ExportView = lazy(() => import('./views/ExportView').then(m => ({ default:
 const AboutView = lazy(() => import('./views/AboutView').then(m => ({ default: m.AboutView })));
 const WeatherGeneratorView = lazy(() => import('./views/WeatherGeneratorView').then(m => ({ default: m.WeatherGeneratorView })));
 const FunctionsView = lazy(() => import('./views/FunctionsView').then(m => ({ default: m.FunctionsView })));
+const ResponseFunctionsView = lazy(() => import('./views/ResponseFunctionsView').then(m => ({ default: m.ResponseFunctionsView })));
 const AgrivoltaicsView = lazy(() => import('./views/AgrivoltaicsView').then(m => ({ default: m.AgrivoltaicsView })));
 const ScenarioView = lazy(() => import('./views/ScenarioView').then(m => ({ default: m.ScenarioView })));
 const AgriVoltaicEnergyView = lazy(() => import('./views/AgriVoltaicEnergyView').then(m => ({ default: m.AgriVoltaicEnergyView })));
@@ -25,6 +26,7 @@ const SeedEmergenceView = lazy(() => import('./views/SeedEmergenceView').then(m 
 const LearningPathView = lazy(() => import('./views/LearningPathView').then(m => ({ default: m.LearningPathView })));
 const ExercisesView = lazy(() => import('./views/ExercisesView').then(m => ({ default: m.ExercisesView })));
 const ValidationView = lazy(() => import('./views/ValidationView').then(m => ({ default: m.ValidationView })));
+const CalibrationView = lazy(() => import('./views/CalibrationView').then(m => ({ default: m.CalibrationView })));
 const BibliographyView = lazy(() => import('./views/BibliographyView').then(m => ({ default: m.BibliographyView })));
 const ManualeView = lazy(() => import('./views/ManualeView').then(m => ({ default: m.ManualeView })));
 const WeatherDataManagementView = lazy(() => import('./views/WeatherDataManagementView').then(m => ({ default: m.WeatherDataManagementView })));
@@ -44,6 +46,7 @@ const App: React.FC = () => {
       case 'weather_management': return <WeatherDataManagementView />; 
       case 'concepts': return <ConceptsView />;
       case 'functions': return <FunctionsView />;
+      case 'response_functions': return <ResponseFunctionsView />;
       case 'emergence': return <SeedEmergenceView />;
       case 'phenology': return <PhenologyView />;
       case 'lai': return <LaiView />;
@@ -58,6 +61,7 @@ const App: React.FC = () => {
       case 'learning_path': return <LearningPathView onNavigate={setActiveTab} />;
       case 'exercises': return <ExercisesView />;
       case 'validation': return <ValidationView />;
+      case 'calibration': return <CalibrationView onNavigate={setActiveTab} />;
       case 'bibliography': return <BibliographyView />;
       case 'manuale': return <ManualeView onNavigate={setActiveTab} />;
       case 'about': return <AboutView />;

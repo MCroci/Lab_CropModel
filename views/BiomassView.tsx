@@ -54,6 +54,14 @@ export const BiomassView: React.FC = () => {
               description="Temperatura massima sopra la quale la fotosintesi si azzera (stress termico)."
             />
           </div>
+          <div className="my-4 border-t pt-4">
+            <h4 className="text-sm font-semibold mb-3 text-gray-700">Stress Idrico (FTSW/WSFG)</h4>
+            <Slider 
+              label="Soglia FTSW (WSSG)" value={cropParams.WSSG ?? 0.25} min={0.1} max={0.5} step={0.05}
+              onChange={v => setCropParams(p => ({...p, WSSG: v}))} 
+              description="Sotto questa soglia la crescita è limitata (Eq. 15.3)."
+            />
+          </div>
           <p className="text-xs text-gray-500">La funzione di risposta è trapezoidale (0-1) basata sulla temperatura media giornaliera.</p>
         </Card>
       </div>
@@ -73,7 +81,8 @@ export const BiomassView: React.FC = () => {
               <li><strong>PAR:</strong> Photosynthetically Active Radiation (~48% della radiazione globale).</li>
               <li><strong>f(T):</strong> Fattore di limitazione termica (0-1) che riduce la fotosintesi se fa troppo freddo o troppo caldo.</li>
               <li><strong>f(Heat):</strong> Stress termico (SIMPLE, Zhao et al. 2019): riduce la crescita quando Tmax supera 35°C, azzerandosi sopra ~45°C.</li>
-              <li><strong>Effetto CO₂:</strong> In modelli avanzati, RUE_x = RUE_0[1 + b·ln(C_x/C_0)] con b≈0.4 (C4) o 0.8 (C3).</li>
+              <li><strong>WSFG (stress idrico):</strong> FTSW &lt; soglia riduce RUE (Eq. 15.3-15.4). WSFG = FTSW/WSSG sotto soglia.</li>
+              <li><strong>Effetto CO₂:</strong> RUE_x = RUE_0[1 + b·ln(C_x/C_0)] con b≈0.4 (C4) o 0.8 (C3).</li>
             </ul>
           </div>
         </Card>

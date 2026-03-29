@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { 
   Compass, BookOpen, Calendar, Leaf, Activity, Droplet, Layers,
   Download, Info, Menu, X, CloudRain, Code, Sun, Sliders, Zap, Microscope, Sprout,
-  GraduationCap, FileCheck, CheckCircle2, Library, Database, FileText
+  GraduationCap, FileCheck, CheckCircle2, Library, Database, FileText, LineChart, Target
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -21,6 +21,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     { id: 'learning_path', label: 'Percorso Didattico', icon: GraduationCap },
     { id: 'exercises', label: 'Esercizi', icon: FileCheck },
     { id: 'concepts', label: 'Concetti Base', icon: BookOpen },
+    { id: 'response_functions', label: 'Funzioni di Risposta', icon: LineChart },
     { id: 'manuale', label: 'Manuale Teoria', icon: FileText },
     
     // === INPUT E FONDAMENTI ===
@@ -38,6 +39,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     
     // === ANALISI E VALIDAZIONE ===
     { id: 'scenario', label: 'Analisi Scenario', icon: Sliders },
+    { id: 'calibration', label: 'Calibrazione', icon: Target },
     { id: 'validation', label: 'Validazione', icon: CheckCircle2 },
     
     // === APPLICAZIONI AVANZATE ===
@@ -95,7 +97,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Introduzione
             </div>
-            {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'concepts', 'manuale'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'concepts', 'response_functions', 'manuale'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
@@ -170,7 +172,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Analisi e Validazione
             </div>
-            {menuItems.filter(item => ['scenario', 'validation'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['scenario', 'calibration', 'validation'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (

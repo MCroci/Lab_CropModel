@@ -2,33 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { Card, Select, Button, LoadingSpinner } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { CropParams } from '../types';
-import { GitCompare, Save, FolderOpen, Trash2, CheckCircle, BookOpen, Leaf, Activity, Droplet, Code, Library, Calendar, Layers } from 'lucide-react';
+import { GitCompare, Save, FolderOpen, Trash2, CheckCircle, BookOpen, Leaf, Activity, Droplet, Code, Library, Calendar, Layers, LineChart } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 // Preset Data - Completi con tutti i parametri necessari
 const CROP_PRESETS: Record<string, Partial<CropParams>> = {
   'generica': {
-    Tbase: 8, tuHAR: 1400, LAI0: 0.02, LAIMX: 5, ALPHA: 0.02, 
+    Tbase: 8, tuHAR: 1400, LAI0: 0.02, LAIMX: 5, ALPHA: 0.02,
     SENRATE: 0.02, frEMR: 0.05, frBLS: 0.65, KPAR: 0.6, RUE: 2.5,
-    TBRUE: 8, TP1RUE: 18, TP2RUE: 28, TCRUE: 40, B0: 0
+    TBRUE: 8, TP1RUE: 18, TP2RUE: 28, TCRUE: 40, WSSG: 0.25, B0: 0
   },
   'mais': {
-    Tbase: 10, tuHAR: 1600, LAI0: 0.015, LAIMX: 6, ALPHA: 0.025, 
+    Tbase: 10, tuHAR: 1600, LAI0: 0.015, LAIMX: 6, ALPHA: 0.025,
     SENRATE: 0.03, frEMR: 0.05, frBLS: 0.7, KPAR: 0.65, RUE: 3.8,
-    // Mais (C4): ottimo termico più alto, range più ampio
-    TBRUE: 10, TP1RUE: 22, TP2RUE: 32, TCRUE: 45, B0: 0
+    TBRUE: 10, TP1RUE: 22, TP2RUE: 32, TCRUE: 45, WSSG: 0.25, B0: 0
   },
   'frumento': {
-    Tbase: 0, tuHAR: 1900, LAI0: 0.02, LAIMX: 7, ALPHA: 0.015, 
+    Tbase: 0, tuHAR: 1900, LAI0: 0.02, LAIMX: 7, ALPHA: 0.015,
     SENRATE: 0.01, frEMR: 0.05, frBLS: 0.6, KPAR: 0.5, RUE: 2.2,
-    // Frumento (C3): ottimo termico più basso, range più stretto
-    TBRUE: 0, TP1RUE: 15, TP2RUE: 25, TCRUE: 35, B0: 0
+    TBRUE: 0, TP1RUE: 15, TP2RUE: 25, TCRUE: 35, WSSG: 0.25, B0: 0
   },
   'pomodoro': {
-    Tbase: 12, tuHAR: 1800, LAI0: 0.01, LAIMX: 4, ALPHA: 0.03, 
+    Tbase: 12, tuHAR: 1800, LAI0: 0.01, LAIMX: 4, ALPHA: 0.03,
     SENRATE: 0.02, frEMR: 0.05, frBLS: 0.8, KPAR: 0.7, RUE: 2.0,
-    // Pomodoro: pianta termofila, ottimo termico intermedio
-    TBRUE: 12, TP1RUE: 20, TP2RUE: 30, TCRUE: 42, B0: 0
+    TBRUE: 12, TP1RUE: 20, TP2RUE: 30, TCRUE: 42, WSSG: 0.25, B0: 0
   }
 };
 
@@ -136,6 +133,13 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
                 <div>
                   <div className="font-semibold text-gray-900">Concetti Base</div>
                   <div className="text-xs text-gray-600">Expolinear, Bilancio di Massa</div>
+                </div>
+              </button>
+              <button onClick={() => onNavigate('response_functions')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
+                <LineChart size={18} className="text-cyan-600 flex-shrink-0" />
+                <div>
+                  <div className="font-semibold text-gray-900">Funzioni di Risposta</div>
+                  <div className="text-xs text-gray-600">tempfun, FTSW, Beer-Lambert, SCS</div>
                 </div>
               </button>
               <button onClick={() => onNavigate('phenology')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
@@ -335,8 +339,8 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
             <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
               <li>Scegli un preset qui sopra.</li>
               <li>Vai su <strong>Generatore Meteo</strong> per definire il clima.</li>
-              <li>Analizza la <strong>Biomassa</strong> per vedere l'accumulo.</li>
-              <li>Controlla <strong>Bilancio Idrico</strong> per lo stress (ARID).</li>
+              <li>Esplora <strong>Funzioni di Risposta</strong> per le forme delle equazioni.</li>
+              <li>Analizza <strong>Biomassa</strong> e <strong>Bilancio Idrico</strong> (FTSW, ARID).</li>
             </ol>
           </div>
           <div className="pt-4 border-t border-blue-200 mt-4">

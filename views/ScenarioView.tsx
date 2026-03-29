@@ -3,7 +3,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, Button } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
-import { simulateCrop, simulateSoilWater } from '../services/cropModel';
+import { simulateCropAndWater } from '../services/cropModel';
 import { Zap, BookOpen } from 'lucide-react';
 
 export const ScenarioView: React.FC = () => {
@@ -33,46 +33,40 @@ export const ScenarioView: React.FC = () => {
   const scenarioData = useMemo(() => {
     if (baselineRes.length === 0) return null;
 
-    // 1. Modify Weather based on factors
     const scenarioWeather = baselineRes.map(day => ({
       ...day,
       SRAD: Math.max(0, day.SRAD * radFactor),
       RAIN: Math.max(0, day.RAIN * rainFactor),
     }));
 
-    // 2. Modify Soil Params
     const scenarioSoilParams = {
       ...soilParams,
       ET0: soilParams.ET0 * et0Factor
     };
 
-    // 3. Run Models
-    const cropRes = simulateCrop(scenarioWeather, cropParams);
-    const laiSeries = cropRes.map(r => r.LAI);
-    const waterRes = simulateSoilWater(scenarioWeather, scenarioSoilParams, laiSeries);
+    const { crop: scenCropRes, water: scenWaterRes } = simulateCropAndWater(
+      scenarioWeather, cropParams, scenarioSoilParams, 1
+    );
 
-    // 4. Merge for Charting
+    const waterByDay = Object.fromEntries(scenWaterRes.map(w => [w.day, w]));
+    const baselineWaterByDay = Object.fromEntries(baselineWater.map(w => [w.day, w]));
+
     return baselineRes.map((base, i) => {
-      const scenCrop = cropRes[i];
-      const scenWater = waterRes[i];
-      
+      const scenCrop = scenCropRes[i];
+      const scenWater = waterByDay[base.day] ?? scenWaterRes[i];
+      const baseW = baselineWaterByDay[base.day] ?? baselineWater[i];
       return {
         day: base.day,
-        // Biomass
         B_Base: base.B,
-        B_Scen: scenCrop.B,
-        // LAI
+        B_Scen: scenCrop?.B ?? base.B,
         LAI_Base: base.LAI,
-        LAI_Scen: scenCrop.LAI,
-        // Water
-        W_Base: baselineWater[i]?.W || 0,
-        W_Scen: scenWater.W,
-        // Stress
-        ARID_Base: baselineWater[i]?.ARID || 0,
-        ARID_Scen: scenWater.ARID
+        LAI_Scen: scenCrop?.LAI ?? base.LAI,
+        W_Base: baseW?.W ?? 0,
+        W_Scen: scenWater?.W ?? 0,
+        ARID_Base: baseW?.ARID ?? 0,
+        ARID_Scen: scenWater?.ARID ?? 0
       };
     });
-
   }, [baselineRes, baselineWater, cropParams, soilParams, radFactor, et0Factor, rainFactor]);
 
   if (!scenarioData) return <div>Esegui prima una simulazione nella tab Panoramica o Fenologia.</div>;

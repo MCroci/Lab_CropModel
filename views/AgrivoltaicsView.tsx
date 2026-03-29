@@ -4,7 +4,7 @@ import { CHART_MARGIN } from '../utils/chartMargins';
 import { Card, Slider, DownloadAction } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { Sun, Zap, BookOpen } from 'lucide-react';
-import { simulateCrop, simulateSoilWater } from '../services/cropModel';
+import { simulateCropAndWater } from '../services/cropModel';
 
 export const AgrivoltaicsView: React.FC = () => {
   const { dailyWeather, cropParams, soilParams, agrivoltaicsShading, setAgrivoltaicsShading, runSimulation, getCurrentCropSowingDay } = useSimulation();
@@ -20,46 +20,40 @@ export const AgrivoltaicsView: React.FC = () => {
   const getAgrivoltaicsData = () => {
     if (dailyWeather.length === 0) return [];
 
-    // Filter weather from sowing day
-    const weatherFromSowing = dailyWeather.filter(w => w.day >= sowingDay);
-    if (weatherFromSowing.length === 0) return [];
-    
-    const adjustedWeather = weatherFromSowing.map((w, idx) => ({ ...w, day: idx + 1 }));
+    const safeSowing = Math.min(Math.max(1, sowingDay), dailyWeather.length);
 
-    // 1. Standard Simulation (0% Shading)
-    const baseCropRes = simulateCrop(adjustedWeather, cropParams);
-    const baseLaiSeries = baseCropRes.map(r => r.LAI);
-    // For water, need full series with pre-sowing period
-    const fullLaiSeries = new Array(sowingDay - 1).fill(0).concat(baseLaiSeries);
-    const baseWaterRes = simulateSoilWater(dailyWeather, soilParams, fullLaiSeries);
-    const baseWaterFromSowing = baseWaterRes.filter((_, idx) => idx >= sowingDay - 1);
+    // 1. Standard Simulation
+    const { crop: baseCropRes, water: baseWaterRes } = simulateCropAndWater(
+      dailyWeather, cropParams, soilParams, safeSowing
+    );
+    const baseWaterFromSowing = baseWaterRes.filter(w => w.day >= safeSowing);
 
     // 2. Agrivoltaics Simulation (Current Shading)
     const radiationFactor = 1.0 - (agrivoltaicsShading / 100);
-    // Agrivoltaics often reduces ET0 demand due to wind protection/shade. Heuristic: half the % of shading reduction applied to ET0
-    const et0Factor = 1.0 - (agrivoltaicsShading / 100) * 0.3; 
+    const et0Factor = 1.0 - (agrivoltaicsShading / 100) * 0.3;
+    const agriWeather = dailyWeather.map(w =>
+      w.day >= safeSowing ? { ...w, SRAD: w.SRAD * radiationFactor } : w
+    );
+    const agriSoilParams = { ...soilParams, ET0: soilParams.ET0 * et0Factor };
 
-    const agrivoltaicsWeather = adjustedWeather.map(w => ({
-      ...w,
-      SRAD: w.SRAD * radiationFactor
-    }));
-    const agrivoltaicsSoilParams = { ...soilParams, ET0: soilParams.ET0 * et0Factor };
-    
-    const agriCropRes = simulateCrop(agrivoltaicsWeather, cropParams);
-    const agriLaiSeries = agriCropRes.map(r => r.LAI);
-    const fullAgriLaiSeries = new Array(sowingDay - 1).fill(0).concat(agriLaiSeries);
-    const agriWaterRes = simulateSoilWater(dailyWeather, agrivoltaicsSoilParams, fullAgriLaiSeries);
-    const agriWaterFromSowing = agriWaterRes.filter((_, idx) => idx >= sowingDay - 1);
+    const { crop: agriCropRes, water: agriWaterRes } = simulateCropAndWater(
+      agriWeather, cropParams, agriSoilParams, safeSowing
+    );
+    const agriWaterFromSowing = agriWaterRes.filter(w => w.day >= safeSowing);
 
-    return baseCropRes.map((base, i) => ({
-      day: weatherFromSowing[i].day, // Original day number
-      Biomassa_Standard: base.B,
-      Biomassa_Agri: agriCropRes[i].B,
-      Acqua_Standard: baseWaterFromSowing[i]?.W || 0,
-      Acqua_Agri: agriWaterFromSowing[i]?.W || 0,
-      Stress_Standard: baseWaterFromSowing[i]?.ARID || 0,
-      Stress_Agri: agriWaterFromSowing[i]?.ARID || 0
-    }));
+    return baseCropRes.map((base, i) => {
+      const wBase = baseWaterFromSowing.find(w => w.day === base.day);
+      const wAgri = agriWaterFromSowing.find(w => w.day === base.day);
+      return {
+        day: base.day,
+        Biomassa_Standard: base.B,
+        Biomassa_Agri: agriCropRes[i]?.B ?? base.B,
+        Acqua_Standard: wBase?.W ?? 0,
+        Acqua_Agri: wAgri?.W ?? 0,
+        Stress_Standard: wBase?.ARID ?? 0,
+        Stress_Agri: wAgri?.ARID ?? 0
+      };
+    });
   };
 
   const chartData = getAgrivoltaicsData();

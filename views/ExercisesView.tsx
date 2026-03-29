@@ -19,46 +19,6 @@ interface Exercise {
   completed: boolean;
 }
 
-const RHO_S = 2650; // kg/m³ densità particelle
-const RHO_L = 1000; // kg/m³ densità acqua
-
-const PorosityCalculator: React.FC = () => {
-  const [rhoB, setRhoB] = useState(1200);
-  const [w, setW] = useState(0.20);
-  const [hPrism, setHPrism] = useState(2);
-  const phi = 1 - rhoB / RHO_S;
-  const theta = w * (rhoB / RHO_L);
-  const hW = theta * hPrism * 1000; // mm
-  return (
-    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-      <h4 className="font-semibold text-amber-900 mb-3">Calcolatore interattivo: Porosità e Acqua nel Pedon</h4>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Slider label="ρ_b (kg/m³)" value={rhoB} min={800} max={1800} step={50} onChange={setRhoB} description="Densità apparente" />
-        <Slider label="w (gravimetrico)" value={w} min={0.05} max={0.45} step={0.01} onChange={setW} description="0-1" />
-        <Slider label="h_prism (m)" value={hPrism} min={0.5} max={3} step={0.1} onChange={setHPrism} description="Profondità prisma" />
-      </div>
-      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-        <div className="bg-white p-2 rounded border border-amber-200">
-          <div className="text-amber-700 font-medium">φ (porosità)</div>
-          <div className="text-lg font-bold text-amber-900">{(phi * 100).toFixed(1)}%</div>
-        </div>
-        <div className="bg-white p-2 rounded border border-amber-200">
-          <div className="text-amber-700 font-medium">θ (volumetrico)</div>
-          <div className="text-lg font-bold text-amber-900">{(theta * 100).toFixed(1)}%</div>
-        </div>
-        <div className="bg-white p-2 rounded border border-amber-200">
-          <div className="text-amber-700 font-medium">h_w (mm)</div>
-          <div className="text-lg font-bold text-amber-900">{hW.toFixed(0)}</div>
-        </div>
-        <div className="bg-white p-2 rounded border border-amber-200 col-span-2 sm:col-span-1">
-          <div className="text-amber-700 font-medium">Aria (φ-θ)</div>
-          <div className="text-lg font-bold text-amber-900">{((phi - theta) * 100).toFixed(1)}%</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export const ExercisesView: React.FC = () => {
   const { cropParams, setCropParams, simulationResults } = useSimulation();
   const [showSolution, setShowSolution] = useState<Record<string, boolean>>({});
@@ -78,12 +38,12 @@ export const ExercisesView: React.FC = () => {
       ],
       steps: [
         {
-          description: 'Genera dati osservati sintetici: esegui una simulazione con RUE=3.5 e aggiungi rumore gaussiano (σ=200 kg/ha)',
-          hint: 'Usa la vista Calibrazione per generare osservazioni sintetiche'
+          description: 'Genera dati osservati sintetici: esegui una simulazione con RUE=3.5 e aggiungi rumore gaussiano (σ≈150-200 kg/ha)',
+          hint: 'Vai alla vista Calibrazione (menu Analisi e Validazione), clicca "Genera Osservazioni Sintetiche"'
         },
         {
-          description: 'Esegui calibrazione variando RUE tra 2.0 e 5.0 con step 0.2',
-          hint: 'Nella vista Calibrazione, seleziona RUE come parametro da calibrare'
+          description: 'Esegui calibrazione variando RUE (grid search). Seleziona RUE come parametro da calibrare.',
+          hint: 'Nella vista Calibrazione, scegli RUE dal menu, poi clicca "Esegui Calibrazione"'
         },
         {
           description: 'Identifica il valore di RUE che minimizza il RMSE',
@@ -132,7 +92,7 @@ export const ExercisesView: React.FC = () => {
     {
       id: 'ex3',
       title: 'Effetto dello Stress Idrico sulla Produttività',
-      description: 'Analizza come lo stress idrico influisce sulla produzione di biomassa attraverso l\'indice ARID.',
+      description: 'Analizza come lo stress idrico (FTSW, WSFG, ARID) influisce sulla produzione di biomassa.',
       difficulty: 'intermedio',
       module: 'Bilancio Idrico del Suolo',
       objectives: [
@@ -143,7 +103,7 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Simula uno scenario con precipitazioni normali (rain_mean=2 mm/d). Registra la biomassa finale.',
-          hint: 'Usa la vista Bilancio Idrico per vedere ARID e la vista Biomassa per la biomassa finale'
+          hint: 'Vista Bilancio Idrico: ARID e FTSW. Vista Biomassa: biomassa finale. Genera meteo prima.'
         },
         {
           description: 'Ripeti con precipitazioni ridotte (rain_mean=0.5 mm/d). Confronta ARID e biomassa finale.',
@@ -175,7 +135,7 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Simula con KPAR=0.5 (tipico per frumento). Calcola FINT media durante la fase di crescita.',
-          hint: 'FINT = 1 - exp(-KPAR × LAI). Usa la vista LAI per vedere FINT'
+          hint: 'FINT = 1 - exp(-KPAR × LAI). Vista LAI & Radiazione mostra LAI e FINT nel grafico'
         },
         {
           description: 'Varia KPAR tra 0.3 e 0.7 con step 0.05. Per ogni valore, calcola FINT media.',
@@ -314,87 +274,199 @@ export const ExercisesView: React.FC = () => {
       completed: false
     },
     {
-      id: 'ex6a',
-      title: 'Analisi della Macroporosità negli Aggregati tramite Box Counting',
-      description: 'La struttura del suolo e la presenza di macropori sono fondamentali per la crescita delle radici e per il drenaggio. La teoria è spiegata nella sezione Suolo e Aggregati. Questo esercizio modella la geometria dei pori tra gli aggregati (peds) usando la dimensione frattale.',
-      difficulty: 'avanzato',
-      module: 'Fisica del Suolo',
+      id: 'ex6',
+      title: 'Funzioni di Risposta: tempfun e Forme',
+      description: 'Esplora la vista Funzioni di Risposta e le diverse forme della risposta alla temperatura.',
+      difficulty: 'base',
+      module: 'Funzioni di Risposta',
       objectives: [
-        'Utilizzare la tecnica del box counting per determinare la dimensione frattale (D)',
-        'Identificare la frazione di superficie occupata dai pori',
-        'Collegare la lavorazione del terreno alla porosità'
+        'Conoscere la forma trapezoidale (default)',
+        'Confrontare trapezoidale, triangolare e beta',
+        'Interpretare le temperature cardinali'
       ],
       steps: [
         {
-          description: 'Caricare un\'immagine di una sezione di suolo (es. soil_image.jpg) e impostare una soglia RGB (es. 128) per distinguere i pori (chiari) dalla matrice solida (scura).',
-          hint: 'Vedi sezione Suolo e Aggregati per la teoria. Soglie tipiche: valori > soglia = pori, < soglia = solido'
+          description: 'Vai alla vista Funzioni di Risposta. Con TBD=8, TP1=18, TP2=28, TCD=40: a quale temperatura f(T) raggiunge 1?',
+          hint: 'La forma trapezoidale è 1 tra TP1 e TP2'
         },
         {
-          description: 'Calcolare come varia il numero di "box" occupati dai pori al diminuire della dimensione del box (L). La relazione N(L) ∝ L^(-D) fornisce la dimensione frattale D.',
-          hint: 'D = -log(N2/N1) / log(L2/L1) per due scale L1, L2'
+          description: 'Passa alla forma triangolare. Come cambia la curva rispetto alla trapezoidale?',
+          solution: 'La triangolare ha un singolo picco (Topt); non c\'è plateau, la curva scende subito dopo il massimo'
         },
         {
-          description: 'Se una lavorazione del terreno (es. aratura) frammenta i macro-aggregati aumentando la dimensione frattale dei pori, come cambierà la percentuale di porosità totale?',
-          solution: 'La frammentazione aumenta la complessità della rete di pori (D più alto) e tipicamente aumenta la porosità totale accessibile alle scale di misura, migliorando drenaggio e aerazione ma anche rischio di compattazione successiva.'
+          description: 'Con la forma beta, a T=5°C (sotto TBD) qual è il valore di f(T)?',
+          solution: 'f(T) = 0 per T ≤ TBD (nessuno sviluppo)'
         }
       ],
-      solution: 'Il box counting stima D dalla pendenza di log(N) vs log(1/L). Un suolo lavorato di fresco ha aggregati più piccoli e una rete di pori più ramificata (D più alto). La porosità totale calcolata aumenta perché si "vedono" più pori alle scale fini.',
+      solution: 'Le tre forme modellano diversamente la risposta alle temperature estreme. La trapezoidale è usata nel modello; la beta dà transizioni più morbide.',
       completed: false
     },
     {
-      id: 'ex6b',
-      title: 'Modellizzazione del "Bundle of Capillaries" (Fascio di Capillari)',
-      description: 'Per simulare come l\'acqua viene trattenuta e resa disponibile per le colture, il suolo viene modellato come un insieme di tubi capillari con raggi distribuiti casualmente. Vedi la sezione Suolo e Aggregati per la teoria.',
-      difficulty: 'avanzato',
-      module: 'Fisica del Suolo',
-      objectives: [
-        'Generare un modello stocastico di pori capillari',
-        'Rappresentare la rete idraulica di un aggregato di suolo',
-        'Modificare il modello per suoli compattati'
-      ],
-      steps: [
-        {
-          description: 'Generare n=250 capillari con raggi (r) e posizioni (x,z) casuali. Implementare un controllo per evitare sovrapposizioni e mantenere i capillari entro un raggio definito (aggregato cilindrico o prismatico).',
-          hint: 'Vedi sezione Suolo e Aggregati per la teoria. Verifica distanza tra centri: sqrt((x1-x2)²+(z1-z2)²) > r1+r2'
-        },
-        {
-          description: 'Visualizzare la distribuzione (es. con VPython: visual.cylinder per ogni poro).',
-          hint: 'Ogni capillare è un cilindro con raggio r e altezza dell\'aggregato'
-        },
-        {
-          description: 'In un suolo compattato da macchinari agricoli, i raggi dei pori più grandi vengono ridotti. Come modificare la generazione dei raggi per riflettere una riduzione della macroporosità?',
-          solution: 'Usare una distribuzione dei raggi più "stretta" (es. solo raggi piccoli) o una distribuzione troncata: r_max ridotto, oppure una distribuzione log-normale con media più bassa. La macroporosità (pori > 75 μm) diminuisce drasticamente.'
-        }
-      ],
-      solution: 'Nel modello a fascio di capillari, la compattazione si simula riducendo la variabilità e il massimo dei raggi. La legge di Jurin (h ∝ 1/r) mostra che i capillari più piccoli trattengono acqua a tensioni più alte; un suolo compattato ha meno macropori e più ritenzione idrica ma minore drenaggio.',
-      completed: false
-    },
-    {
-      id: 'ex6c',
-      title: 'Porosità e Indice dei Vuoti in un Prisma di Suolo (Pedon)',
-      description: 'La densità apparente (ρ_b) è un indicatore chiave della salute del suolo. Suoli lavorati di fresco hanno densità basse; suoli compattati ostacolano lo sviluppo radicale. Usa il calcolatore nella sezione Suolo e Aggregati per verificare i risultati.',
+      id: 'ex7',
+      title: 'Runoff e Curve Number SCS',
+      description: 'Analizza come il Curve Number influisce sul ruscellamento usando la vista Funzioni di Risposta e Bilancio Idrico.',
       difficulty: 'intermedio',
-      module: 'Fisica del Suolo',
+      module: 'Bilancio Idrico',
       objectives: [
-        'Calcolare porosità totale, contenuto d\'acqua volumetrico e altezza equivalente',
-        'Confrontare suolo tilled vs compattato',
-        'Determinare l\'acqua disponibile per l\'irrigazione'
+        'Comprendere la formula SCS',
+        'Relazionare CN con infiltrazione',
+        'Interpretare l\'effetto della copertura vegetale'
       ],
       steps: [
         {
-          description: 'Definire ρ_s = 2650 kg/m³ (densità particelle) e ρ_l = 1000 kg/m³ (acqua). Scrivere computePorosity(ρ_b, w) che calcola: φ = 1 - (ρ_b/ρ_s), θ = w·(ρ_b/ρ_l), h_w = θ·h_prism.',
-          hint: 'Usa il calcolatore nella sezione Suolo e Aggregati. φ = porosità totale; θ = contenuto volumetrico; h_prism = profondità del prisma (es. 2 m)'
+          description: 'Nella vista Funzioni di Risposta, sezione Runoff SCS: con CN=70 e pioggia 50 mm, quanto runoff si genera?',
+          hint: 'Leggi il valore dal grafico interattivo'
         },
         {
-          description: 'Esempio: suolo tilled ρ_b = 1000 kg/m³, suolo compattato ρ_b = 1600 kg/m³. Calcola la differenza nella porosità totale disponibile per lo scambio gassoso.',
-          solution: 'φ_tilled = 1 - 1000/2650 = 0.62; φ_compattato = 1 - 1600/2650 = 0.40. Differenza = 0.22 (22% in meno di spazio per aria/acqua nel suolo compattato).'
+          description: 'Aumenta CN a 90. Come cambia il runoff per la stessa pioggia?',
+          solution: 'CN più alto = più runoff, meno infiltrazione (suolo meno permeabile o meno copertura)'
         },
         {
-          description: 'Per un prisma di 2 m, w = 0.20 (20% gravimetrico) e ρ_b = 1200 kg/m³: qual è l\'altezza equivalente dell\'acqua (h_w)?',
-          solution: 'θ = 0.20·(1200/1000) = 0.24; h_w = 0.24·2 = 0.48 m = 480 mm'
+          description: 'Nella vista Bilancio Idrico, varia il Curve Number. Come influisce su W (contenuto idrico) e su ARID?',
+          hint: 'Più runoff = meno acqua che entra nel suolo = W più basso, ARID più alto'
         }
       ],
-      solution: 'φ = 1 - ρ_b/ρ_s indica lo spazio totale per fluidi. θ = w·(ρ_b/ρ_l) converte il contenuto gravimetrico in volumetrico. h_w (mm) è utile per il bilancio idrico e l\'irrigazione. Suoli compattati hanno φ più bassa e minore aerazione radicale.',
+      solution: 'CN basso (50-60): suolo permeabile, buona copertura. CN alto (85-95): suolo nudo, argilloso. La formula S = 254(100/CN - 1) definisce la ritenzione massima.',
+      completed: false
+    },
+    {
+      id: 'ex8',
+      title: 'Data di Semina e Durata del Ciclo',
+      description: 'Analizza come la data di semina influisce sulla durata del ciclo colturale e sulla biomassa finale.',
+      difficulty: 'base',
+      module: 'Fenologia',
+      objectives: [
+        'Comprendere l\'effetto della stagione sulla fenologia',
+        'Collegare semina precoce/tardiva con maturità',
+        'Interpretare i gradi giorno accumulati'
+      ],
+      steps: [
+        {
+          description: 'Con preset Mais, imposta semina al giorno 1. Quanti giorni circa impiega a raggiungere NDS=1?',
+          hint: 'Vista Fenologia: osserva quando NDS raggiunge 1'
+        },
+        {
+          description: 'Ripeti con semina al giorno 120 (fine aprile). La durata in giorni è la stessa?',
+          solution: 'No: con semina tardiva le temperature sono più alte, quindi DTU/giorno è maggiore e il ciclo si completa in meno giorni solari'
+        },
+        {
+          description: 'Quale dei due scenari produce più biomassa finale? Perché?',
+          hint: 'Considera la radiazione disponibile durante il ciclo'
+        }
+      ],
+      solution: 'La semina precoce espone a temperature più basse (DTU/giorno minore) ma ciclo più lungo. Semina tardiva: temperature alte, ciclo più corto. La biomassa dipende da LAI, radiazione intercettata e durata effettiva.',
+      completed: false
+    },
+    {
+      id: 'ex9',
+      title: 'Interpretazione LAI e FINT',
+      description: 'Collega la dinamica del LAI alla frazione di radiazione intercettata e alla produzione di biomassa.',
+      difficulty: 'intermedio',
+      module: 'LAI & Radiazione',
+      objectives: [
+        'Leggere LAI e FINT dai grafici',
+        'Calcolare FINT da LAI e KPAR',
+        'Identificare la fase di massima intercettazione'
+      ],
+      steps: [
+        {
+          description: 'Nella vista LAI & Radiazione: a che valore di LAI (approssimativo) FINT supera 0.9 con KPAR=0.6?',
+          hint: 'FINT = 1 - exp(-k·LAI). Per FINT=0.9: 0.9 = 1 - exp(-0.6·LAI) => LAI ≈ 3.8'
+        },
+        {
+          description: 'In quale fase fenologica (NDS) il LAI è massimo?',
+          solution: 'Subito prima dell\'inizio della senescenza (frBLS), tipicamente NDS tra 0.6 e 0.7'
+        },
+        {
+          description: 'Perché la biomassa giornaliera (dB) è massima quando FINT è alta ma LAI non ha ancora iniziato a senescere?',
+          solution: 'dB = PAR·FINT·RUE·... : FINT alta significa massima intercettazione; LAI ancora verde significa nessuna perdita di area fotosintetica'
+        }
+      ],
+      solution: 'FINT segue una curva di saturazione: a LAI ~4-5 con k=0.6, FINT è vicina a 1. La produzione di biomassa è massima nella fase di LAI elevato e stabile.',
+      completed: false
+    },
+    {
+      id: 'ex10',
+      title: 'Riduzione Radiazione (Agrivoltaico)',
+      description: 'Simula l\'effetto dell\'ombreggiamento da pannelli fotovoltaici sulla produttività.',
+      difficulty: 'intermedio',
+      module: 'Riduzione Radiazione',
+      objectives: [
+        'Quantificare la riduzione di biomassa',
+        'Confrontare stress idrico con/senza ombreggiamento',
+        'Interpretare il trade-off radiazione-acqua'
+      ],
+      steps: [
+        {
+          description: 'Vai alla vista Riduzione Radiazione. Con 0% ombreggiamento, registra la biomassa finale.',
+          hint: 'Grafico Biomassa_Standard'
+        },
+        {
+          description: 'Imposta 40% ombreggiamento. Di quanto si riduce la biomassa? E come cambia lo stress (ARID)?',
+          solution: 'Biomassa si riduce ~30-50%; ARID spesso diminuisce (meno traspirazione, acqua dura di più)'
+        },
+        {
+          description: 'Spiega perché sotto pannelli la coltura può avere meno stress idrico ma minore produttività.',
+          solution: 'Meno radiazione = meno fotosintesi e crescita, ma anche meno calore e traspirazione. L\'acqua nel suolo si esaurisce più lentamente.'
+        }
+      ],
+      solution: 'L\'agrivoltaico crea un disaccoppiamento sviluppo-crescita: la fenologia procede quasi normalmente (temperatura simile) ma la crescita è limitata dalla PAR ridotta. Lo stress idrico può diminuire.',
+      completed: false
+    },
+    {
+      id: 'ex11',
+      title: 'Validazione: RMSE e R²',
+      description: 'Interpreta le metriche di validazione nella vista Validazione.',
+      difficulty: 'base',
+      module: 'Calibrazione e Validazione',
+      objectives: [
+        'Comprendere RMSE e R²',
+        'Interpretare nRMSE e bias',
+        'Valutare la bontà di adattamento'
+      ],
+      steps: [
+        {
+          description: 'Vai alla vista Validazione. Con rumore σ=0, quali valori di R² e RMSE ottieni?',
+          hint: 'Senza rumore, simulato = osservato'
+        },
+        {
+          description: 'Aumenta il rumore a σ=300. Come cambiano RMSE e R²?',
+          solution: 'RMSE aumenta (~300 kg/ha); R² diminuisce (maggiore scatter tra oss e sim)'
+        },
+        {
+          description: 'Cosa indica un bias positivo? E uno negativo?',
+          solution: 'Bias > 0: il modello sovrastima sistematicamente. Bias < 0: sottostima.'
+        }
+      ],
+      solution: 'R² vicino a 1 = ottimo adattamento. RMSE in unità della variabile (kg/ha). nRMSE < 10% = eccellente. Bias indica errore sistematico.',
+      completed: false
+    },
+    {
+      id: 'ex12',
+      title: 'Soglia WSSG e Stress sulla Crescita',
+      description: 'Analizza come la soglia FTSW (WSSG) influenza la riduzione di crescita sotto stress idrico.',
+      difficulty: 'intermedio',
+      module: 'Biomassa',
+      objectives: [
+        'Comprendere WSFG = FTSW/WSSG sotto soglia',
+        'Valutare l\'effetto di WSSG su DDMP',
+        'Interpretare la vista Funzioni di Risposta'
+      ],
+      steps: [
+        {
+          description: 'Nella vista Funzioni di Risposta, sezione FTSW→WSFG: con WSSG=0.25 e FTSW=0.20, qual è WSFG?',
+          solution: 'WSFG = 0.20/0.25 = 0.8 (crescita ridotta al 80%)'
+        },
+        {
+          description: 'Se WSSG=0.40 (soglia più alta), con FTSW=0.20 qual è WSFG?',
+          solution: 'WSFG = 0.20/0.40 = 0.5 (crescita al 50%)'
+        },
+        {
+          description: 'Colture con WSSG alto sono più o meno sensibili allo stress idrico?',
+          solution: 'Più sensibili: iniziano a ridurre la crescita prima (a FTSW più alto)'
+        }
+      ],
+      solution: 'WSSG basso (0.2): coltura tollerante, riduce crescita solo con FTSW molto bassa. WSSG alto (0.4): coltura sensibile, riduce crescita prima.',
       completed: false
     },
     {
@@ -526,8 +598,6 @@ export const ExercisesView: React.FC = () => {
                   ))}
                 </ul>
               </div>
-
-              {exercise.id === 'ex6c' && <PorosityCalculator />}
 
               <div className="space-y-3">
                 <h4 className="font-semibold text-gray-900">Procedura Step-by-Step</h4>

@@ -27,7 +27,8 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
         'Distinguere variabili di stato da variabili di flusso',
         'Comprendere il ruolo dei parametri nel modello',
         'Identificare le variabili forzanti',
-        'Analizzare il ciclo giornaliero di simulazione'
+        'Analizzare il ciclo giornaliero di simulazione',
+        'Esplorare la funzione Expolinear e il bilancio di massa'
       ],
       estimatedTime: '2 ore',
       prerequisites: [],
@@ -35,17 +36,31 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
       locked: false
     },
     {
+      id: '1b',
+      title: 'Funzioni di Risposta',
+      description: 'Forme delle equazioni che mappano input (temperatura, acqua, LAI) in fattori moltiplicativi.',
+      objectives: [
+        'Comprendere tempfun (trapezoidale, triangolare, beta)',
+        'Interpretare FTSW → WSFG per stress idrico',
+        'Visualizzare Beer-Lambert (FINT), stress termico (fHeat), Runoff SCS'
+      ],
+      estimatedTime: '1 ora',
+      prerequisites: ['1'],
+      completed: false,
+      locked: false
+    },
+    {
       id: '2',
       title: 'Fenologia e Tempo Termico',
-      description: 'Modellazione dello sviluppo fenologico attraverso l\'accumulo di gradi giorno (GDD).',
+      description: 'Modellazione dello sviluppo fenologico attraverso l\'accumulo di gradi giorno (GDD) e tempfun.',
       objectives: [
-        'Calcolare unità termiche giornaliere (DTU)',
+        'Calcolare DTU con tempfun (temperature cardinali)',
         'Comprendere l\'accumulo cumulativo (CTU)',
         'Relazionare CTU con stadio di sviluppo (NDS)',
-        'Analizzare l\'influenza della temperatura base'
+        'Analizzare Fillocrono (PHYL) e sviluppo nodi (INODE)'
       ],
       estimatedTime: '2 ore',
-      prerequisites: ['1'],
+      prerequisites: ['1b'],
       completed: false,
       locked: false
     },
@@ -71,8 +86,8 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
       objectives: [
         'Comprendere il concetto di RUE',
         'Calcolare la biomassa prodotta giornalmente',
-        'Analizzare la risposta della RUE alla temperatura',
-        'Valutare l\'impatto dello stress idrico sulla crescita'
+        'Analizzare la risposta della RUE alla temperatura (TCFRUE)',
+        'Valutare l\'impatto dello stress idrico (FTSW, WSFG) sulla crescita'
       ],
       estimatedTime: '3 ore',
       prerequisites: ['3'],
@@ -86,8 +101,8 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
       objectives: [
         'Comprendere il modello "a secchio" (Bucket)',
         'Calcolare evapotraspirazione potenziale e reale',
-        'Modellare drenaggio e ruscellamento',
-        'Analizzare l\'indice di stress idrico (ARID)'
+        'Modellare drenaggio e ruscellamento (Runoff SCS con Curve Number)',
+        'Analizzare FTSW, WSFG e indice di stress idrico (ARID)'
       ],
       estimatedTime: '3 ore',
       prerequisites: ['4'],
@@ -112,7 +127,7 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
     {
       id: '6',
       title: 'Calibrazione e Validazione',
-      description: 'Metodi per calibrare i parametri del modello e validare le simulazioni.',
+      description: 'Calibrazione (grid search su RUE, KPAR, ecc.) e validazione con metriche RMSE, R². Viste: Calibrazione e Validazione.',
       objectives: [
         'Eseguire calibrazione mediante grid search',
         'Valutare metriche di bontà di adattamento (RMSE, R²)',
@@ -154,14 +169,15 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({ onNavigate }
 
   // Mapping moduli -> tab IDs
   const moduleToTabMap: Record<string, string> = {
-    '1': 'concepts',        // Concetti Fondamentali
-    '2': 'phenology',      // Fenologia
-    '3': 'lai',            // LAI & Radiazione
-    '4': 'biomass',        // Biomassa
-    '5': 'water',          // Bilancio Idrico
-    '5b': 'soil',          // Suolo e Aggregati
-    '6': 'validation',     // Calibrazione e Validazione
-    '7': 'scenario'        // Analisi Scenario
+    '1': 'concepts',
+    '1b': 'response_functions',
+    '2': 'phenology',
+    '3': 'lai',
+    '4': 'biomass',
+    '5': 'water',
+    '5b': 'soil',
+    '6': 'calibration',    // Calibrazione (grid search) e Validazione
+    '7': 'scenario'
   };
 
   const handleStartModule = (moduleId: string) => {
