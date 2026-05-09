@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { 
   Compass, BookOpen, Calendar, Leaf, Activity, Droplet, Layers,
   Download, Info, Menu, X, CloudRain, Code, Sun, Sliders, Zap, Microscope, Sprout,
-  GraduationCap, FileCheck, CheckCircle2, Library, Database, FileText, LineChart, Target
+  GraduationCap, FileCheck, CheckCircle2, Library, Database, FileText, LineChart, Target, HelpCircle
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -20,6 +20,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     { id: 'overview', label: 'Panoramica', icon: Compass },
     { id: 'learning_path', label: 'Percorso Didattico', icon: GraduationCap },
     { id: 'exercises', label: 'Esercizi', icon: FileCheck },
+    { id: 'quiz', label: 'Quiz', icon: HelpCircle },
     { id: 'concepts', label: 'Concetti Base', icon: BookOpen },
     { id: 'response_functions', label: 'Funzioni di Risposta', icon: LineChart },
     { id: 'manuale', label: 'Manuale Teoria', icon: FileText },
@@ -97,7 +98,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Introduzione
             </div>
-            {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'concepts', 'response_functions', 'manuale'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'quiz', 'concepts', 'response_functions', 'manuale'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
