@@ -754,6 +754,80 @@ export const ExercisesView: React.FC = () => {
     }
   };
 
+  const getObjectiveSummary = (exercise: Exercise): string => {
+    if (exercise.objectives.length === 0) return 'Consolidare la comprensione del modulo attraverso applicazioni pratiche.';
+    if (exercise.objectives.length === 1) return exercise.objectives[0];
+    return `${exercise.objectives[0]}; ${exercise.objectives[1].charAt(0).toLowerCase()}${exercise.objectives[1].slice(1)}.`;
+  };
+
+  const getImplicationsAndUtility = (exercise: Exercise): string => {
+    const module = exercise.module.toLowerCase();
+
+    if (module.includes('fenologia')) {
+      return 'Permette di capire come temperatura e data di semina modificano il calendario colturale, utile per pianificare semina, gestione e raccolta.';
+    }
+    if (module.includes('lai') || module.includes('radiazione')) {
+      return 'Chiarisce come l\'architettura fogliare controlla l\'intercettazione della luce e quindi la crescita, utile per leggere differenze tra cultivar e pratiche agronomiche.';
+    }
+    if (module.includes('idrico') || module.includes('acqua')) {
+      return 'Mostra come disponibilita idrica, runoff e stress si trasformano in perdita di crescita, utile per decisioni su suolo, irrigazione e rischio siccita.';
+    }
+    if (module.includes('calibrazione') || module.includes('validazione')) {
+      return 'Allena alla stima dei parametri e alla lettura critica delle metriche, utile per valutare l\'affidabilita del modello prima di usarlo in scenari reali.';
+    }
+    if (module.includes('biomassa')) {
+      return 'Evidenzia i fattori che limitano l\'accumulo produttivo, utile per interpretare differenze di resa e sensibilita agli stress.';
+    }
+    if (module.includes('scenario') || module.includes('integrata')) {
+      return 'Allena al confronto multi-scenario e multi-indicatore, utile per scegliere strategie gestionali motivate da dati simulati.';
+    }
+    if (module.includes('concetti fondamentali')) {
+      return 'Rinforza la logica modello-variabili-flussi, utile per evitare errori di interpretazione nelle fasi avanzate del corso.';
+    }
+    if (module.includes('funzioni di risposta')) {
+      return 'Aiuta a leggere le funzioni che trasformano input in fattori di crescita/stress, utile per capire perche il modello risponde in modo non lineare.';
+    }
+    if (module.includes('riduzione radiazione')) {
+      return 'Quantifica il trade-off tra minore luce e minore stress evaporativo, utile per valutare soluzioni agrivoltaiche.';
+    }
+
+    return 'Rende operativi i concetti teorici del modulo con evidenze numeriche, utile per sviluppare capacita di analisi e decisione basata su simulazioni.';
+  };
+
+  const getWhyImportant = (exercise: Exercise): string => {
+    const module = exercise.module.toLowerCase();
+    if (module.includes('fenologia')) {
+      return 'Perche la tempistica del ciclo condiziona tutte le scelte agronomiche (epoca di semina, gestione e raccolta).';
+    }
+    if (module.includes('idrico') || module.includes('acqua')) {
+      return 'Perche lo stress idrico e una delle principali cause di perdita di resa e deve essere anticipato con indicatori leggibili.';
+    }
+    if (module.includes('calibrazione') || module.includes('validazione')) {
+      return 'Perche un modello non calibrato/validato puo portare a decisioni non affidabili.';
+    }
+    if (module.includes('lai') || module.includes('radiazione')) {
+      return 'Perche l\'intercettazione della luce governa gran parte del potenziale produttivo della coltura.';
+    }
+    return 'Perche collega teoria e pratica, trasformando concetti in decisioni supportate dai risultati di simulazione.';
+  };
+
+  const getWhereUsed = (exercise: Exercise): string => {
+    const module = exercise.module.toLowerCase();
+    if (module.includes('fenologia')) {
+      return 'Nella pianificazione del calendario colturale e nella scelta della data di semina.';
+    }
+    if (module.includes('idrico') || module.includes('acqua')) {
+      return 'Nella gestione irrigua, nella valutazione del rischio siccita e nella scelta di pratiche conservative.';
+    }
+    if (module.includes('calibrazione') || module.includes('validazione')) {
+      return 'Nella taratura di parametri di cultivar/sito e nella verifica della qualita del modello.';
+    }
+    if (module.includes('scenario') || module.includes('riduzione radiazione')) {
+      return 'Nelle analisi di scenario per confrontare alternative gestionali e climatiche.';
+    }
+    return 'Nelle attivita di analisi dati e supporto alle decisioni agronomiche basate su simulazione.';
+  };
+
   const handleAnswerChange = (exerciseId: string, stepIndex: number, answer: string) => {
     setUserAnswers(prev => ({
       ...prev,
@@ -837,6 +911,24 @@ export const ExercisesView: React.FC = () => {
                 <p className="text-gray-700 mb-2">{exercise.description}</p>
                 <div className="text-sm text-gray-600">
                   <strong>Modulo:</strong> {exercise.module}
+                </div>
+              </div>
+
+              <div className="bg-violet-50 p-4 rounded-lg border border-violet-200">
+                <h4 className="font-semibold text-violet-900 mb-2">Contesto Didattico</h4>
+                <div className="space-y-2 text-sm text-violet-800">
+                  <p>
+                    <strong>Cosa impari:</strong> {getObjectiveSummary(exercise)}
+                  </p>
+                  <p>
+                    <strong>Perche e importante:</strong> {getWhyImportant(exercise)}
+                  </p>
+                  <p>
+                    <strong>Dove lo usi in pratica:</strong> {getWhereUsed(exercise)}
+                  </p>
+                  <p>
+                    <strong>Implicazioni operative:</strong> {getImplicationsAndUtility(exercise)}
+                  </p>
                 </div>
               </div>
 
