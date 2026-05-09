@@ -470,6 +470,234 @@ export const ExercisesView: React.FC = () => {
       completed: false
     },
     {
+      id: 'ex13',
+      title: 'Fenologia Base: durata del ciclo',
+      description: 'Confronta la durata del ciclo in due scenari termici semplici.',
+      difficulty: 'base',
+      module: 'Fenologia',
+      objectives: [
+        'Leggere il grafico NDS nel tempo',
+        'Confrontare due scenari termici',
+        'Capire come la temperatura influenza DTU'
+      ],
+      steps: [
+        {
+          description: 'Imposta Mais. Nel Generatore Meteo usa tmean=14°C e genera meteo. In Fenologia annota il giorno in cui NDS raggiunge 1.',
+          hint: 'NDS=1 indica fine ciclo fenologico'
+        },
+        {
+          description: 'Ripeti con tmean=22°C mantenendo gli altri parametri uguali.',
+          hint: 'Confronta il giorno di maturità tra i due scenari'
+        },
+        {
+          description: 'Quale scenario conclude prima il ciclo? Spiega in una frase.',
+          solution: 'Con tmean più alta il ciclo si conclude prima, perché l\'accumulo termico giornaliero (DTU) è maggiore.'
+        }
+      ],
+      solution: 'All\'aumentare della temperatura media, il modello accumula DTU più rapidamente e NDS raggiunge 1 in meno giorni solari.',
+      completed: false
+    },
+    {
+      id: 'ex14',
+      title: 'LAI e saturazione della luce',
+      description: 'Osserva quando la radiazione intercettata si avvicina al massimo.',
+      difficulty: 'base',
+      module: 'LAI & Radiazione',
+      objectives: [
+        'Leggere LAI e FINT dai grafici',
+        'Riconoscere la saturazione della Beer-Lambert',
+        'Interpretare perché oltre un certo LAI i guadagni sono ridotti'
+      ],
+      steps: [
+        {
+          description: 'Vai in LAI & Radiazione e osserva l\'andamento di FINT durante il ciclo.',
+          hint: 'FINT cresce velocemente all\'inizio e poi rallenta'
+        },
+        {
+          description: 'Individua il valore di LAI (approssimativo) per cui FINT supera 0.9.',
+          solution: 'Con KPAR~0.6, FINT supera 0.9 intorno a LAI 3.5-4.5.'
+        },
+        {
+          description: 'Spiega perché aumentare ancora LAI oltre quel valore ha effetto limitato su FINT.',
+          solution: 'La funzione è saturante: gran parte della luce è già intercettata, quindi i guadagni aggiuntivi diventano piccoli.'
+        }
+      ],
+      solution: 'La relazione FINT-LAI segue una curva di saturazione: dopo LAI medio-alti, l\'intercettazione è quasi massima.',
+      completed: false
+    },
+    {
+      id: 'ex15',
+      title: 'Stress idrico: impatto su FTSW e biomassa',
+      description: 'Valuta l\'effetto di una riduzione della pioggia su acqua disponibile e crescita.',
+      difficulty: 'intermedio',
+      module: 'Bilancio Idrico',
+      objectives: [
+        'Confrontare due scenari di pioggia',
+        'Interpretare FTSW e ARID',
+        'Collegare stress idrico a biomassa finale'
+      ],
+      steps: [
+        {
+          description: 'Scenario A: rain_mean=2 mm/d. Genera meteo e registra FTSW medio e biomassa finale.',
+          hint: 'Usa Bilancio Idrico + Biomassa'
+        },
+        {
+          description: 'Scenario B: rain_mean=0.5 mm/d. Rigenera meteo e confronta FTSW, ARID e biomassa.',
+          hint: 'Con meno pioggia, aspettati più stress'
+        },
+        {
+          description: 'Descrivi cosa accade quando FTSW scende sotto la soglia WSSG.',
+          solution: 'WSFG scende sotto 1 e la crescita giornaliera (dB) viene ridotta, con biomassa finale inferiore.'
+        }
+      ],
+      solution: 'La riduzione della pioggia abbassa FTSW, aumenta ARID e riduce la biomassa finale via fattore di stress idrico.',
+      completed: false
+    },
+    {
+      id: 'ex16',
+      title: 'Calibrazione guidata di RUE',
+      description: 'Esegui una calibrazione semplice e interpreta il minimo RMSE.',
+      difficulty: 'intermedio',
+      module: 'Calibrazione e Validazione',
+      objectives: [
+        'Eseguire la procedura 1-2 della vista Calibrazione',
+        'Identificare il parametro ottimale',
+        'Comprendere l\'effetto del rumore sulla stima'
+      ],
+      steps: [
+        {
+          description: 'In Calibrazione imposta σ=120 e parametro RUE. Genera dati osservati e avvia la grid search.',
+          hint: 'Segui gli step guidati nella vista'
+        },
+        {
+          description: 'Annota RUE calibrato e RMSE minimo. Confronta con il valore vero mostrato nella card.',
+          hint: 'Lo scostamento dovrebbe essere piccolo con rumore moderato'
+        },
+        {
+          description: 'Aumenta il rumore a σ=300 e ripeti. Cosa osservi nel minimo RMSE?',
+          solution: 'Con più rumore la curva è meno netta e la stima del parametro è meno precisa.'
+        }
+      ],
+      solution: 'La calibrazione recupera bene RUE con rumore basso/moderato; con rumore alto aumenta l\'incertezza e peggiora la precisione della stima.',
+      completed: false
+    },
+    {
+      id: 'ex17',
+      title: 'Runoff SCS e produttività stagionale',
+      description: 'Collega il Curve Number al ruscellamento e agli impatti sulla biomassa.',
+      difficulty: 'intermedio',
+      module: 'Bilancio Idrico',
+      objectives: [
+        'Interpretare l\'effetto del CN sul runoff',
+        'Collegare infiltrazione e disponibilità idrica',
+        'Valutare l\'impatto finale su biomassa'
+      ],
+      steps: [
+        {
+          description: 'Con meteo invariato, confronta due simulazioni con CN=65 e CN=90.',
+          hint: 'CN alto implica maggiore runoff e minore infiltrazione'
+        },
+        {
+          description: 'Annota differenze in RO cumulato, FTSW medio e biomassa finale.',
+          hint: 'Usa Bilancio Idrico + Biomassa'
+        },
+        {
+          description: 'Spiega il legame causa-effetto in massimo 4 righe.',
+          solution: 'CN elevato aumenta RO, riduce l\'acqua infiltrata nel profilo, abbassa FTSW e penalizza la crescita.'
+        }
+      ],
+      solution: 'A parità di pioggia, CN più alto tende a ridurre la produttività perché limita il ricarico del suolo.',
+      completed: false
+    },
+    {
+      id: 'ex18',
+      title: 'Data di semina: confronto multi-indicatore',
+      description: 'Valuta l\'effetto della semina precoce vs tardiva su fenologia, acqua e biomassa.',
+      difficulty: 'intermedio',
+      module: 'Analisi Integrata',
+      objectives: [
+        'Confrontare due date di semina',
+        'Integrare indicatori fenologici e idrici',
+        'Argomentare una scelta gestionale'
+      ],
+      steps: [
+        {
+          description: 'Simula semina giorno 1 e giorno 120, mantenendo stesso meteo e cultivar.',
+          hint: 'Usa il selettore data di semina della coltura'
+        },
+        {
+          description: 'Confronta: durata ciclo (giorni), ARID medio, biomassa finale.',
+          hint: 'Raccogli i risultati in una piccola tabella'
+        },
+        {
+          description: 'Quale data sceglieresti e perché?',
+          solution: 'Dipende dal compromesso: semina tardiva accelera il ciclo ma può ridurre biomassa; la scelta migliore minimizza stress e massimizza resa.'
+        }
+      ],
+      solution: 'La data di semina modifica sincronizzazione con clima stagionale e quindi il bilancio sviluppo-crescita.',
+      completed: false
+    },
+    {
+      id: 'ex19',
+      title: 'Agrivoltaico: trade-off radiazione-acqua',
+      description: 'Analizza l\'effetto dell\'ombreggiamento su crescita e stress idrico.',
+      difficulty: 'avanzato',
+      module: 'Riduzione Radiazione',
+      objectives: [
+        'Valutare il trade-off produttività/stress',
+        'Confrontare scenari di ombreggiamento',
+        'Interpretare risultati in chiave gestionale'
+      ],
+      steps: [
+        {
+          description: 'Confronta 0%, 20% e 40% di ombreggiamento.',
+          hint: 'Vista Riduzione Radiazione'
+        },
+        {
+          description: 'Per ogni scenario annota biomassa finale e un indicatore di stress idrico (ARID o FTSW medio).',
+          hint: 'Compila una tabella con 3 righe'
+        },
+        {
+          description: 'Individua il livello di ombreggiamento più equilibrato per resa/stress.',
+          solution: 'Spesso un livello intermedio riduce lo stress senza penalizzare eccessivamente la biomassa.'
+        }
+      ],
+      solution: 'L\'ombreggiamento riduce energia disponibile (meno crescita) ma può mitigare domanda evaporativa (meno stress).',
+      completed: false
+    },
+    {
+      id: 'ex20',
+      title: 'Mini-progetto finale: calibra e valida',
+      description: 'Esegui un flusso completo calibrazione-validazione e valuta l\'affidabilità del modello.',
+      difficulty: 'avanzato',
+      module: 'Calibrazione e Validazione',
+      objectives: [
+        'Applicare workflow completo (calibra -> valida)',
+        'Interpretare RMSE, R², nRMSE e bias',
+        'Scrivere una conclusione tecnico-scientifica'
+      ],
+      steps: [
+        {
+          description: 'In Calibrazione: genera osservazioni sintetiche e calibra RUE.',
+          hint: 'Usa rumore moderato (σ=120-180)'
+        },
+        {
+          description: 'In Validazione: usa stesso scenario e interpreta RMSE, R², nRMSE e bias.',
+          hint: 'Valuta anche la qualità (buono/scarso)'
+        },
+        {
+          description: 'Ripeti aumentando il rumore e confronta le metriche.',
+          hint: 'Con più rumore il fit peggiora'
+        },
+        {
+          description: 'Scrivi una conclusione di 6-8 righe su robustezza e limiti del modello.',
+          solution: 'Un modello può essere utile anche con errore non nullo, ma va interpretato con metriche e limiti del dataset.'
+        }
+      ],
+      solution: 'La qualità del modello dipende da rumore dati, scelta parametri e coerenza del setup. Validazione e interpretazione critica sono indispensabili.',
+      completed: false
+    },
+    {
       id: 'ex5',
       title: 'Confronto Varietà: Mais vs Frumento',
       description: 'Confronta le performance di mais (C4) e frumento (C3) in termini di produttività e uso dell\'acqua.',
@@ -502,6 +730,20 @@ export const ExercisesView: React.FC = () => {
       completed: false
     }
   ];
+
+  const recommendedPath = [
+    'ex13', 'ex14', 'ex15', 'ex16', // blocco 2 ore
+    'ex17', 'ex18', 'ex19', 'ex20', // estensione progressiva
+    'ex1', 'ex2', 'ex3', 'ex8', 'ex9', 'ex12',
+    'ex7', 'ex10', 'ex11', 'ex4', 'ex5a', 'ex5b', 'ex5c', 'ex5d', 'ex5', 'ex6'
+  ];
+
+  const pathOrder = new Map(recommendedPath.map((id, idx) => [id, idx]));
+  const orderedExercises = [...exercises].sort((a, b) => {
+    const ai = pathOrder.get(a.id) ?? Number.MAX_SAFE_INTEGER;
+    const bi = pathOrder.get(b.id) ?? Number.MAX_SAFE_INTEGER;
+    return ai - bi;
+  });
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -556,15 +798,29 @@ export const ExercisesView: React.FC = () => {
             <div className="text-sm text-red-600">Esercizi Avanzati</div>
           </div>
         </div>
+        <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+          <h4 className="font-semibold text-indigo-900 mb-2">Percorso Logico Ottimizzato</h4>
+          <p className="text-sm text-indigo-800 mb-2">
+            Segui l'ordine consigliato mostrato in questa pagina. I primi 4 esercizi (`ex13`-`ex16`) sono il blocco base da 2 ore.
+          </p>
+          <div className="text-xs text-indigo-700 space-y-1">
+              <div><strong>Fase 1 - Fondamenti:</strong> ex13 -&gt; ex14 -&gt; ex15 -&gt; ex16</div>
+              <div><strong>Fase 2 - Integrazione:</strong> ex17 -&gt; ex18 -&gt; ex19 -&gt; ex20</div>
+            <div><strong>Fase 3 - Approfondimenti:</strong> esercizi rimanenti in ordine crescente di complessita</div>
+          </div>
+        </div>
       </Card>
 
       <div className="space-y-4">
-        {exercises.map((exercise) => (
+        {orderedExercises.map((exercise, idx) => (
           <Card 
             key={exercise.id}
             title={
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-3">
+                  <span className="px-2 py-1 rounded text-xs font-semibold border bg-indigo-100 text-indigo-800 border-indigo-300">
+                    Step {idx + 1}
+                  </span>
                   <span className={`px-2 py-1 rounded text-xs font-semibold border ${getDifficultyColor(exercise.difficulty)}`}>
                     {exercise.difficulty.toUpperCase()}
                   </span>

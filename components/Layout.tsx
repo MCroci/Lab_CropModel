@@ -20,7 +20,6 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     { id: 'overview', label: 'Panoramica', icon: Compass },
     { id: 'learning_path', label: 'Percorso Didattico', icon: GraduationCap },
     { id: 'exercises', label: 'Esercizi', icon: FileCheck },
-    { id: 'course_exercises', label: 'Corso - Esercizi', icon: GraduationCap },
     { id: 'concepts', label: 'Concetti Base', icon: BookOpen },
     { id: 'response_functions', label: 'Funzioni di Risposta', icon: LineChart },
     { id: 'manuale', label: 'Manuale Teoria', icon: FileText },
@@ -98,7 +97,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Introduzione
             </div>
-            {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'course_exercises', 'concepts', 'response_functions', 'manuale'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'concepts', 'response_functions', 'manuale'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (

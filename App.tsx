@@ -25,7 +25,6 @@ const FarquharView = lazy(() => import('./views/FarquharView').then(m => ({ defa
 const SeedEmergenceView = lazy(() => import('./views/SeedEmergenceView').then(m => ({ default: m.SeedEmergenceView })));
 const LearningPathView = lazy(() => import('./views/LearningPathView').then(m => ({ default: m.LearningPathView })));
 const ExercisesView = lazy(() => import('./views/ExercisesView').then(m => ({ default: m.ExercisesView })));
-const CourseExercisesView = lazy(() => import('./views/CourseExercisesView').then(m => ({ default: m.CourseExercisesView })));
 const ValidationView = lazy(() => import('./views/ValidationView').then(m => ({ default: m.ValidationView })));
 const CalibrationView = lazy(() => import('./views/CalibrationView').then(m => ({ default: m.CalibrationView })));
 const BibliographyView = lazy(() => import('./views/BibliographyView').then(m => ({ default: m.BibliographyView })));
@@ -61,7 +60,6 @@ const App: React.FC = () => {
       case 'export': return <ExportView />;
       case 'learning_path': return <LearningPathView onNavigate={setActiveTab} />;
       case 'exercises': return <ExercisesView />;
-      case 'course_exercises': return <CourseExercisesView />;
       case 'validation': return <ValidationView />;
       case 'calibration': return <CalibrationView onNavigate={setActiveTab} />;
       case 'bibliography': return <BibliographyView />;
