@@ -598,8 +598,8 @@ export const ExercisesView: React.FC = () => {
           hint: 'CN alto implica maggiore runoff e minore infiltrazione'
         },
         {
-          description: 'Annota differenze in RO cumulato, FTSW medio e biomassa finale.',
-          hint: 'Usa Bilancio Idrico + Biomassa'
+          description: 'Annota differenze nel runoff giornaliero (RO) in alcuni giorni piovosi, in FTSW e in biomassa finale.',
+          hint: 'Usa la tabella in Bilancio Idrico per RO e FTSW, e la vista Biomassa per il valore finale'
         },
         {
           description: 'Spiega il legame causa-effetto in massimo 4 righe.',
@@ -705,12 +705,12 @@ export const ExercisesView: React.FC = () => {
       module: 'Analisi di Scenario',
       objectives: [
         'Confrontare fisiologia C3 vs C4',
-        'Analizzare efficienza idrica',
+        'Analizzare risposta allo stress idrico',
         'Valutare adattamento a condizioni diverse'
       ],
       steps: [
         {
-          description: 'Simula mais (preset) con condizioni normali. Registra biomassa finale e ET cumulativa.',
+          description: 'Simula mais (preset) con condizioni normali. Registra biomassa finale e ARID medio.',
           hint: 'Usa i preset nella vista Panoramica e confronta i risultati'
         },
         {
@@ -718,15 +718,15 @@ export const ExercisesView: React.FC = () => {
           hint: 'Il mais (C4) ha generalmente RUE più alta'
         },
         {
-          description: 'Calcola l\'efficienza idrica (biomassa/ET) per entrambe le colture.',
-          hint: 'Efficienza idrica = Biomassa finale (kg/ha) / ET cumulativa (mm)'
+          description: 'Confronta i valori di ARID tra le due colture: quale mostra meno stress a parità di scenario?',
+          hint: 'ARID più basso indica minore stress idrico'
         },
         {
           description: 'Ripeti in condizioni di stress idrico (rain_mean=0.5). Quale coltura è più resiliente?',
           solution: 'Il mais (C4) ha generalmente maggiore efficienza idrica e resilienza allo stress, grazie alla fotosintesi C4 che riduce la traspirazione'
         }
       ],
-      solution: 'Il mais (C4) mostra generalmente: 1) Biomassa finale più alta (RUE ~3.8 vs ~2.2 per frumento), 2) Efficienza idrica superiore (fotosintesi C4 più efficiente), 3) Maggiore resilienza allo stress idrico. Il frumento (C3) ha ciclo più lungo e può accumulare biomassa in condizioni ottimali, ma è più sensibile allo stress idrico.',
+      solution: 'Il mais (C4) mostra generalmente: 1) Biomassa finale più alta (RUE ~3.8 vs ~2.2 per frumento), 2) ARID mediamente più basso a parità di condizioni, 3) maggiore resilienza allo stress idrico. Il frumento (C3) è spesso più sensibile in scenari siccitosi.',
       completed: false
     }
   ];
