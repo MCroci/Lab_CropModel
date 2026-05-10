@@ -242,10 +242,20 @@ export const ResponseFunctionsView: React.FC = () => {
 
       {/* 5. Runoff SCS */}
       <Card title="5. Runoff – Metodo SCS Curve Number (Eq. 14.14)" className="border-l-4 border-l-cyan-500" headerAction={<CloudRain className="text-cyan-500" />}>
-        <p className="text-sm text-gray-700 mb-3">
-          <MathFormula formula="S = 254(100/CN - 1)" /> &nbsp;
-          <MathFormula formula="RO = \\frac{(P - 0.2S)^2}{P + 0.8S}" /> se P &gt; 0.2S
-        </p>
+        <div className="text-sm text-gray-700 mb-3 space-y-2">
+          <p>
+            Ritenzione massima potenziale <span className="font-medium">S</span> (mm) dal Curve Number:
+            <MathFormula formula="S = 254(100/CN - 1)" />{' '}
+            Runoff giornaliero da precipitazione <span className="font-medium">P</span> (mm):
+            <MathFormula formula="RO = \\frac{(P - 0.2S)^2}{P + 0.8S}" /> se{' '}
+            <span className="font-medium">P &gt; 0.2S</span>.
+          </p>
+          <ul className="list-disc list-inside text-gray-600 space-y-1 ml-1">
+            <li>Se <strong>P ≤ 0</strong> o <strong>CN ≤ 0</strong>: RO = 0.</li>
+            <li>Se <strong>P ≤ 0.2S</strong> (sotto astrazione iniziale): RO = 0.</li>
+            <li>Nel <strong>Bilancio idrico</strong>, se CN non è usato: RO ≈ max(P − capacità infiltrazione, 0) al posto della formula SCS.</li>
+          </ul>
+        </div>
         <div className="flex gap-4 mb-4">
           <Slider label="Curve Number (CN)" value={CN} min={50} max={95} step={5} onChange={setCN} className="max-w-xs" />
         </div>

@@ -121,7 +121,7 @@ Molti processi (acqua, azoto, carbonio) sono simulati tramite l'equazione genera
 \]
 
 Esempi:
-- **Acqua nel suolo**: \(W(t+1) = W(t) + \text{Pioggia} - ET - \text{Drenaggio} - \text{Ruscellamento}\)
+- **Acqua nel suolo**: \(W(t+1) = W(t) + \text{Pioggia} - ET - \text{Drenaggio} - \text{Ruscellamento}\) — calcolo del ruscellamento (SCS / fallback): §7.2
 - **Biomassa**: \(B(t+1) = B(t) + \Delta B\) (dove \(\Delta B\) è la produzione giornaliera)
 - **CTU**: \(CTU(t) = CTU(t-1) + DTU(t)\)
 
@@ -318,7 +318,38 @@ In forma dettagliata per il primo strato:
 ATSW_1(t+1) = ATSW_1(t) + RAIN + IRRIG - DRAIN - RUNOFF - E_{suolo} - TR_1
 \]
 
-### 7.2 Parametri Idrologici
+### 7.2 Ruscellamento (SCS Curve Number, Eq. 14.14)
+
+Nell’applicazione il **ruscellamento giornaliero** \(RUNOFF\) (mm) segue il metodo **SCS Curve Number** quando è definito un **Curve Number (CN)** strettamente positivo (intervallo tipico in didattica: 50–95).
+
+**Ritenzione massima potenziale** del suolo (mm):
+
+\[
+S = 254 \left( \frac{100}{CN} - 1 \right)
+\]
+
+Il fattore **254** converte la formulazione classica (pollici) in millimetri. CN basso corrisponde a maggiore infiltrazione / minore runoff; CN alto a suoli compatti, impermeabili o spogli.
+
+**Astrazione iniziale**: nella formulazione standard si assume che le perdite iniziali (intercettazione, infiltrazione iniziale) equivalgano a **\(0{,}2\,S\)** prima che si manifesti runoff significativo.
+
+Per la precipitazione giornaliera \(P\) (= **RAIN**, mm), il ruscellamento è calcolato così:
+
+| Condizione | RUNOFF (mm) |
+|------------|-------------|
+| \(P \le 0\) oppure \(CN \le 0\) | \(0\) |
+| \(S \le 0\) (caso limite numerico) | \(P\) |
+| \(0 < P \le 0{,}2\,S\) | \(0\) (evento sotto la soglia di astrazione iniziale) |
+| \(P > 0{,}2\,S\) | \(\displaystyle RUNOFF = \frac{(P - 0{,}2\,S)^2}{P + 0{,}8\,S}\) |
+
+**Senza Curve Number**: se **CN** non è impostato o è nullo, il modello non usa la formula SCS e adotta un fallback basato sulla **capacità di infiltrazione giornaliera** \(inf\_cap\) (mm/giorno):
+
+\[
+RUNOFF = \max(P - inf\_cap,\, 0)
+\]
+
+Nel bilancio idrico (§7.1), il RUNOFF è un’**uscita**: riduce l’acqua disponibile per ricaricare \(W\) rispetto alla pioggia caduta.
+
+### 7.3 Parametri Idrologici
 
 | Parametro | Descrizione |
 |-----------|-------------|
@@ -326,13 +357,13 @@ ATSW_1(t+1) = ATSW_1(t) + RAIN + IRRIG - DRAIN - RUNOFF - E_{suolo} - TR_1
 | W_fc (Capacità di Campo) | Massima acqua trattenuta contro gravità |
 | W_sat (Saturazione) | Porosità totale |
 
-### 7.3 Partizione ET0
+### 7.4 Partizione ET0
 
 - **Tpot**: traspirazione potenziale = ET0 × f_cover (f_cover ∝ LAI)
 - **Epot**: evaporazione potenziale dal suolo = ET0 × (1 - f_cover)
 - **Tact, Eact**: limitati dall'acqua disponibile (AW = W - W_wp)
 
-### 7.4 Indice ARID (Stress Idrico)
+### 7.5 Indice ARID (Stress Idrico)
 
 \[
 ARID = 1 - \frac{T_{act}}{ET_0}
@@ -341,7 +372,7 @@ ARID = 1 - \frac{T_{act}}{ET_0}
 - ARID = 0: nessuno stress
 - ARID = 1: stress totale
 
-### 7.5 FTSW (Frazione di Acqua Traspirabile)
+### 7.6 FTSW (Frazione di Acqua Traspirabile)
 
 La **FTSW** (Fraction of Transpirable Soil Water) è il principale indicatore di stress idrico per la pianta:
 
