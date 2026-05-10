@@ -5,9 +5,9 @@ import { CHART_MARGIN } from '../utils/chartMargins';
 import { MathFormula } from '../components/MathFormula';
 import { Thermometer, Droplet, Sun, Zap, CloudRain, Layers } from 'lucide-react';
 
-/** Grafici centrati e quasi quadrati (aspect 1:1): limitati in larghezza per miglior proporzione */
+/** Grafici centrati, formato orizzontale (≈5:3) e larghezza generosa per assi X leggibili */
 const RF_CHART_WRAP =
-  'mx-auto w-full max-w-[min(100%,24rem)] sm:max-w-lg md:max-w-xl aspect-square min-h-[220px]';
+  'mx-auto w-full max-w-[min(100%,64rem)] aspect-[5/3] min-h-[200px] sm:min-h-[240px]';
 
 // Funzioni di risposta (per demo interattiva)
 const tempfunTrapezoid = (t: number, TBD: number, TP1: number, TP2: number, TCD: number): number => {
