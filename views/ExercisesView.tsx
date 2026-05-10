@@ -1,7 +1,33 @@
 import React, { useState } from 'react';
 import { Card, Button, Slider } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
-import { CheckCircle, Lightbulb, Target, ArrowRight } from 'lucide-react';
+import { CheckCircle, Lightbulb, Target, ArrowRight, MapPin } from 'lucide-react';
+
+/** Percorsi fissi (allineati alle voci del menu laterale) */
+const WHERE = {
+  panoramicaCrop:
+    'Menu laterale → Panoramica: selettore «Seleziona Coltura (Preset)» (Mais, Frumento, …) e, sotto, «Data di Semina/Trapianto» con cursore sul giorno dell’anno (1–365).',
+  meteo:
+    'Menu → Generatore Meteo: card «Generatore Stocastico» — imposta Piovosità Media (mm/d), Temperatura Media, poi pulsante «Genera Meteo Sintetico» (la simulazione colturale si aggiorna da sola).',
+  fenologia:
+    'Menu → Fenologia: card «Parametri Fenologici» (slider Tbase, tuHAR); nella stessa pagina leggi i grafici NDS e CTU.',
+  biomassa:
+    'Menu → Biomassa: card «Parametri Biomassa» (slider RUE) e grafici di biomassa.',
+  bilancioIdrico:
+    'Menu → Bilancio Idrico: parametri suolo (es. Curve Number), grafici FTSW/ARID e tabella giornaliera.',
+  laiRad:
+    'Menu → LAI & Radiazione: slider «Coeff. Estinzione (K)» (= KPAR) e grafici LAI / FINT.',
+  funzioniRisposta:
+    'Menu → Funzioni di Risposta: scorri le card numerate (inclusa la sezione Runoff SCS).',
+  calibrazione:
+    'Menu → Analisi e Validazione → Calibrazione.',
+  validazione:
+    'Menu → Validazione.',
+  riduzioneRad:
+    'Menu → Riduzione Radiazione (ombreggiamento / scenari di luce ridotta).',
+  concetti:
+    'Menu → Concetti Base.',
+} as const;
 
 interface Exercise {
   id: string;
@@ -12,6 +38,8 @@ interface Exercise {
   objectives: string[];
   steps: {
     description: string;
+    /** Dove cliccare nel menu / quale vista usare */
+    where?: string;
     hint?: string;
     solution?: string;
   }[];
@@ -39,18 +67,22 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Genera dati osservati sintetici: esegui una simulazione con RUE=3.5 e aggiungi rumore gaussiano (σ≈150-200 kg/ha)',
+          where: `${WHERE.calibrazione} Regola RUE dagli slider se richiesto (Menu → Panoramica preset o Biomassa); nella stessa vista Calibrazione usa il pulsante «1. Genera Dati Osservati».`,
           hint: 'Vai alla vista Calibrazione (menu Analisi e Validazione), clicca "Genera Osservazioni Sintetiche"'
         },
         {
           description: 'Esegui calibrazione variando RUE (grid search). Seleziona RUE come parametro da calibrare.',
+          where: WHERE.calibrazione,
           hint: 'Nella vista Calibrazione, scegli RUE dal menu, poi clicca "Esegui Calibrazione"'
         },
         {
           description: 'Identifica il valore di RUE che minimizza il RMSE',
+          where: WHERE.calibrazione,
           hint: 'Cerca il punto più basso nel grafico RMSE vs RUE'
         },
         {
           description: 'Quale valore di RUE hai trovato? (approssima a 1 decimale)',
+          where: 'Risultato letto nei grafici della stessa vista Calibrazione.',
           solution: 'Il valore ottimale dovrebbe essere vicino a 3.5 (il valore "vero" usato per generare i dati)'
         }
       ],
@@ -71,18 +103,22 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Simula con Tbase=8°C e tuHAR=1400°C·d. Quanti giorni impiega la coltura a raggiungere la maturazione?',
+          where: WHERE.fenologia,
           hint: 'Controlla il grafico NDS nella vista Fenologia'
         },
         {
           description: 'Ripeti la simulazione con Tbase=10°C (mantenendo tuHAR=1400). Come cambia la durata?',
+          where: WHERE.fenologia,
           hint: 'Una Tbase più alta riduce l\'accumulo di gradi giorno'
         },
         {
           description: 'Ripeti con tuHAR=1600°C·d (mantenendo Tbase=8). Come cambia la durata?',
+          where: WHERE.fenologia,
           hint: 'Un tuHAR più alto richiede più gradi giorno per maturare'
         },
         {
           description: 'Quale parametro ha maggiore impatto sulla durata del ciclo?',
+          where: 'Stessa vista Fenologia: rifletti sui tre scenari appena impostati con gli slider.',
           solution: 'tuHAR ha generalmente un impatto maggiore, poiché determina direttamente il numero totale di gradi giorno necessari'
         }
       ],
@@ -103,18 +139,22 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Simula uno scenario con precipitazioni normali (rain_mean=2 mm/d). Registra la biomassa finale.',
+          where: `${WHERE.meteo} Poi ${WHERE.bilancioIdrico} per ARID/FTSW e ${WHERE.biomassa} per la biomassa finale.`,
           hint: 'Vista Bilancio Idrico: ARID e FTSW. Vista Biomassa: biomassa finale. Genera meteo prima.'
         },
         {
           description: 'Ripeti con precipitazioni ridotte (rain_mean=0.5 mm/d). Confronta ARID e biomassa finale.',
+          where: `${WHERE.meteo} Quindi ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
           hint: 'Lo stress idrico aumenta quando le precipitazioni sono scarse'
         },
         {
           description: 'In quale fase fenologica lo stress idrico ha maggiore impatto? (emergenza, crescita, fioritura, maturazione)',
+          where: 'Leggi NDS e LAI in Fenologia / LAI & Radiazione e collega alle curve FTSW in Bilancio Idrico.',
           solution: 'Generalmente la fase di crescita attiva (quando LAI è massimo) è più sensibile allo stress idrico'
         },
         {
           description: 'Calcola la riduzione percentuale della biomassa finale tra i due scenari.',
+          where: 'Valore biomassa da Menu → Biomassa (ultimo punto o tabella esportazione se usi Esportazione Dati).',
           hint: 'Formula: ((Biomassa_normale - Biomassa_siccita) / Biomassa_normale) × 100'
         }
       ],
@@ -135,18 +175,22 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Simula con KPAR=0.5 (tipico per frumento). Calcola FINT media durante la fase di crescita.',
+          where: `${WHERE.panoramicaCrop} Scegli preset «Frumento (C3)». Poi ${WHERE.laiRad} Imposta KPAR=0,50.`,
           hint: 'FINT = 1 - exp(-KPAR × LAI). Vista LAI & Radiazione mostra LAI e FINT nel grafico'
         },
         {
           description: 'Varia KPAR tra 0.3 e 0.7 con step 0.05. Per ogni valore, calcola FINT media.',
+          where: WHERE.laiRad,
           hint: 'KPAR più alto aumenta FINT ma può ridurre l\'efficienza per unità di LAI'
         },
         {
           description: 'Identifica il valore di KPAR che massimizza FINT media. È sempre il valore più alto?',
+          where: 'Dati sempre dalla vista LAI & Radiazione (grafico FINT vs tempo o tabella se esporti).',
           solution: 'No, perché FINT è limitato a 1. Valori molto alti di KPAR possono portare a saturazione precoce'
         },
         {
           description: 'Considera anche l\'efficienza: quale KPAR massimizza FINT/LAI?',
+          where: 'Usa i valori LAI e FINT dalla stessa vista al variare di KPAR (calcolo a mano o foglio).',
           hint: 'Questo rappresenta l\'efficienza di intercettazione per unità di area fogliare'
         }
       ],
@@ -167,18 +211,22 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Per il bilancio idrico: W(t+1) = W(t) + ? - ? - ? - ?. Completa con i termini mancanti.',
+          where: 'Esercizio scritto; oppure confronta con Menu → Logica & Codice o Manuale Teoria.',
           solution: 'Pioggia, Ruscellamento, ET_reale, Drenaggio (o analoghi)'
         },
         {
           description: 'Per la biomassa: B(t+1) = B(t) + ?. Qual è il termine di flusso?',
+          where: 'Esercizio scritto.',
           solution: 'Delta B (produzione giornaliera di biomassa)'
         },
         {
           description: 'Per CTU: CTU(t) = CTU(t-1) + ?. Quale flusso giornaliero?',
+          where: 'Esercizio scritto.',
           solution: 'DTU (unità termiche giornaliere)'
         },
         {
           description: 'Nella vista Concetti Base, avvia il simulatore. Verifica che CTU[N] = CTU[N-1] + DTU[N] per un giorno a scelta.',
+          where: `${WHERE.concetti} Card «Simulatore Interattivo» (confronto stato vs flusso).`,
           hint: 'Usa il confronto Stato vs Flusso nel simulatore'
         }
       ],
@@ -199,18 +247,22 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Nella vista Concetti Base, usa la demo Expolinear. Con r_m=0.1, C_m=20, t_b=20: a che giorno la curva inizia a diventare lineare?',
+          where: `${WHERE.concetti} Card «Funzione Expolinear (Goudriaan e Monteith, 1990)» con slider r_m, C_m, t_b.`,
           hint: 'Osserva quando la pendenza (dW/dt) smette di aumentare e diventa costante'
         },
         {
           description: 'Raddoppia r_m (0.2). Come cambia la forma della curva?',
+          where: WHERE.concetti,
           hint: 'r_m più alto accelera la transizione alla fase lineare'
         },
         {
           description: 'Aumenta t_b a 40. Cosa succede alla fase esponenziale?',
+          where: WHERE.concetti,
           solution: 'La fase esponenziale si prolunga; la transizione alla fase lineare avviene più tardi'
         },
         {
           description: 'Quale parametro determina la pendenza della fase lineare?',
+          where: 'Risposta concettuale (stessa demo Expolinear).',
           solution: 'C_m (tasso di crescita massimo) determina la pendenza della fase lineare'
         }
       ],
@@ -231,14 +283,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Vai alla vista Fenologia. Genera meteo e osserva la demo Fillocrono. Con PHYL=50°C·d, quanti nodi ha la pianta al giorno 100?',
+          where: `${WHERE.meteo} Poi ${WHERE.fenologia} Scheda demo Fillocrono con slider PHYL.`,
           hint: 'Usa la demo interattiva con lo slider PHYL'
         },
         {
           description: 'Riduci PHYL a 30. Come cambia il numero di nodi?',
+          where: WHERE.fenologia,
           hint: 'PHYL più basso = più nodi per unità di tempo termico'
         },
         {
           description: 'Perché colture con fillocrono basso sviluppano più nodi a parità di gradi giorno?',
+          where: 'Domanda teorica (stesso contesto Fenologia / fillocrono).',
           solution: 'PHYL rappresenta i °C·d necessari per ogni nuovo nodo; valori bassi significano che la pianta \"consuma\" meno gradi giorno per nodo'
         }
       ],
@@ -259,14 +314,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'FTSW = (W - W_wp)/(W_fc - W_wp). Se W=120 mm, W_wp=80, W_fc=200: qual è FTSW?',
+          where: 'Calcolo a mano; in app i valori W sono in Bilancio Idrico (grafici/tabella).',
           solution: 'FTSW = (120-80)/(200-80) = 40/120 = 0.33'
         },
         {
           description: 'A quale valore di FTSW si considera critico lo stress idrico per molte colture?',
+          where: `Concetto teorico; le curve simulate sono in ${WHERE.bilancioIdrico}`,
           hint: 'Soglie tipiche: 0.2-0.3'
         },
         {
           description: 'Come si relaziona ARID con FTSW?',
+          where: `Associazione tipica osservabile nei grafici di ${WHERE.bilancioIdrico}`,
           solution: 'ARID = 1 - T_act/ET0 riflette lo stress; quando FTSW è basso, T_act diminuisce e ARID aumenta'
         }
       ],
@@ -287,14 +345,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Vai alla vista Funzioni di Risposta. Con TBD=8, TP1=18, TP2=28, TCD=40: a quale temperatura f(T) raggiunge 1?',
+          where: `${WHERE.funzioniRisposta} Prima card sulla risposta alla temperatura: regola TBD, TP1, TP2, TCD e leggi il grafico f(T).`,
           hint: 'La forma trapezoidale è 1 tra TP1 e TP2'
         },
         {
           description: 'Passa alla forma triangolare. Come cambia la curva rispetto alla trapezoidale?',
+          where: WHERE.funzioniRisposta,
           solution: 'La triangolare ha un singolo picco (Topt); non c\'è plateau, la curva scende subito dopo il massimo'
         },
         {
           description: 'Con la forma beta, a T=5°C (sotto TBD) qual è il valore di f(T)?',
+          where: WHERE.funzioniRisposta,
           solution: 'f(T) = 0 per T ≤ TBD (nessuno sviluppo)'
         }
       ],
@@ -315,14 +376,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Nella vista Funzioni di Risposta, sezione Runoff SCS: con CN=70 e pioggia 50 mm, quanto runoff si genera?',
+          where: `${WHERE.funzioniRisposta} Card «Runoff – Metodo SCS Curve Number»: slider CN, lettura sul grafico Pioggia–Runoff.`,
           hint: 'Leggi il valore dal grafico interattivo'
         },
         {
           description: 'Aumenta CN a 90. Come cambia il runoff per la stessa pioggia?',
+          where: WHERE.funzioniRisposta,
           solution: 'CN più alto = più runoff, meno infiltrazione (suolo meno permeabile o meno copertura)'
         },
         {
           description: 'Nella vista Bilancio Idrico, varia il Curve Number. Come influisce su W (contenuto idrico) e su ARID?',
+          where: `${WHERE.bilancioIdrico} Slider «Curve Number (CN) SCS».`,
           hint: 'Più runoff = meno acqua che entra nel suolo = W più basso, ARID più alto'
         }
       ],
@@ -343,14 +407,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Con preset Mais, imposta semina al giorno 1. Quanti giorni circa impiega a raggiungere NDS=1?',
+          where: `${WHERE.panoramicaCrop} Seleziona «Mais (C4)» e imposta il giorno di semina a 1. Poi ${WHERE.fenologia} Leggi il giorno in cui il grafico NDS arriva a 1.`,
           hint: 'Vista Fenologia: osserva quando NDS raggiunge 1'
         },
         {
           description: 'Ripeti con semina al giorno 120 (fine aprile). La durata in giorni è la stessa?',
+          where: `${WHERE.panoramicaCrop} Sposta solo «Data di Semina/Trapianto» a 120. Controlla di nuovo ${WHERE.fenologia}.`,
           solution: 'No: con semina tardiva le temperature sono più alte, quindi DTU/giorno è maggiore e il ciclo si completa in meno giorni solari'
         },
         {
           description: 'Quale dei due scenari produce più biomassa finale? Perché?',
+          where: `${WHERE.biomassa} Confronta la biomassa finale tra le due configurazioni (stesso meteo).`,
           hint: 'Considera la radiazione disponibile durante il ciclo'
         }
       ],
@@ -371,14 +438,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Nella vista LAI & Radiazione: a che valore di LAI (approssimativo) FINT supera 0.9 con KPAR=0.6?',
+          where: `${WHERE.laiRad} Imposta KPAR=0,60 e leggi LAI e FINT dai grafici (o valori prossimi al picco).`,
           hint: 'FINT = 1 - exp(-k·LAI). Per FINT=0.9: 0.9 = 1 - exp(-0.6·LAI) => LAI ≈ 3.8'
         },
         {
           description: 'In quale fase fenologica (NDS) il LAI è massimo?',
+          where: `${WHERE.laiRad} Grafico LAI vs tempo; incrocia con NDS aprendo ${WHERE.fenologia} se serve.`,
           solution: 'Subito prima dell\'inizio della senescenza (frBLS), tipicamente NDS tra 0.6 e 0.7'
         },
         {
           description: 'Perché la biomassa giornaliera (dB) è massima quando FINT è alta ma LAI non ha ancora iniziato a senescere?',
+          where: `Osservazione da ${WHERE.laiRad} e ${WHERE.biomassa} (andamento dB).`,
           solution: 'dB = PAR·FINT·RUE·... : FINT alta significa massima intercettazione; LAI ancora verde significa nessuna perdita di area fotosintetica'
         }
       ],
@@ -399,14 +469,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Vai alla vista Riduzione Radiazione. Con 0% ombreggiamento, registra la biomassa finale.',
+          where: `${WHERE.riduzioneRad} Card «Configurazione Impianto Agrivoltaico»: slider «Ombreggiamento (%)» a 0. Grafici Biomassa_Standard vs Biomassa_Agri nella stessa pagina.`,
           hint: 'Grafico Biomassa_Standard'
         },
         {
           description: 'Imposta 40% ombreggiamento. Di quanto si riduce la biomassa? E come cambia lo stress (ARID)?',
+          where: `Sempre ${WHERE.riduzioneRad} Confronta i grafici; per ARID apri anche ${WHERE.bilancioIdrico}.`,
           solution: 'Biomassa si riduce ~30-50%; ARID spesso diminuisce (meno traspirazione, acqua dura di più)'
         },
         {
           description: 'Spiega perché sotto pannelli la coltura può avere meno stress idrico ma minore produttività.',
+          where: 'Risposta argomentativa; dati numerici da Riduzione Radiazione + Bilancio Idrico.',
           solution: 'Meno radiazione = meno fotosintesi e crescita, ma anche meno calore e traspirazione. L\'acqua nel suolo si esaurisce più lentamente.'
         }
       ],
@@ -427,14 +500,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Vai alla vista Validazione. Con rumore σ=0, quali valori di R² e RMSE ottieni?',
+          where: `${WHERE.validazione} Slider «Rumore Osservazioni» / «Livello di Rumore (σ)»: leggi RMSE e R² nelle card della pagina.`,
           hint: 'Senza rumore, simulato = osservato'
         },
         {
           description: 'Aumenta il rumore a σ=300. Come cambiano RMSE e R²?',
+          where: WHERE.validazione,
           solution: 'RMSE aumenta (~300 kg/ha); R² diminuisce (maggiore scatter tra oss e sim)'
         },
         {
           description: 'Cosa indica un bias positivo? E uno negativo?',
+          where: WHERE.validazione,
           solution: 'Bias > 0: il modello sovrastima sistematicamente. Bias < 0: sottostima.'
         }
       ],
@@ -455,14 +531,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Nella vista Funzioni di Risposta, sezione FTSW→WSFG: con WSSG=0.25 e FTSW=0.20, qual è WSFG?',
+          where: `${WHERE.funzioniRisposta} Card sulla relazione FTSW–WSFG: regola lo slider WSSG e leggi WSFG sul grafico o tabella.`,
           solution: 'WSFG = 0.20/0.25 = 0.8 (crescita ridotta al 80%)'
         },
         {
           description: 'Se WSSG=0.40 (soglia più alta), con FTSW=0.20 qual è WSFG?',
+          where: WHERE.funzioniRisposta,
           solution: 'WSFG = 0.20/0.40 = 0.5 (crescita al 50%)'
         },
         {
           description: 'Colture con WSSG alto sono più o meno sensibili allo stress idrico?',
+          where: `Risposta argomentativa; per cambiare WSSG nella simulazione: ${WHERE.biomassa} Slider «Soglia FTSW (WSSG)».`,
           solution: 'Più sensibili: iniziano a ridurre la crescita prima (a FTSW più alto)'
         }
       ],
@@ -483,14 +562,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Imposta Mais. Nel Generatore Meteo usa tmean=14°C e genera meteo. In Fenologia annota il giorno in cui NDS raggiunge 1.',
+          where: `${WHERE.panoramicaCrop} Preset «Mais (C4)». Poi ${WHERE.meteo} Imposta Temperatura Media 14 °C e «Genera Meteo Sintetico». Infine ${WHERE.fenologia} Leggi il giorno con NDS=1.`,
           hint: 'NDS=1 indica fine ciclo fenologico'
         },
         {
           description: 'Ripeti con tmean=22°C mantenendo gli altri parametri uguali.',
+          where: `${WHERE.meteo} Solo Temperatura Media → 22 °C, poi «Genera Meteo Sintetico»; ${WHERE.fenologia}.`,
           hint: 'Confronta il giorno di maturità tra i due scenari'
         },
         {
           description: 'Quale scenario conclude prima il ciclo? Spiega in una frase.',
+          where: 'Confronto tra i due esperimenti usando i grafici in Fenologia.',
           solution: 'Con tmean più alta il ciclo si conclude prima, perché l\'accumulo termico giornaliero (DTU) è maggiore.'
         }
       ],
@@ -511,14 +593,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Vai in LAI & Radiazione e osserva l\'andamento di FINT durante il ciclo.',
+          where: WHERE.laiRad,
           hint: 'FINT cresce velocemente all\'inizio e poi rallenta'
         },
         {
           description: 'Individua il valore di LAI (approssimativo) per cui FINT supera 0.9.',
+          where: WHERE.laiRad,
           solution: 'Con KPAR~0.6, FINT supera 0.9 intorno a LAI 3.5-4.5.'
         },
         {
           description: 'Spiega perché aumentare ancora LAI oltre quel valore ha effetto limitato su FINT.',
+          where: 'Argomentazione teorica coerente con i grafici in LAI & Radiazione.',
           solution: 'La funzione è saturante: gran parte della luce è già intercettata, quindi i guadagni aggiuntivi diventano piccoli.'
         }
       ],
@@ -539,14 +624,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Scenario A: rain_mean=2 mm/d. Genera meteo e registra FTSW medio e biomassa finale.',
+          where: `${WHERE.meteo} Piovosità Media 2 mm/d → «Genera Meteo Sintetico». Poi ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
           hint: 'Usa Bilancio Idrico + Biomassa'
         },
         {
           description: 'Scenario B: rain_mean=0.5 mm/d. Rigenera meteo e confronta FTSW, ARID e biomassa.',
+          where: `${WHERE.meteo} Piovosità 0,5 mm/d → «Genera Meteo Sintetico»; stesse viste ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
           hint: 'Con meno pioggia, aspettati più stress'
         },
         {
           description: 'Descrivi cosa accade quando FTSW scende sotto la soglia WSSG.',
+          where: `Collega ai grafici ${WHERE.bilancioIdrico} e alla soglia WSSG in ${WHERE.biomassa}.`,
           solution: 'WSFG scende sotto 1 e la crescita giornaliera (dB) viene ridotta, con biomassa finale inferiore.'
         }
       ],
@@ -567,14 +655,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'In Calibrazione imposta σ=120 e parametro RUE. Genera dati osservati e avvia la grid search.',
+          where: `${WHERE.calibrazione} Seleziona RUE, rumore σ=120, pulsante «1. Genera Dati Osservati», poi avvio calibrazione come da istruzioni nella pagina.`,
           hint: 'Segui gli step guidati nella vista'
         },
         {
           description: 'Annota RUE calibrato e RMSE minimo. Confronta con il valore vero mostrato nella card.',
+          where: WHERE.calibrazione,
           hint: 'Lo scostamento dovrebbe essere piccolo con rumore moderato'
         },
         {
           description: 'Aumenta il rumore a σ=300 e ripeti. Cosa osservi nel minimo RMSE?',
+          where: WHERE.calibrazione,
           solution: 'Con più rumore la curva è meno netta e la stima del parametro è meno precisa.'
         }
       ],
@@ -595,14 +686,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Con meteo invariato, confronta due simulazioni con CN=65 e CN=90.',
+          where: `${WHERE.bilancioIdrico} Slider Curve Number: esegui una volta CN=65, annota; poi CN=90 (non cambiare meteo).`,
           hint: 'CN alto implica maggiore runoff e minore infiltrazione'
         },
         {
           description: 'Annota differenze nel runoff giornaliero (RO) in alcuni giorni piovosi, in FTSW e in biomassa finale.',
+          where: `${WHERE.bilancioIdrico} Tabella/giorni con pioggia; ${WHERE.biomassa} per biomassa finale.`,
           hint: 'Usa la tabella in Bilancio Idrico per RO e FTSW, e la vista Biomassa per il valore finale'
         },
         {
           description: 'Spiega il legame causa-effetto in massimo 4 righe.',
+          where: 'Sintesi scritta; i dati numerici vengono dalle viste indicate sopra.',
           solution: 'CN elevato aumenta RO, riduce l\'acqua infiltrata nel profilo, abbassa FTSW e penalizza la crescita.'
         }
       ],
@@ -623,14 +717,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Simula semina giorno 1 e giorno 120, mantenendo stesso meteo e cultivar.',
+          where: `${WHERE.panoramicaCrop} Stesso preset coltura; modifica solo «Data di Semina/Trapianto» (1 poi 120). Meteo: ${WHERE.meteo}`,
           hint: 'Usa il selettore data di semina della coltura'
         },
         {
           description: 'Confronta: durata ciclo (giorni), ARID medio, biomassa finale.',
+          where: `${WHERE.fenologia} per durata/NDS; ${WHERE.bilancioIdrico} per ARID; ${WHERE.biomassa} per biomassa.`,
           hint: 'Raccogli i risultati in una piccola tabella'
         },
         {
           description: 'Quale data sceglieresti e perché?',
+          where: 'Valutazione personale basata sui numeri raccolti.',
           solution: 'Dipende dal compromesso: semina tardiva accelera il ciclo ma può ridurre biomassa; la scelta migliore minimizza stress e massimizza resa.'
         }
       ],
@@ -651,14 +748,17 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Confronta 0%, 20% e 40% di ombreggiamento.',
+          where: WHERE.riduzioneRad,
           hint: 'Vista Riduzione Radiazione'
         },
         {
           description: 'Per ogni scenario annota biomassa finale e un indicatore di stress idrico (ARID o FTSW medio).',
+          where: `${WHERE.riduzioneRad} per biomassa; ${WHERE.bilancioIdrico} per ARID/FTSW.`,
           hint: 'Compila una tabella con 3 righe'
         },
         {
           description: 'Individua il livello di ombreggiamento più equilibrato per resa/stress.',
+          where: 'Interpretazione dei tre scenari impostati in Riduzione Radiazione.',
           solution: 'Spesso un livello intermedio riduce lo stress senza penalizzare eccessivamente la biomassa.'
         }
       ],
@@ -679,18 +779,22 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'In Calibrazione: genera osservazioni sintetiche e calibra RUE.',
+          where: `${WHERE.calibrazione} Workflow completo come nelle card «Esercizio di Calibrazione».`,
           hint: 'Usa rumore moderato (σ=120-180)'
         },
         {
           description: 'In Validazione: usa stesso scenario e interpreta RMSE, R², nRMSE e bias.',
+          where: WHERE.validazione,
           hint: 'Valuta anche la qualità (buono/scarso)'
         },
         {
           description: 'Ripeti aumentando il rumore e confronta le metriche.',
+          where: `${WHERE.calibrazione} → poi ${WHERE.validazione} con σ più alto.`,
           hint: 'Con più rumore il fit peggiora'
         },
         {
           description: 'Scrivi una conclusione di 6-8 righe su robustezza e limiti del modello.',
+          where: 'Elaborato scritto fuori dall\'app (quaderno o documento).',
           solution: 'Un modello può essere utile anche con errore non nullo, ma va interpretato con metriche e limiti del dataset.'
         }
       ],
@@ -711,18 +815,22 @@ export const ExercisesView: React.FC = () => {
       steps: [
         {
           description: 'Simula mais (preset) con condizioni normali. Registra biomassa finale e ARID medio.',
+          where: `${WHERE.panoramicaCrop} «Mais (C4)». Meteo predefinito o ${WHERE.meteo} con pioggia «normale». Poi ${WHERE.biomassa} e ${WHERE.bilancioIdrico}.`,
           hint: 'Usa i preset nella vista Panoramica e confronta i risultati'
         },
         {
           description: 'Ripeti per frumento nelle stesse condizioni. Confronta biomassa finale.',
+          where: `${WHERE.panoramicaCrop} Passa a «Frumento (C3)» senza cambiare meteo; ${WHERE.biomassa}.`,
           hint: 'Il mais (C4) ha generalmente RUE più alta'
         },
         {
           description: 'Confronta i valori di ARID tra le due colture: quale mostra meno stress a parità di scenario?',
+          where: WHERE.bilancioIdrico,
           hint: 'ARID più basso indica minore stress idrico'
         },
         {
           description: 'Ripeti in condizioni di stress idrico (rain_mean=0.5). Quale coltura è più resiliente?',
+          where: `${WHERE.meteo} Piovosità 0,5 mm/d → «Genera Meteo Sintetico». Poi ${WHERE.panoramicaCrop} per selezionare mais o frumento e ${WHERE.biomassa}.`,
           solution: 'Il mais (C4) ha generalmente maggiore efficienza idrica e resilienza allo stress, grazie alla fotosintesi C4 che riduce la traspirazione'
         }
       ],
@@ -852,6 +960,12 @@ export const ExercisesView: React.FC = () => {
           Questa sezione contiene esercizi pratici organizzati per difficoltà e modulo didattico.
           Completa gli esercizi per consolidare la comprensione dei concetti teorici.
         </p>
+        <p className="text-sm text-gray-600 mb-4 p-3 bg-slate-100 rounded-lg border border-slate-200">
+          <strong>Come orientarsi:</strong> ogni passo che richiede l&apos;app include la riga «Dove nell&apos;app»
+          (icona puntina): indica la voce del menu laterale e il controllo da usare (preset coltura, slider, pulsanti).
+          La <em>coltura</em> (es. Mais) si imposta sempre in <strong>Panoramica</strong> con «Seleziona Coltura (Preset)»;
+          la <em>data di semina</em> è il cursore «Data di Semina/Trapianto» nella stessa pagina.
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
             <div className="text-2xl font-bold text-blue-700">
@@ -955,6 +1069,15 @@ export const ExercisesView: React.FC = () => {
                       <span className="font-bold text-brand-700">Step {index + 1}:</span>
                       <span className="text-gray-700 flex-1">{step.description}</span>
                     </div>
+                    {step.where && (
+                      <div className="mt-2 flex items-start gap-2 text-sm bg-slate-100 border border-slate-200 p-2 rounded-md">
+                        <MapPin size={16} className="mt-0.5 flex-shrink-0 text-slate-600" aria-hidden />
+                        <span className="text-slate-800">
+                          <span className="font-semibold text-slate-900">Dove nell&apos;app: </span>
+                          {step.where}
+                        </span>
+                      </div>
+                    )}
                     {step.hint && (
                       <div className="mt-2 flex items-start gap-2 text-sm text-gray-600 bg-yellow-50 p-2 rounded">
                         <Lightbulb size={14} className="mt-0.5 flex-shrink-0 text-yellow-600" />
