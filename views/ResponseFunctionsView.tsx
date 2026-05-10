@@ -5,6 +5,10 @@ import { CHART_MARGIN } from '../utils/chartMargins';
 import { MathFormula } from '../components/MathFormula';
 import { Thermometer, Droplet, Sun, Zap, CloudRain, Layers } from 'lucide-react';
 
+/** Grafici centrati e quasi quadrati (aspect 1:1): limitati in larghezza per miglior proporzione */
+const RF_CHART_WRAP =
+  'mx-auto w-full max-w-[min(100%,24rem)] sm:max-w-lg md:max-w-xl aspect-square min-h-[220px]';
+
 // Funzioni di risposta (per demo interattiva)
 const tempfunTrapezoid = (t: number, TBD: number, TP1: number, TP2: number, TCD: number): number => {
   if (t <= TBD) return 0;
@@ -150,7 +154,7 @@ export const ResponseFunctionsView: React.FC = () => {
             )}
           </div>
         </div>
-        <div className="h-[280px]">
+        <div className={RF_CHART_WRAP}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={tempData} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -178,7 +182,7 @@ export const ResponseFunctionsView: React.FC = () => {
         <div className="bg-slate-50 p-3 rounded border border-slate-200 text-sm mb-4 font-mono">
           WSFG = 1 se FTSW ≥ WSSG &nbsp;&nbsp;|&nbsp;&nbsp; WSFG = FTSW/WSSG se FTSW &lt; WSSG
         </div>
-        <div className="h-[260px]">
+        <div className={RF_CHART_WRAP}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={wsfgData} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -200,7 +204,7 @@ export const ResponseFunctionsView: React.FC = () => {
         <div className="flex gap-4 mb-4">
           <Slider label="K (KPAR)" value={KPAR} min={0.3} max={1.0} step={0.05} onChange={setKPAR} className="max-w-xs" />
         </div>
-        <div className="h-[260px]">
+        <div className={RF_CHART_WRAP}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={fintData} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -225,7 +229,7 @@ export const ResponseFunctionsView: React.FC = () => {
         <div className="bg-slate-50 p-3 rounded border border-slate-200 text-sm mb-4 font-mono">
           fHeat = 1 se Tmax &lt; soglia &nbsp;&nbsp;|&nbsp;&nbsp; fHeat = 0 se Tmax ≥ estrema &nbsp;&nbsp;|&nbsp;&nbsp; lineare tra le due
         </div>
-        <div className="h-[260px]">
+        <div className={RF_CHART_WRAP}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={heatData} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -259,7 +263,7 @@ export const ResponseFunctionsView: React.FC = () => {
         <div className="flex gap-4 mb-4">
           <Slider label="Curve Number (CN)" value={CN} min={50} max={95} step={5} onChange={setCN} className="max-w-xs" />
         </div>
-        <div className="h-[260px]">
+        <div className={RF_CHART_WRAP}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={runoffData} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
