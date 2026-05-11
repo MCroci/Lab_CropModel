@@ -89,7 +89,7 @@ export const WaterView: React.FC = () => {
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
                         <Clock size={16} className="text-brand-600"/>
-                        Giorno {currentStep.day} {sowingDay > 1 && <span className="text-xs font-normal text-gray-500">(Semina: {sowingDay})</span>}
+                        Giorno {currentStep.day} <span className="text-xs font-normal text-gray-500">(periodo post-semina, semina: {sowingDay})</span>
                     </div>
                     <div className="text-xs text-gray-500">
                         ARID: <span className={currentStep.ARID > 0 ? "text-red-600 font-bold" : "text-green-600"}>{currentStep.ARID.toFixed(2)}</span>
@@ -106,7 +106,7 @@ export const WaterView: React.FC = () => {
                     onChange={(e) => setSelectedDayIndex(parseInt(e.target.value))}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-600"
                 />
-                <p className="text-center text-xs text-gray-400 mt-1">Trascina per vedere l'evoluzione nel tempo</p>
+                <p className="text-center text-xs text-gray-400 mt-1">Trascina per vedere l'evoluzione nel tempo (solo dal giorno di semina)</p>
              </div>
           </Card>
 
@@ -168,6 +168,9 @@ export const WaterView: React.FC = () => {
             title="Bilancio Idrico e Stress"
             headerAction={<DownloadAction data={displayedWaterResults} filename="bilancio_idrico.csv" />}
           >
+            <div className="mb-2 text-xs text-gray-600 bg-blue-50 border border-blue-200 rounded px-3 py-2">
+              <strong>Nota:</strong> in questa sezione i risultati sono mostrati solo dal <strong>giorno di semina ({sowingDay})</strong> in poi.
+            </div>
             <div className="h-[400px] w-full">
               <ResponsiveContainer>
                 <LineChart data={displayedWaterResults} margin={CHART_MARGIN_DUAL_Y}>
@@ -209,7 +212,7 @@ export const WaterView: React.FC = () => {
         </div>
       </div>
 
-      <Card title="Tabella Bilancio Idrico">
+      <Card title={`Tabella Bilancio Idrico (dal giorno di semina ${sowingDay})`}>
         <div className="overflow-x-auto max-h-[300px]">
           <table className="min-w-full text-sm text-left text-gray-600">
             <thead className="bg-gray-50 text-gray-700 font-medium sticky top-0">
