@@ -139,11 +139,21 @@ export const LaiView: React.FC = () => {
                   name="FINT (Intercettazione, asse destro)"
                   dot={false}
                 />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="NDS"
+                  stroke="#7c3aed"
+                  strokeWidth={2}
+                  name="NDS (Fenologia, asse destro)"
+                  dot={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
           <p className="text-sm text-gray-500 mt-4 text-center">
-            FINT = 1 - exp(-K * LAI). La produzione giornaliera usa: SRAD * 0.48 * FINT * RUE.
+            FINT = 1 - exp(-K * LAI). NDS (0-1) mostra l'avanzamento fenologico sulla stessa scala di FINT.
+            La produzione giornaliera usa: SRAD * 0.48 * FINT * RUE.
           </p>
         </Card>
       </div>
