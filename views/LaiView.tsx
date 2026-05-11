@@ -18,11 +18,10 @@ export const LaiView: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cropParams]);
 
-  // Calcolo FINT per il grafico
+  // Calcolo FINT reale (0-1) per il grafico a doppio asse
   const chartData = simulationResults.map(d => ({
     ...d,
-    FINT: 1 - Math.exp(-cropParams.KPAR * d.LAI),
-    FINT_Scaled: (1 - Math.exp(-cropParams.KPAR * d.LAI)) * (Math.max(...simulationResults.map(r=>r.LAI)) || 1)
+    FINT: 1 - Math.exp(-cropParams.KPAR * d.LAI)
   }));
 
   return (
@@ -109,11 +108,37 @@ export const LaiView: React.FC = () => {
                   dataKey="day" 
                   label={{ value: `Giorno (Semina: giorno ${sowingDay})`, position: 'insideBottom', offset: 0 }} 
                 />
-                <YAxis label={{ value: 'LAI', angle: -90, position: 'insideLeft' }} />
+                <YAxis
+                  yAxisId="left"
+                  label={{ value: 'LAI', angle: -90, position: 'insideLeft' }}
+                />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  domain={[0, 1.05]}
+                  label={{ value: 'FINT (0-1)', angle: 90, position: 'insideRight' }}
+                />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="LAI" stroke="#16a34a" strokeWidth={2} name="LAI (Indice Area Fogliare)" dot={false} />
-                <Line type="monotone" dataKey="FINT_Scaled" stroke="#ca8a04" strokeDasharray="5 5" strokeWidth={2} name="FINT (Intercettazione scalata)" dot={false} />
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="LAI"
+                  stroke="#16a34a"
+                  strokeWidth={2}
+                  name="LAI (Indice Area Fogliare)"
+                  dot={false}
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="FINT"
+                  stroke="#ca8a04"
+                  strokeDasharray="5 5"
+                  strokeWidth={2}
+                  name="FINT (Intercettazione, asse destro)"
+                  dot={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>

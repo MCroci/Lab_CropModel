@@ -44,6 +44,7 @@ export const WaterView: React.FC = () => {
   const { soilParams, setSoilParams, waterResults, runSimulation, getCurrentCropSowingDay } = useSimulation();
   const sowingDay = getCurrentCropSowingDay();
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(-1);
+  const displayedWaterResults = waterResults.filter(r => r.day >= sowingDay);
 
   // Re-run on soil param change
   useEffect(() => {
@@ -56,17 +57,17 @@ export const WaterView: React.FC = () => {
 
   // Update selection when results change
   useEffect(() => {
-    if (waterResults.length > 0 && selectedDayIndex === -1) {
-        setSelectedDayIndex(waterResults.length - 1);
+    if (displayedWaterResults.length > 0 && (selectedDayIndex === -1 || selectedDayIndex >= displayedWaterResults.length)) {
+        setSelectedDayIndex(displayedWaterResults.length - 1);
     }
-  }, [waterResults, selectedDayIndex]);
+  }, [displayedWaterResults, selectedDayIndex]);
 
   // Determina quale step mostrare
-  const safeIndex = (selectedDayIndex >= 0 && selectedDayIndex < waterResults.length) 
+  const safeIndex = (selectedDayIndex >= 0 && selectedDayIndex < displayedWaterResults.length) 
     ? selectedDayIndex 
-    : waterResults.length - 1;
+    : displayedWaterResults.length - 1;
     
-  const currentStep = waterResults[safeIndex] || { W: 0, day: 0, ARID: 0 };
+  const currentStep = displayedWaterResults[safeIndex] || { W: 0, day: 0, ARID: 0 };
 
   return (
     <div className="space-y-6">
@@ -100,7 +101,7 @@ export const WaterView: React.FC = () => {
                 <input 
                     type="range" 
                     min="0" 
-                    max={Math.max(0, waterResults.length - 1)} 
+                    max={Math.max(0, displayedWaterResults.length - 1)} 
                     value={safeIndex} 
                     onChange={(e) => setSelectedDayIndex(parseInt(e.target.value))}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-600"
@@ -165,11 +166,11 @@ export const WaterView: React.FC = () => {
 
           <Card 
             title="Bilancio Idrico e Stress"
-            headerAction={<DownloadAction data={waterResults} filename="bilancio_idrico.csv" />}
+            headerAction={<DownloadAction data={displayedWaterResults} filename="bilancio_idrico.csv" />}
           >
             <div className="h-[400px] w-full">
               <ResponsiveContainer>
-                <LineChart data={waterResults} margin={CHART_MARGIN_DUAL_Y}>
+                <LineChart data={displayedWaterResults} margin={CHART_MARGIN_DUAL_Y}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                   <XAxis 
                     dataKey="day" 
@@ -194,7 +195,7 @@ export const WaterView: React.FC = () => {
                   
                   {/* Linea ARID mappata sull'asse destro */}
                   <Line yAxisId="right" type="monotone" dataKey="ARID" stroke="#ef4444" strokeDasharray="3 3" strokeWidth={2} name="ARID" dot={false} />
-                  {waterResults.some((r: { FTSW?: number }) => r.FTSW != null) && (
+                  {displayedWaterResults.some((r: { FTSW?: number }) => r.FTSW != null) && (
                     <Line yAxisId="right" type="monotone" dataKey="FTSW" stroke="#3b82f6" strokeWidth={1} name="FTSW" dot={false} />
                   )}
                 </LineChart>
@@ -226,7 +227,7 @@ export const WaterView: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {waterResults.map((row, idx) => (
+              {displayedWaterResults.map((row, idx) => (
                 <tr key={row.day} className={`border-b border-gray-100 hover:bg-gray-50 ${idx === safeIndex ? 'bg-orange-50 border-orange-200' : ''}`}>
                   <td className="px-4 py-2">{row.day}</td>
                   <td className="px-4 py-2">{row.RAIN.toFixed(1)}</td>

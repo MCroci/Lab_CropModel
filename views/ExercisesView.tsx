@@ -8,7 +8,7 @@ const WHERE = {
   panoramicaCrop:
     'Menu laterale → Panoramica: selettore «Seleziona Coltura (Preset)» (Mais, Frumento, …) e, sotto, «Data di Semina/Trapianto» con cursore sul giorno dell’anno (1–365).',
   meteo:
-    'Menu → Generatore Meteo: card «Generatore Stocastico» — imposta Piovosità Media (mm/d), Temperatura Media, poi pulsante «Genera Meteo Sintetico» (la simulazione colturale si aggiorna da sola).',
+    'Menu → Generatore Meteo: usa preferibilmente tab «ERA5» (seleziona coordinate + anno e scarica) o tab «Climate» (date/modello CMIP6 e scarica). Il generatore stocastico resta opzionale.',
   fenologia:
     'Menu → Fenologia: card «Parametri Fenologici» (slider Tbase, tuHAR); nella stessa pagina leggi i grafici NDS e CTU.',
   biomassa:
@@ -56,7 +56,7 @@ export const ExercisesView: React.FC = () => {
     {
       id: 'ex1',
       title: 'Calibrazione del Parametro RUE',
-      description: 'Calibra il parametro RUE (Radiation Use Efficiency) per una coltura di mais utilizzando dati sintetici.',
+      description: 'Calibra il parametro RUE (Radiation Use Efficiency) per una coltura di mais su uno scenario meteo reale/climatico (ERA5 o Climate).',
       difficulty: 'base',
       module: 'Accumulo di Biomassa',
       objectives: [
@@ -66,7 +66,7 @@ export const ExercisesView: React.FC = () => {
       ],
       steps: [
         {
-          description: 'Genera dati osservati sintetici: esegui una simulazione con RUE=3.5 e aggiungi rumore gaussiano (σ≈150-200 kg/ha)',
+          description: 'Importa prima un meteo reale/climatico (ERA5 o Climate). Poi genera dati osservati sintetici: esegui una simulazione con RUE=3.5 e aggiungi rumore gaussiano (σ≈150-200 kg/ha).',
           where: `${WHERE.calibrazione} Regola RUE dagli slider se richiesto (Menu → Panoramica preset o Biomassa); nella stessa vista Calibrazione usa il pulsante «1. Genera Dati Osservati».`,
           hint: 'Vai alla vista Calibrazione (menu Analisi e Validazione), clicca "Genera Osservazioni Sintetiche"'
         },
@@ -551,7 +551,7 @@ export const ExercisesView: React.FC = () => {
     {
       id: 'ex13',
       title: 'Fenologia Base: durata del ciclo',
-      description: 'Confronta la durata del ciclo in due scenari termici semplici.',
+      description: 'Confronta la durata del ciclo in due scenari meteo reali/climatici con diverso regime termico.',
       difficulty: 'base',
       module: 'Fenologia',
       objectives: [
@@ -561,14 +561,14 @@ export const ExercisesView: React.FC = () => {
       ],
       steps: [
         {
-          description: 'Imposta Mais. Nel Generatore Meteo usa tmean=14°C e genera meteo. In Fenologia annota il giorno in cui NDS raggiunge 1.',
-          where: `${WHERE.panoramicaCrop} Preset «Mais (C4)». Poi ${WHERE.meteo} Imposta Temperatura Media 14 °C e «Genera Meteo Sintetico». Infine ${WHERE.fenologia} Leggi il giorno con NDS=1.`,
-          hint: 'NDS=1 indica fine ciclo fenologico'
+          description: 'Imposta Mais. Carica uno scenario ERA5 più fresco (es. anno storico fresco nel sito scelto) oppure Climate equivalente. In Fenologia annota il giorno in cui NDS raggiunge 1.',
+          where: `${WHERE.panoramicaCrop} Preset «Mais (C4)». Poi ${WHERE.meteo} Carica il primo scenario (fresco). Infine ${WHERE.fenologia} Leggi il giorno con NDS=1.`,
+          hint: 'NDS=1 indica fine ciclo fenologico; usa due anni/scenari con temperatura media diversa'
         },
         {
-          description: 'Ripeti con tmean=22°C mantenendo gli altri parametri uguali.',
-          where: `${WHERE.meteo} Solo Temperatura Media → 22 °C, poi «Genera Meteo Sintetico»; ${WHERE.fenologia}.`,
-          hint: 'Confronta il giorno di maturità tra i due scenari'
+          description: 'Ripeti con un secondo scenario ERA5/Climate più caldo mantenendo la stessa coltura e sito.',
+          where: `${WHERE.meteo} Carica il secondo scenario (caldo), poi ${WHERE.fenologia}.`,
+          hint: 'Confronta il giorno di maturità tra i due anni/scenari'
         },
         {
           description: 'Quale scenario conclude prima il ciclo? Spiega in una frase.',
@@ -613,7 +613,7 @@ export const ExercisesView: React.FC = () => {
     {
       id: 'ex15',
       title: 'Stress idrico: impatto su FTSW e biomassa',
-      description: 'Valuta l\'effetto di una riduzione della pioggia su acqua disponibile e crescita.',
+      description: 'Valuta l\'effetto di scenari pluviometrici diversi (anni ERA5 o scenari Climate) su acqua disponibile e crescita.',
       difficulty: 'intermedio',
       module: 'Bilancio Idrico',
       objectives: [
@@ -623,13 +623,13 @@ export const ExercisesView: React.FC = () => {
       ],
       steps: [
         {
-          description: 'Scenario A: rain_mean=2 mm/d. Genera meteo e registra FTSW medio e biomassa finale.',
-          where: `${WHERE.meteo} Piovosità Media 2 mm/d → «Genera Meteo Sintetico». Poi ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
-          hint: 'Usa Bilancio Idrico + Biomassa'
+          description: 'Scenario A: scegli un anno/scenario relativamente umido (ERA5 o Climate). Registra FTSW medio e biomassa finale.',
+          where: `${WHERE.meteo} Carica scenario umido, poi ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
+          hint: 'Usa Bilancio Idrico + Biomassa su dati non sintetici'
         },
         {
-          description: 'Scenario B: rain_mean=0.5 mm/d. Rigenera meteo e confronta FTSW, ARID e biomassa.',
-          where: `${WHERE.meteo} Piovosità 0,5 mm/d → «Genera Meteo Sintetico»; stesse viste ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
+          description: 'Scenario B: scegli un anno/scenario più secco. Confronta FTSW, ARID e biomassa rispetto allo Scenario A.',
+          where: `${WHERE.meteo} Carica scenario secco; stesse viste ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
           hint: 'Con meno pioggia, aspettati più stress'
         },
         {
@@ -706,7 +706,7 @@ export const ExercisesView: React.FC = () => {
     {
       id: 'ex18',
       title: 'Data di semina: confronto multi-indicatore',
-      description: 'Valuta l\'effetto della semina precoce vs tardiva su fenologia, acqua e biomassa.',
+      description: 'Valuta l\'effetto della semina precoce vs tardiva su fenologia, acqua e biomassa usando un dataset ERA5/Climate fisso.',
       difficulty: 'intermedio',
       module: 'Analisi Integrata',
       objectives: [
@@ -716,8 +716,8 @@ export const ExercisesView: React.FC = () => {
       ],
       steps: [
         {
-          description: 'Simula semina giorno 1 e giorno 120, mantenendo stesso meteo e cultivar.',
-          where: `${WHERE.panoramicaCrop} Stesso preset coltura; modifica solo «Data di Semina/Trapianto» (1 poi 120). Meteo: ${WHERE.meteo}`,
+          description: 'Carica un dataset ERA5/Climate e simula semina giorno 1 e giorno 120, mantenendo stesso meteo e cultivar.',
+          where: `${WHERE.meteo} Carica un solo dataset e non cambiarlo. Poi ${WHERE.panoramicaCrop} modifica solo «Data di Semina/Trapianto» (1 poi 120).`,
           hint: 'Usa il selettore data di semina della coltura'
         },
         {
@@ -804,7 +804,7 @@ export const ExercisesView: React.FC = () => {
     {
       id: 'ex5',
       title: 'Confronto Varietà: Mais vs Frumento',
-      description: 'Confronta le performance di mais (C4) e frumento (C3) in termini di produttività e uso dell\'acqua.',
+      description: 'Confronta le performance di mais (C4) e frumento (C3) in termini di produttività e uso dell\'acqua su scenari meteo reali/climatici.',
       difficulty: 'avanzato',
       module: 'Analisi di Scenario',
       objectives: [
@@ -814,8 +814,8 @@ export const ExercisesView: React.FC = () => {
       ],
       steps: [
         {
-          description: 'Simula mais (preset) con condizioni normali. Registra biomassa finale e ARID medio.',
-          where: `${WHERE.panoramicaCrop} «Mais (C4)». Meteo predefinito o ${WHERE.meteo} con pioggia «normale». Poi ${WHERE.biomassa} e ${WHERE.bilancioIdrico}.`,
+          description: 'Simula mais (preset) su uno scenario ERA5/Climate di riferimento. Registra biomassa finale e ARID medio.',
+          where: `${WHERE.meteo} Carica scenario di riferimento. Poi ${WHERE.panoramicaCrop} «Mais (C4)», quindi ${WHERE.biomassa} e ${WHERE.bilancioIdrico}.`,
           hint: 'Usa i preset nella vista Panoramica e confronta i risultati'
         },
         {
@@ -829,8 +829,8 @@ export const ExercisesView: React.FC = () => {
           hint: 'ARID più basso indica minore stress idrico'
         },
         {
-          description: 'Ripeti in condizioni di stress idrico (rain_mean=0.5). Quale coltura è più resiliente?',
-          where: `${WHERE.meteo} Piovosità 0,5 mm/d → «Genera Meteo Sintetico». Poi ${WHERE.panoramicaCrop} per selezionare mais o frumento e ${WHERE.biomassa}.`,
+          description: 'Ripeti su uno scenario ERA5/Climate più secco. Quale coltura è più resiliente?',
+          where: `${WHERE.meteo} Carica scenario più secco. Poi ${WHERE.panoramicaCrop} per selezionare mais o frumento e ${WHERE.biomassa}.`,
           solution: 'Il mais (C4) ha generalmente maggiore efficienza idrica e resilienza allo stress, grazie alla fotosintesi C4 che riduce la traspirazione'
         }
       ],
@@ -840,10 +840,12 @@ export const ExercisesView: React.FC = () => {
   ];
 
   const recommendedPath = [
-    'ex13', 'ex14', 'ex15', 'ex16', // blocco 2 ore
-    'ex17', 'ex18', 'ex19', 'ex20', // estensione progressiva
-    'ex1', 'ex2', 'ex3', 'ex8', 'ex9', 'ex12',
-    'ex7', 'ex10', 'ex11', 'ex4', 'ex5a', 'ex5b', 'ex5c', 'ex5d', 'ex5', 'ex6'
+    // Tipologia 1 - Fondamenti e lettura funzioni
+    'ex13', 'ex14', 'ex5a', 'ex15', 'ex17',
+    // Tipologia 2 - Scenari (inclusa semina, subito dopo runoff)
+    'ex3', 'ex8', 'ex18', 'ex19', 'ex10', 'ex6', 'ex5b', 'ex5c', 'ex5d', 'ex7', 'ex9', 'ex12', 'ex4', 'ex5', 'ex2',
+    // Tipologia 3 - Calibrazione e validazione (spostate in coda)
+    'ex1', 'ex16', 'ex11', 'ex20'
   ];
 
   const pathOrder = new Map(recommendedPath.map((id, idx) => [id, idx]));
@@ -989,12 +991,12 @@ export const ExercisesView: React.FC = () => {
         <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
           <h4 className="font-semibold text-indigo-900 mb-2">Percorso Logico Ottimizzato</h4>
           <p className="text-sm text-indigo-800 mb-2">
-            Segui l'ordine consigliato mostrato in questa pagina. I primi 4 esercizi (`ex13`-`ex16`) sono il blocco base da 2 ore.
+            Segui l&apos;ordine consigliato mostrato in questa pagina: gli esercizi sono raggruppati per tipologia e uso di scenari meteo reali/climatici (ERA5/Climate).
           </p>
           <div className="text-xs text-indigo-700 space-y-1">
-              <div><strong>Fase 1 - Fondamenti:</strong> ex13 -&gt; ex14 -&gt; ex15 -&gt; ex16</div>
-              <div><strong>Fase 2 - Integrazione:</strong> ex17 -&gt; ex18 -&gt; ex19 -&gt; ex20</div>
-            <div><strong>Fase 3 - Approfondimenti:</strong> esercizi rimanenti in ordine crescente di complessita</div>
+              <div><strong>Tipologia 1 - Fondamenti:</strong> fenomeni base + runoff SCS (prime posizioni).</div>
+              <div><strong>Tipologia 2 - Scenari:</strong> confronti tra anni/scenari ERA5-Climate, inclusi gli esercizi di semina subito dopo runoff.</div>
+            <div><strong>Tipologia 3 - Calibrazione/Validazione:</strong> esercizi spostati nella parte finale del percorso.</div>
           </div>
         </div>
       </Card>
