@@ -236,179 +236,19 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
       </div>
       <div className="lg:col-span-1">
         <Card title="Configurazione Rapida" className="h-full bg-blue-50 border-blue-100">
-          <div className="mb-6">
-            <Select 
-              label="Seleziona Coltura (Preset)"
-              value={selectedPreset}
-              options={[
-                { value: 'generica', label: 'Coltura Generica' },
-                { value: 'mais', label: 'Mais (C4)' },
-                { value: 'frumento', label: 'Frumento (C3)' },
-                { value: 'pomodoro', label: 'Pomodoro' },
-              ]}
-              onChange={handlePresetChange}
-              description="Carica automaticamente un set di parametri fisiologici tipici per la coltura selezionata. I parametri includono fenologia, LAI, RUE e risposta alla temperatura."
-            />
-
-            {/* Data di Semina/Trapianto per la coltura selezionata */}
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Data di Semina/Trapianto - {CROP_PRESETS[selectedPreset] ? ['Coltura Generica', 'Mais (C4)', 'Frumento (C3)', 'Pomodoro'][['generica', 'mais', 'frumento', 'pomodoro'].indexOf(selectedPreset)] : 'Coltura Selezionata'}
-              </label>
-              <input
-                type="number"
-                min="1"
-                max={365}
-                value={sowingDays[selectedPreset] || 1}
-                onChange={(e) => {
-                  const day = parseInt(e.target.value) || 1;
-                  setSowingDays(prev => ({
-                    ...prev,
-                    [selectedPreset]: Math.max(1, Math.min(day, 365))
-                  }));
-                }}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Giorno {sowingDays[selectedPreset] || 1} di 365 disponibili. La simulazione è sempre di un anno completo (365 giorni).
-              </p>
-              <div className="mt-2 flex gap-2">
-                <button
-                  onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: 1 }))}
-                  className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
-                >
-                  Giorno 1
-                </button>
-                <button
-                  onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: Math.floor(365 * 0.1) }))}
-                  className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
-                >
-                  10% stagione
-                </button>
-                <button
-                  onClick={() => setSowingDays(prev => ({ ...prev, [selectedPreset]: Math.floor(365 * 0.3) }))}
-                  className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
-                >
-                  30% stagione
-                </button>
-              </div>
-              <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800">
-                <strong>Nota:</strong> Ogni coltura può avere una data di semina diversa. La data impostata qui si applica solo alla coltura selezionata.
-              </div>
-            </div>
-            
-            {/* Riepilogo Parametri Chiave */}
-            {selectedPreset && CROP_PRESETS[selectedPreset] && (
-              <div className="mt-4 bg-white border border-gray-200 rounded-lg p-3 text-xs">
-                <div className="font-semibold text-gray-900 mb-2">Parametri Chiave Attivi:</div>
-                <div className="grid grid-cols-2 gap-2 text-gray-700">
-                  <div>
-                    <span className="font-medium">RUE:</span> {CROP_PRESETS[selectedPreset].RUE} g/MJ
-                  </div>
-                  <div>
-                    <span className="font-medium">KPAR:</span> {CROP_PRESETS[selectedPreset].KPAR}
-                  </div>
-                  <div>
-                    <span className="font-medium">Tbase:</span> {CROP_PRESETS[selectedPreset].Tbase}°C
-                  </div>
-                  <div>
-                    <span className="font-medium">tuHAR:</span> {CROP_PRESETS[selectedPreset].tuHAR}°C·d
-                  </div>
-                  <div>
-                    <span className="font-medium">LAIMX:</span> {CROP_PRESETS[selectedPreset].LAIMX}
-                  </div>
-                  <div>
-                    <span className="font-medium">TP1RUE:</span> {CROP_PRESETS[selectedPreset].TP1RUE}°C
-                  </div>
-                </div>
-                {selectedPreset === 'mais' && (
-                  <div className="mt-2 text-green-700 font-medium">
-                    ✓ Mais (C4): Alta RUE, ottimo termico elevato
-                  </div>
-                )}
-                {selectedPreset === 'frumento' && (
-                  <div className="mt-2 text-blue-700 font-medium">
-                    ✓ Frumento (C3): RUE moderata, ottimo termico basso
-                  </div>
-                )}
-              </div>
-            )}
+          <p className="text-sm text-blue-900 mb-3">
+            Gli <strong>input colturali</strong> (preset, data di semina e parametri) sono stati spostati nella pagina dedicata
+            <strong> Input Colturali</strong>, per tenere la Panoramica più pulita.
+          </p>
+          <div className="space-y-2 text-sm text-blue-800 mb-4">
+            <p>Da lì puoi modificare direttamente fenologia, LAI, RUE, risposta termica e soglia di stress idrico.</p>
+            <p>In Panoramica trovi solo il quadro generale e i collegamenti rapidi alle sezioni del modello.</p>
           </div>
-          <div className="pt-4 border-t border-blue-200">
-            <h4 className="font-semibold text-blue-900 mb-2">Guida Rapida</h4>
-            <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
-              <li>Scegli un preset qui sopra.</li>
-              <li>Vai su <strong>Generatore Meteo</strong> per definire il clima.</li>
-              <li>Esplora <strong>Funzioni di Risposta</strong> per le forme delle equazioni.</li>
-              <li>Analizza <strong>Biomassa</strong> e <strong>Bilancio Idrico</strong> (FTSW, ARID).</li>
-            </ol>
-          </div>
-          <div className="pt-4 border-t border-blue-200 mt-4">
-            <div className="flex gap-2 mb-3">
-              <Button 
-                onClick={() => setShowSaveDialog(true)} 
-                variant="primary" 
-                className="flex-1 text-sm"
-              >
-                <Save size={16} />
-                Salva Configurazione
-              </Button>
-            </div>
-            {showSaveDialog && (
-              <div className="bg-white border border-gray-300 rounded-lg p-3 mb-3">
-                <input
-                  type="text"
-                  value={configName}
-                  onChange={(e) => setConfigName(e.target.value)}
-                  placeholder="Nome configurazione..."
-                  className="w-full border border-gray-300 rounded px-2 py-1 text-sm mb-2"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSaveConfiguration()}
-                />
-                <div className="flex gap-2">
-                  <Button onClick={handleSaveConfiguration} variant="primary" className="flex-1 text-xs">
-                    <CheckCircle size={14} />
-                    Salva
-                  </Button>
-                  <Button onClick={() => { setShowSaveDialog(false); setConfigName(''); }} variant="outline" className="flex-1 text-xs">
-                    Annulla
-                  </Button>
-                </div>
-              </div>
-            )}
-            {savedConfigs.length > 0 && (
-              <div className="mt-3">
-                <h5 className="text-xs font-semibold text-blue-900 mb-2">Configurazioni Salvate:</h5>
-                <div className="space-y-1 max-h-40 overflow-y-auto">
-                  {savedConfigs.map((config) => (
-                    <div key={config.id} className="flex items-center justify-between bg-white border border-gray-200 rounded px-2 py-1 text-xs">
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-700">{config.name}</div>
-                        <div className="text-gray-500 text-xs">
-                          {new Date(config.timestamp).toLocaleDateString('it-IT')}
-                        </div>
-                      </div>
-                      <div className="flex gap-1">
-                        <button
-                          onClick={() => handleLoadConfiguration(config.id)}
-                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-                          title="Carica"
-                        >
-                          <FolderOpen size={14} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteConfiguration(config.id)}
-                          className="p-1 text-red-600 hover:bg-red-50 rounded"
-                          title="Elimina"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          {onNavigate && (
+            <Button onClick={() => onNavigate('crop_inputs')} variant="primary" className="w-full">
+              Apri Input Colturali
+            </Button>
+          )}
         </Card>
       </div>
       </div>

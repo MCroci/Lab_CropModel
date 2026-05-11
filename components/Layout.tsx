@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { 
   Compass, BookOpen, Calendar, Leaf, Activity, Droplet, Layers,
   Download, Info, Menu, X, CloudRain, Code, Sun, Sliders, Zap, Microscope, Sprout,
-  GraduationCap, FileCheck, CheckCircle2, Library, Database, FileText, LineChart, Target, HelpCircle
+  GraduationCap, FileCheck, CheckCircle2, Library, Database, FileText, LineChart, Target, HelpCircle, Settings2
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -26,6 +26,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
     { id: 'manuale', label: 'Manuale Teoria', icon: FileText },
     
     // === INPUT E FONDAMENTI ===
+    { id: 'crop_inputs', label: 'Input Colturali', icon: Settings2 },
     { id: 'weather', label: 'Generatore Meteo', icon: CloudRain },
     { id: 'weather_management', label: 'Gestione Dati Meteo', icon: Database },
     
@@ -123,7 +124,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
             <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Input e Fondamenti
             </div>
-            {menuItems.filter(item => ['weather', 'weather_management'].includes(item.id)).map((item) => {
+            {menuItems.filter(item => ['crop_inputs', 'weather', 'weather_management'].includes(item.id)).map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (

@@ -7,6 +7,7 @@ import { ToastProvider } from './components/Toast';
 
 // Lazy load views for code-splitting
 const OverviewView = lazy(() => import('./views/OverviewView').then(m => ({ default: m.OverviewView })));
+const CropInputsView = lazy(() => import('./views/CropInputsView').then(m => ({ default: m.CropInputsView })));
 const ConceptsView = lazy(() => import('./views/ConceptsView').then(m => ({ default: m.ConceptsView })));
 const PhenologyView = lazy(() => import('./views/PhenologyView').then(m => ({ default: m.PhenologyView })));
 const LaiView = lazy(() => import('./views/LaiView').then(m => ({ default: m.LaiView })));
@@ -43,6 +44,7 @@ const App: React.FC = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'overview': return <OverviewView onNavigate={setActiveTab} />;
+      case 'crop_inputs': return <CropInputsView />;
       case 'weather': return <WeatherGeneratorView />;
       case 'weather_management': return <WeatherDataManagementView />; 
       case 'concepts': return <ConceptsView />;

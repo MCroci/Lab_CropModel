@@ -51,6 +51,7 @@ export const ExercisesView: React.FC = () => {
   const { cropParams, setCropParams, simulationResults } = useSimulation();
   const [showSolution, setShowSolution] = useState<Record<string, boolean>>({});
   const [userAnswers, setUserAnswers] = useState<Record<string, Record<number, string>>>({});
+  const [activeTypeFilter, setActiveTypeFilter] = useState<string>('tutti');
 
   const exercises: Exercise[] = [
     {
@@ -561,13 +562,13 @@ export const ExercisesView: React.FC = () => {
       ],
       steps: [
         {
-          description: 'Imposta Mais. Carica uno scenario ERA5 più fresco (es. anno storico fresco nel sito scelto) oppure Climate equivalente. In Fenologia annota il giorno in cui NDS raggiunge 1.',
-          where: `${WHERE.panoramicaCrop} Preset «Mais (C4)». Poi ${WHERE.meteo} Carica il primo scenario (fresco). Infine ${WHERE.fenologia} Leggi il giorno con NDS=1.`,
+          description: 'Imposta Mais. Carica uno scenario ERA5 con temperatura media annua inferiore (oppure Climate equivalente). In Fenologia annota il giorno in cui NDS raggiunge 1.',
+          where: `${WHERE.panoramicaCrop} Preset «Mais (C4)». Poi ${WHERE.meteo} Carica il primo scenario (temperatura media annua inferiore). Infine ${WHERE.fenologia} Leggi il giorno con NDS=1.`,
           hint: 'NDS=1 indica fine ciclo fenologico; usa due anni/scenari con temperatura media diversa'
         },
         {
-          description: 'Ripeti con un secondo scenario ERA5/Climate più caldo mantenendo la stessa coltura e sito.',
-          where: `${WHERE.meteo} Carica il secondo scenario (caldo), poi ${WHERE.fenologia}.`,
+          description: 'Ripeti con un secondo scenario ERA5/Climate con temperatura media annua superiore, mantenendo la stessa coltura e sito.',
+          where: `${WHERE.meteo} Carica il secondo scenario (temperatura media annua superiore), poi ${WHERE.fenologia}.`,
           hint: 'Confronta il giorno di maturità tra i due anni/scenari'
         },
         {
@@ -623,12 +624,12 @@ export const ExercisesView: React.FC = () => {
       ],
       steps: [
         {
-          description: 'Scenario A: scegli un anno/scenario relativamente umido (ERA5 o Climate). Registra FTSW medio e biomassa finale.',
-          where: `${WHERE.meteo} Carica scenario umido, poi ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
+          description: 'Scenario A: scegli un anno/scenario con precipitazione cumulata annua più elevata (ERA5 o Climate). Registra FTSW medio e biomassa finale.',
+          where: `${WHERE.meteo} Carica scenario con precipitazione cumulata annua più elevata, poi ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
           hint: 'Usa Bilancio Idrico + Biomassa su dati non sintetici'
         },
         {
-          description: 'Scenario B: scegli un anno/scenario più secco. Confronta FTSW, ARID e biomassa rispetto allo Scenario A.',
+          description: 'Scenario B: scegli un anno/scenario con precipitazione cumulata annua più bassa. Confronta FTSW, ARID e biomassa rispetto allo Scenario A.',
           where: `${WHERE.meteo} Carica scenario secco; stesse viste ${WHERE.bilancioIdrico} e ${WHERE.biomassa}.`,
           hint: 'Con meno pioggia, aspettati più stress'
         },
@@ -829,8 +830,8 @@ export const ExercisesView: React.FC = () => {
           hint: 'ARID più basso indica minore stress idrico'
         },
         {
-          description: 'Ripeti su uno scenario ERA5/Climate più secco. Quale coltura è più resiliente?',
-          where: `${WHERE.meteo} Carica scenario più secco. Poi ${WHERE.panoramicaCrop} per selezionare mais o frumento e ${WHERE.biomassa}.`,
+          description: 'Ripeti su uno scenario ERA5/Climate con precipitazione cumulata annua inferiore. Quale coltura è più resiliente?',
+          where: `${WHERE.meteo} Carica scenario con precipitazione cumulata annua inferiore. Poi ${WHERE.panoramicaCrop} per selezionare mais o frumento e ${WHERE.biomassa}.`,
           solution: 'Il mais (C4) ha generalmente maggiore efficienza idrica e resilienza allo stress, grazie alla fotosintesi C4 che riduce la traspirazione'
         }
       ],
@@ -854,6 +855,35 @@ export const ExercisesView: React.FC = () => {
     const bi = pathOrder.get(b.id) ?? Number.MAX_SAFE_INTEGER;
     return ai - bi;
   });
+
+  const getExerciseType = (exercise: Exercise): string => {
+    const module = exercise.module.toLowerCase();
+    if (module.includes('idrico') || module.includes('acqua')) return 'acqua';
+    if (module.includes('lai') || module.includes('radiazione')) return 'luce';
+    if (module.includes('fenologia')) return 'fenologia';
+    if (module.includes('calibrazione') || module.includes('validazione')) return 'calibrazione';
+    if (module.includes('scenario') || module.includes('integrata')) return 'scenari';
+    if (module.includes('concetti')) return 'fondamenti';
+    if (module.includes('funzioni di risposta')) return 'funzioni';
+    if (module.includes('biomassa')) return 'biomassa';
+    return 'altro';
+  };
+
+  const typeOptions = [
+    { id: 'tutti', label: 'Tutti' },
+    { id: 'acqua', label: 'Acqua' },
+    { id: 'luce', label: 'Luce' },
+    { id: 'fenologia', label: 'Fenologia' },
+    { id: 'scenari', label: 'Scenari' },
+    { id: 'biomassa', label: 'Biomassa' },
+    { id: 'funzioni', label: 'Funzioni' },
+    { id: 'fondamenti', label: 'Fondamenti' },
+    { id: 'calibrazione', label: 'Calibrazione/Validazione' }
+  ];
+
+  const filteredExercises = orderedExercises.filter(ex =>
+    activeTypeFilter === 'tutti' ? true : getExerciseType(ex) === activeTypeFilter
+  );
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -999,10 +1029,38 @@ export const ExercisesView: React.FC = () => {
             <div><strong>Tipologia 3 - Calibrazione/Validazione:</strong> esercizi spostati nella parte finale del percorso.</div>
           </div>
         </div>
+
+        <div className="bg-white p-4 rounded-lg border border-gray-200 mt-4">
+          <h4 className="font-semibold text-gray-900 mb-2">Filtro per Tipologia</h4>
+          <div className="flex flex-wrap gap-2">
+            {typeOptions.map(opt => {
+              const isActive = activeTypeFilter === opt.id;
+              const count = opt.id === 'tutti'
+                ? orderedExercises.length
+                : orderedExercises.filter(ex => getExerciseType(ex) === opt.id).length;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => setActiveTypeFilter(opt.id)}
+                  className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
+                    isActive
+                      ? 'bg-brand-600 text-white border-brand-600'
+                      : 'bg-gray-50 text-gray-700 border-gray-300 hover:bg-gray-100'
+                  }`}
+                >
+                  {opt.label} ({count})
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Mostrati {filteredExercises.length} esercizi su {orderedExercises.length}.
+          </p>
+        </div>
       </Card>
 
       <div className="space-y-4">
-        {orderedExercises.map((exercise, idx) => (
+        {filteredExercises.map((exercise, idx) => (
           <Card 
             key={exercise.id}
             title={
