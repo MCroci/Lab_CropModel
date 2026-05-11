@@ -73,6 +73,12 @@ export interface SimulationStep extends DailyWeather {
   FTSW?: number;
   /** WSFG (0-1) - Water Stress Factor for Growth */
   WSFG?: number;
+  /** Risposta RUE alla temperatura media (trapezio TBRUE–TP1–TP2–TCRUE), 0–1 */
+  fTempRUE?: number;
+  /** Riduzione per stress da caldo su Tmax (modello semplice), 0–1 */
+  fHeat?: number;
+  /** Frazione PAR intercettata f_int = 1 − exp(−k·LAI), 0–1 */
+  fInt?: number;
 }
 
 export interface WaterStep extends DailyWeather {

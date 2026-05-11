@@ -162,10 +162,24 @@ export const simulateCropAndWater = (
       const tmaxHeat = (p as CropParams & { TmaxHeat?: number }).TmaxHeat ?? 35;
       const textHeat = (p as CropParams & { TextHeat?: number }).TextHeat ?? 45;
       const heatFactor = fHeat(w.TMAX, tmaxHeat, textHeat);
+      const fIntVal = fint(LAI, p.KPAR);
       const dB = NDS >= 1 ? 0 : ddmp(w.SRAD, LAI, p.KPAR, p.RUE, tf * heatFactor, WSFG_val);
       B += dB;
 
-      cropResults.push({ ...w, DTU, CTU, NDS, LAI, dB, B, FTSW, WSFG: WSFG_val });
+      cropResults.push({
+        ...w,
+        DTU,
+        CTU,
+        NDS,
+        LAI,
+        dB,
+        B,
+        FTSW,
+        WSFG: WSFG_val,
+        fTempRUE: tf,
+        fHeat: heatFactor,
+        fInt: fIntVal
+      });
 
       if (NDS >= 1) {
         const f_cover = clamp(LAI / sp.LAI_full_cover, 0, 1);
