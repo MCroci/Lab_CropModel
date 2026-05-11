@@ -63,13 +63,33 @@ interface SliderProps {
   onChange: (val: number) => void;
   unit?: string;
   description?: string;
+  hintMode?: 'text' | 'tooltip' | 'both';
 }
 
-export const Slider: React.FC<SliderProps> = ({ label, value, min, max, step, onChange, unit, description }) => {
+export const Slider: React.FC<SliderProps> = ({ label, value, min, max, step, onChange, unit, description, hintMode = 'text' }) => {
+  const showTooltip = Boolean(description) && (hintMode === 'tooltip' || hintMode === 'both');
+  const showText = Boolean(description) && (hintMode === 'text' || hintMode === 'both');
+
   return (
     <div className="mb-5">
       <div className="flex justify-between mb-2">
-        <label className="text-sm md:text-base font-medium text-gray-700">{label}</label>
+        <div className="flex items-center gap-2 min-w-0">
+          <label className="text-sm md:text-base font-medium text-gray-700 truncate">{label}</label>
+          {showTooltip && (
+            <span className="relative group inline-flex">
+              <button
+                type="button"
+                className="w-5 h-5 inline-flex items-center justify-center rounded-full border border-gray-300 text-gray-600 text-xs font-semibold bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+                aria-label={`Info: ${label}`}
+              >
+                i
+              </button>
+              <span className="pointer-events-none absolute left-1/2 top-full z-20 mt-2 w-64 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+                {description}
+              </span>
+            </span>
+          )}
+        </div>
         <span className="text-sm md:text-base font-bold text-brand-600">{value} {unit}</span>
       </div>
       <input
@@ -82,7 +102,7 @@ export const Slider: React.FC<SliderProps> = ({ label, value, min, max, step, on
         className="w-full h-3 md:h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500/50 touch-manipulation"
         style={{ WebkitAppearance: 'none', appearance: 'none' }}
       />
-      {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
+      {showText && <p className="text-xs text-gray-500 mt-1">{description}</p>}
     </div>
   );
 };

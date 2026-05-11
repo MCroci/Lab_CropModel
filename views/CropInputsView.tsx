@@ -163,28 +163,179 @@ export const CropInputsView: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card title="Fenologia e Sviluppo">
-          <Slider label="Tbase" value={cropParams.Tbase} min={0} max={15} step={0.5} unit="°C" onChange={v => setCropParams(p => ({ ...p, Tbase: v }))} />
-          <Slider label="tuHAR" value={cropParams.tuHAR} min={800} max={2200} step={50} unit="°C·d" onChange={v => setCropParams(p => ({ ...p, tuHAR: v }))} />
-          <Slider label="frEMR" value={cropParams.frEMR} min={0} max={0.2} step={0.01} onChange={v => setCropParams(p => ({ ...p, frEMR: v }))} />
-          <Slider label="frBLS" value={cropParams.frBLS} min={0.2} max={0.9} step={0.01} onChange={v => setCropParams(p => ({ ...p, frBLS: v }))} />
+          <Slider
+            label="Tbase"
+            value={cropParams.Tbase}
+            min={0}
+            max={15}
+            step={0.5}
+            unit="°C"
+            onChange={v => setCropParams(p => ({ ...p, Tbase: v }))}
+            description="Temperatura base: sotto questo valore lo sviluppo fenologico (accumulo di unità termiche) è nullo o trascurabile."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="tuHAR"
+            value={cropParams.tuHAR}
+            min={800}
+            max={2200}
+            step={50}
+            unit="°C·d"
+            onChange={v => setCropParams(p => ({ ...p, tuHAR: v }))}
+            description="Somma termica (unità termiche) richiesta per arrivare alla maturazione/raccolta. Determina la durata del ciclo."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="frEMR"
+            value={cropParams.frEMR}
+            min={0}
+            max={0.2}
+            step={0.01}
+            onChange={v => setCropParams(p => ({ ...p, frEMR: v }))}
+            description="Frazione di sviluppo (0–1) a cui inizia l’emergenza/inizio crescita rapida della chioma."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="frBLS"
+            value={cropParams.frBLS}
+            min={0.2}
+            max={0.9}
+            step={0.01}
+            onChange={v => setCropParams(p => ({ ...p, frBLS: v }))}
+            description="Frazione di sviluppo (0–1) a cui inizia la senescenza (declino del LAI)."
+            hintMode="tooltip"
+          />
         </Card>
 
         <Card title="LAI e Architettura Chioma">
-          <Slider label="LAI0" value={cropParams.LAI0} min={0.001} max={0.5} step={0.005} onChange={v => setCropParams(p => ({ ...p, LAI0: v }))} />
-          <Slider label="LAIMX" value={cropParams.LAIMX} min={1} max={9} step={0.1} onChange={v => setCropParams(p => ({ ...p, LAIMX: v }))} />
-          <Slider label="ALPHA" value={cropParams.ALPHA} min={0.001} max={0.08} step={0.001} onChange={v => setCropParams(p => ({ ...p, ALPHA: v }))} />
-          <Slider label="SENRATE" value={cropParams.SENRATE} min={0.001} max={0.08} step={0.001} onChange={v => setCropParams(p => ({ ...p, SENRATE: v }))} />
-          <Slider label="KPAR" value={cropParams.KPAR} min={0.2} max={1.2} step={0.05} onChange={v => setCropParams(p => ({ ...p, KPAR: v }))} />
+          <Slider
+            label="LAI0"
+            value={cropParams.LAI0}
+            min={0.001}
+            max={0.5}
+            step={0.005}
+            onChange={v => setCropParams(p => ({ ...p, LAI0: v }))}
+            description="LAI iniziale: area fogliare per unità di suolo all’inizio della simulazione (post-emergenza)."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="LAIMX"
+            value={cropParams.LAIMX}
+            min={1}
+            max={9}
+            step={0.1}
+            onChange={v => setCropParams(p => ({ ...p, LAIMX: v }))}
+            description="LAI massimo raggiungibile in condizioni ottimali. Controlla la copertura e l’intercettazione della radiazione."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="ALPHA"
+            value={cropParams.ALPHA}
+            min={0.001}
+            max={0.08}
+            step={0.001}
+            onChange={v => setCropParams(p => ({ ...p, ALPHA: v }))}
+            description="Tasso relativo di espansione fogliare (fase di crescita del LAI). Valori maggiori = chiusura più rapida della chioma."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="SENRATE"
+            value={cropParams.SENRATE}
+            min={0.001}
+            max={0.08}
+            step={0.001}
+            onChange={v => setCropParams(p => ({ ...p, SENRATE: v }))}
+            description="Tasso di senescenza fogliare. Valori maggiori = perdita di LAI più rapida nella fase finale."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="KPAR"
+            value={cropParams.KPAR}
+            min={0.2}
+            max={1.2}
+            step={0.05}
+            onChange={v => setCropParams(p => ({ ...p, KPAR: v }))}
+            description="Coefficiente di estinzione della radiazione (Beer-Lambert). Valori maggiori = più intercettazione a parità di LAI."
+            hintMode="tooltip"
+          />
         </Card>
 
         <Card title="Biomassa e Risposta Termica">
-          <Slider label="RUE" value={cropParams.RUE} min={0.5} max={5.0} step={0.1} unit="g/MJ" onChange={v => setCropParams(p => ({ ...p, RUE: v }))} />
-          <Slider label="TBRUE" value={cropParams.TBRUE} min={0} max={20} step={0.5} unit="°C" onChange={v => setCropParams(p => ({ ...p, TBRUE: v }))} />
-          <Slider label="TP1RUE" value={cropParams.TP1RUE} min={10} max={30} step={0.5} unit="°C" onChange={v => setCropParams(p => ({ ...p, TP1RUE: v }))} />
-          <Slider label="TP2RUE" value={cropParams.TP2RUE} min={15} max={40} step={0.5} unit="°C" onChange={v => setCropParams(p => ({ ...p, TP2RUE: v }))} />
-          <Slider label="TCRUE" value={cropParams.TCRUE} min={20} max={50} step={0.5} unit="°C" onChange={v => setCropParams(p => ({ ...p, TCRUE: v }))} />
-          <Slider label="WSSG" value={cropParams.WSSG ?? 0.25} min={0.1} max={0.5} step={0.05} onChange={v => setCropParams(p => ({ ...p, WSSG: v }))} />
-          <Slider label="B0" value={cropParams.B0 ?? 0} min={0} max={400} step={5} onChange={v => setCropParams(p => ({ ...p, B0: v }))} />
+          <Slider
+            label="RUE"
+            value={cropParams.RUE}
+            min={0.5}
+            max={5.0}
+            step={0.1}
+            unit="g/MJ"
+            onChange={v => setCropParams(p => ({ ...p, RUE: v }))}
+            description="Radiation Use Efficiency: biomassa prodotta per energia PAR intercettata (in condizioni non limitanti)."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="TBRUE"
+            value={cropParams.TBRUE}
+            min={0}
+            max={20}
+            step={0.5}
+            unit="°C"
+            onChange={v => setCropParams(p => ({ ...p, TBRUE: v }))}
+            description="Temperatura base della funzione termica che modula la RUE (sotto questo valore l’efficienza si riduce fortemente)."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="TP1RUE"
+            value={cropParams.TP1RUE}
+            min={10}
+            max={30}
+            step={0.5}
+            unit="°C"
+            onChange={v => setCropParams(p => ({ ...p, TP1RUE: v }))}
+            description="Temperatura cardinale inferiore ottimale per la RUE: oltre TP1 l’efficienza aumenta fino all’optimum."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="TP2RUE"
+            value={cropParams.TP2RUE}
+            min={15}
+            max={40}
+            step={0.5}
+            unit="°C"
+            onChange={v => setCropParams(p => ({ ...p, TP2RUE: v }))}
+            description="Temperatura cardinale superiore ottimale per la RUE: oltre TP2 l’efficienza inizia a diminuire."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="TCRUE"
+            value={cropParams.TCRUE}
+            min={20}
+            max={50}
+            step={0.5}
+            unit="°C"
+            onChange={v => setCropParams(p => ({ ...p, TCRUE: v }))}
+            description="Temperatura critica/superiore: vicino a TCRUE la RUE tende a zero (stress termico elevato)."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="WSSG"
+            value={cropParams.WSSG ?? 0.25}
+            min={0.1}
+            max={0.5}
+            step={0.05}
+            onChange={v => setCropParams(p => ({ ...p, WSSG: v }))}
+            description="Soglia di stress idrico (FTSW) per la crescita: sotto questa frazione di acqua disponibile la crescita viene penalizzata."
+            hintMode="tooltip"
+          />
+          <Slider
+            label="B0"
+            value={cropParams.B0 ?? 0}
+            min={0}
+            max={400}
+            step={5}
+            onChange={v => setCropParams(p => ({ ...p, B0: v }))}
+            description="Biomassa iniziale (condizione al tempo 0). Utile per simulare trapianto o una fase già avviata."
+            hintMode="tooltip"
+          />
         </Card>
 
         <Card title="Salva / Carica Configurazioni" className="bg-blue-50 border-blue-100">
