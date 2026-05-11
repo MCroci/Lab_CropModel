@@ -3,7 +3,7 @@ import { Download, ChevronDown } from 'lucide-react';
 export { LoadingSpinner } from './LoadingSpinner';
 
 export const Card: React.FC<{ title: string; children: React.ReactNode; className?: string, headerAction?: React.ReactNode }> = memo(({ title, children, className = "", headerAction }) => (
-  <div className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden ${className}`}>
+  <div className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-visible ${className}`}>
     <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
       <h3 className="font-semibold text-gray-800 text-sm sm:text-base">{title}</h3>
       {headerAction && <div>{headerAction}</div>}
@@ -76,7 +76,7 @@ export const Slider: React.FC<SliderProps> = ({ label, value, min, max, step, on
         <div className="flex items-center gap-2 min-w-0">
           <label className="text-sm md:text-base font-medium text-gray-700 truncate">{label}</label>
           {showTooltip && (
-            <span className="relative group inline-flex">
+            <span className="group relative z-30 inline-flex shrink-0">
               <button
                 type="button"
                 className="w-5 h-5 inline-flex items-center justify-center rounded-full border border-gray-300 text-gray-600 text-xs font-semibold bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
@@ -84,7 +84,8 @@ export const Slider: React.FC<SliderProps> = ({ label, value, min, max, step, on
               >
                 i
               </button>
-              <span className="pointer-events-none absolute left-1/2 top-full z-20 mt-2 w-64 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+              {/* Anchor left so the panel grows rightward (centered tooltips were clipped by Card / viewport). */}
+              <span className="pointer-events-none absolute left-0 top-full z-50 mt-2 w-[min(16rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-lg bg-gray-900 px-3 py-2 text-xs leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
                 {description}
               </span>
             </span>
