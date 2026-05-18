@@ -4,11 +4,11 @@
 **Modellistica Applicata alle Produzioni Vegetali** — Modulo Coltivazioni Erbacee
 *Prof. Stefano Amaducci*
 
-Questo file contiene le 100 domande del quiz nella versione "pulita" (acronimi sempre introdotti alla prima occorrenza) e le risposte di riferimento per la verifica. Le risposte aperte sono indicative: confrontare con il materiale del corso.
+Questo file contiene le **82 domande** del quiz (42 aperte + 40 chiuse) nella versione "pulita" (acronimi sempre introdotti alla prima occorrenza) e le risposte di riferimento per la verifica. Sono state rimosse le domande che richiedevano calcoli numerici o l'indicazione di valori precisi (per il dettaglio: D9, D11, D13, D22, D25, D41, D42, D45, D56, D58, D59, D60, D61, D62, D63, D71, D89, D90). Le risposte aperte sono indicative: confrontare con il materiale del corso.
 
 ---
 
-## PARTE A — Risposta aperta (D1–D50)
+## PARTE A — Risposta aperta
 
 ### Introduzione alla Modellistica
 
@@ -87,31 +87,12 @@ $$\text{INODE} = \frac{\text{DTU}}{\text{PHYL}} \quad [\text{nodi}/\text{giorno}
 
 ---
 
-#### D9
-**Domanda.** Con DTU = 15 °C e PHYL = 90 °C, quanti giorni occorrono per emettere un nuovo nodo, assumendo DTU costante nel periodo? Mostrare il calcolo.
-
-**Risposta.**
-INODE = DTU/PHYL = 15/90 = **0,167 nodi/giorno**
-Giorni per 1 nodo = 1 / INODE = PHYL / DTU = 90 / 15 = **6 giorni**.
-
----
-
 #### D10
 **Domanda.** Scrivere la formula per la **somma cumulata dei nodi fogliari** (qui indicata con MSNN, *Main Stem Node Number*) giorno per giorno.
 
 **Risposta.**
 $$\text{MSNN}(t+1) = \text{MSNN}(t) + \text{INODE}(t)$$
 o equivalentemente $\text{MSNN}(t) = \sum_{i=1}^{t} \text{INODE}(i)$.
-
----
-
-#### D11
-**Domanda.** Qual è la temperatura base per lo sviluppo (T_base) del **mais**? E quella del **frumento**? E quella della **barbabietola da zucchero**?
-
-**Risposta.**
-- Mais: **≈ 8 °C** (in letteratura anche 10 °C).
-- Frumento: **≈ 0 °C**.
-- Barbabietola: **≈ 3 °C** (3–4 °C).
 
 ---
 
@@ -123,15 +104,6 @@ o equivalentemente $\text{MSNN}(t) = \sum_{i=1}^{t} \text{INODE}(i)$.
 - **Metodo 2 (corretto):** se T_min < T_base, si sostituisce T_min con T_base, poi GDD = ((max(T_min, T_base) + T_max)/2) − T_base.
 
 Differenza: il Metodo 2 **non penalizza** la coltura per le notti fredde (la pianta non "perde" sviluppo quando smette di crescere, semplicemente non avanza). Il Metodo 2 dà sempre GDD ≥ Metodo 1.
-
----
-
-#### D13
-**Domanda.** Con T_min = 5 °C, T_max = 28 °C e T_base = 8 °C (mais), calcolare i GDD giornalieri con entrambi i metodi.
-
-**Risposta.**
-- **Metodo 1:** T_media = (5 + 28)/2 = 16,5 °C → GDD = 16,5 − 8 = **8,5 °C·d**.
-- **Metodo 2:** T_min sostituita con 8 °C → T_media = (8 + 28)/2 = 18 °C → GDD = 18 − 8 = **10 °C·d**.
 
 ---
 
@@ -216,14 +188,6 @@ $$\text{FINT} = 1 - e^{-K_{\text{PAR}} \cdot \text{LAI}}$$
 
 ---
 
-#### D22
-**Domanda.** Se l'indice di area fogliare LAI = 3 e K_PAR = 0,5, calcolare la frazione di luce intercettata FINT.
-
-**Risposta.**
-FINT = 1 − e^(−0,5 · 3) = 1 − e^(−1,5) = 1 − 0,2231 ≈ **0,777** (77,7 % della PAR intercettata).
-
----
-
 #### D23
 **Domanda.** Qual è la differenza principale tra l'approccio **RUE** (empirico) e un modello **meccanicistico** come Gecros o Daisy?
 
@@ -241,16 +205,6 @@ FINT = 1 − e^(−0,5 · 3) = 1 − e^(−1,5) = 1 − 0,2231 ≈ **0,777** (77
 $$\frac{dLAI}{dt} = \text{SLA} \cdot \frac{dW_{\text{foglia}}}{dt}$$
 La pianta cresce in foglie *se ha assimilati*; in caso di stress la canopy si espande meno.
 - **Basato sulla temperatura:** lo sviluppo del LAI è guidato dal tempo termico (gradi giorno). Si assume che gli assimilati non siano mai limitanti, quindi il LAI segue una traiettoria prefissata in funzione di DTU.
-
----
-
-#### D25
-**Domanda.** Descrivere la **crescita esponenziale** di una coltura nelle prime fasi. Qual è il valore tipico del tasso di crescita relativo (rm) e da cosa dipende?
-
-**Risposta.** Nelle prime fasi, quando il LAI è piccolo e la chioma non è ancora chiusa, la biomassa accumulata cresce esponenzialmente:
-$$\frac{dW}{dt} = r_m \cdot W \quad \Rightarrow \quad W(t) = W_0 \cdot e^{r_m \cdot t}$$
-Valore tipico (Goudriaan & Van Laar, 1994): **r_m ≈ 0,1 g g⁻¹ d⁻¹**.
-Dipende da: temperatura, efficienza fotosintetica delle giovani foglie, allocazione preferenziale verso foglie, specie (C3 vs C4).
 
 ---
 
@@ -411,20 +365,6 @@ Tre variabili che la governano:
 
 ---
 
-#### D41
-**Domanda.** Qual è il valore limite di N solubile (indicato con NCON nei modelli) usato nel calcolo della denitrificazione e perché viene imposto?
-
-**Risposta.** Circa **400 mg N/litro** di acqua (≈ 0,0004 g/g acqua). È un limite di **saturazione**: oltre questa concentrazione la dipendenza della denitrificazione dalla [NO₃⁻] viene troncata. Serve per evitare valori irrealisticamente alti quando, in suoli molto asciutti, la concentrazione locale calcolata diventerebbe non fisica.
-
----
-
-#### D42
-**Domanda.** Qual è il valore tipico di accumulo stagionale massimo di azoto per una coltura non leguminosa come il mais?
-
-**Risposta.** Circa **25 g N/m²**, equivalenti a **~250 kg N/ha**.
-
----
-
 #### D43
 **Domanda.** Come influisce una carenza di azoto sulla crescita della biomassa rispetto allo sviluppo fenologico?
 
@@ -449,17 +389,6 @@ Da un modello: si prendono i pool simulati di N nella biomassa e si rapportano a
 ---
 
 ### Ripartizione dei Fotosintetati e Senescenza
-
-#### D45
-**Domanda.** Cos'è l'**Harvest Index (HI)**? Scrivere la formula e indicare valori tipici per mais e frumento.
-
-**Risposta.**
-$$\text{HI} = \frac{\text{Resa (granella)}}{\text{Biomassa aerea totale}}$$
-Valori tipici:
-- **Mais:** HI ≈ 0,45–0,55
-- **Frumento:** HI ≈ 0,40–0,50
-
----
 
 #### D46
 **Domanda.** Quali sono le due principali cause di **senescenza fogliare** simulate nei Modelli colturali?
@@ -514,7 +443,7 @@ Spesso si applica il principio del **fattore limitante** (legge di Liebig): si u
 
 ---
 
-## PARTE B — Risposta chiusa (D51–D100)
+## PARTE B — Risposta chiusa
 
 > Indicazione: una sola opzione corretta per domanda. Le risposte corrette sono evidenziate con ✅.
 
@@ -571,15 +500,6 @@ La **calibrazione** di un modello consiste nel:
 
 ---
 
-#### D56
-Secondo Goudriaan & Van Laar (1994), un tipico valore del **tasso di crescita relativo nella fase esponenziale** (r_m) è:
-- A) 0,01 g g⁻¹ d⁻¹
-- ✅ **B) 0,1 g g⁻¹ d⁻¹**
-- C) 1,0 g g⁻¹ d⁻¹
-- D) 10,0 g g⁻¹ d⁻¹
-
----
-
 ### Fenologia e Sviluppo
 
 #### D57
@@ -588,62 +508,6 @@ La formula semplificata per calcolare l'unità termica giornaliera (DTU) è:
 - ✅ **B) DTU = (T_MIN + T_MAX) / 2 − T_base**
 - C) DTU = T_MAX − T_base
 - D) DTU = T_MIN × PHYL
-
----
-
-#### D58
-Con DTU = 12 °C e fillocrono PHYL = 60 °C, il valore di **INODE** (nodi/giorno) è:
-- A) 0,10
-- ✅ **B) 0,20**
-- C) 0,50
-- D) 5,0
-
-*Calcolo: 12/60 = 0,20.*
-
----
-
-#### D59
-La temperatura base per lo sviluppo (T_base) del **mais** vale:
-- A) 0 °C
-- B) 5 °C
-- ✅ **C) 8 °C**
-- D) 15 °C
-
----
-
-#### D60
-Le temperature cardinali (T_base / T_opt_inf / T_opt_sup / T_critica) del **frumento** sono:
-- ✅ **A) 0 – 25 – 28 – 40 °C**
-- B) 8 – 30 – 37 – 45 °C
-- C) 5 – 20 – 30 – 42 °C
-- D) 0 – 15 – 25 – 38 °C
-
----
-
-#### D61
-Le temperature cardinali (T_base / T_opt_inf / T_opt_sup / T_critica) del **mais** sono:
-- A) 0 – 25 – 28 – 40 °C
-- ✅ **B) 8 – 30 – 37 – 45 °C**
-- C) 5 – 20 – 30 – 42 °C
-- D) 0 – 15 – 25 – 38 °C
-
----
-
-#### D62
-Nel **Metodo 2** di calcolo dei GDD (quando T_min < T_base, T_min viene sostituita con T_base per evitare GDD negativi): se T_min osservata = 3 °C e T_base = 8 °C (mais), quale valore di T_min si usa nel calcolo?
-- A) 3 °C (valore osservato)
-- B) 5,5 °C (media tra 3 e 8)
-- ✅ **C) 8 °C (sostituito con T_base)**
-- D) 0 °C
-
----
-
-#### D63
-Il valore tipico del fillocrono (PHYL) per la maggior parte delle colture è tra:
-- A) 5 – 20 °C
-- ✅ **B) 40 – 120 °C**
-- C) 200 – 400 °C
-- D) 500 – 1000 °C
 
 ---
 
@@ -711,17 +575,6 @@ La formula per la frazione di luce intercettata FINT è:
 - B) FINT = 1 − K · e^LAI
 - ✅ **C) FINT = 1 − e^(−K · LAI)**
 - D) FINT = LAI / K
-
----
-
-#### D71
-Se LAI = 0 in una coltura appena emersa, il valore di FINT è:
-- A) 1
-- B) 0,5
-- ✅ **C) 0**
-- D) Uguale a K_PAR
-
-*Calcolo: 1 − e^0 = 1 − 1 = 0.*
 
 ---
 
@@ -886,24 +739,6 @@ La denitrificazione nel suolo avviene principalmente quando:
 
 ---
 
-#### D89
-Il valore massimo di N solubile usato nel calcolo della denitrificazione è circa:
-- A) 4 g N / litro
-- ✅ **B) 400 mg N / litro (≈ 0,0004 g/g acqua)**
-- C) 40 mg N / litro
-- D) 4 mg N / litro
-
----
-
-#### D90
-Il tipico accumulo stagionale massimo di N per una coltura non leguminosa è circa:
-- A) 100 g m⁻²
-- B) 2,5 g m⁻²
-- ✅ **C) 25 g m⁻²** (≈ 250 kg/ha)
-- D) 250 g m⁻²
-
----
-
 #### D91
 Una carenza di azoto in una coltura influenza principalmente:
 - A) Lo sviluppo fenologico (fioritura anticipata)
@@ -998,20 +833,22 @@ Simulare la **sostanza organica del suolo (SOM)** in un Modello colturale è imp
 
 ---
 
-## Quadro riassuntivo risposte chiuse (D51–D100)
+## Quadro riassuntivo risposte chiuse
 
-| N. | Risp. | N. | Risp. | N. | Risp. | N. | Risp. | N. | Risp. |
-|---:|:----:|---:|:----:|---:|:----:|---:|:----:|---:|:----:|
-| 51 | B | 61 | B | 71 | C | 81 | B | 91 | B |
-| 52 | C | 62 | C | 72 | B | 82 | B | 92 | B |
-| 53 | C | 63 | B | 73 | C | 83 | B | 93 | C |
-| 54 | B | 64 | B | 74 | B | 84 | C | 94 | B |
-| 55 | B | 65 | B | 75 | B | 85 | B | 95 | B |
-| 56 | B | 66 | C | 76 | C | 86 | B | 96 | B |
-| 57 | B | 67 | D | 77 | B | 87 | B | 97 | B |
-| 58 | B | 68 | B | 78 | C | 88 | B | 98 | B |
-| 59 | C | 69 | B | 79 | C | 89 | B | 99 | B |
-| 60 | A | 70 | C | 80 | B | 90 | C | 100 | B |
+40 domande chiuse rimaste (D56, D58–D63, D71, D89, D90 rimosse).
+
+| N. | Risp. | N. | Risp. | N. | Risp. | N. | Risp. |
+|---:|:----:|---:|:----:|---:|:----:|---:|:----:|
+| 51 | B | 68 | B | 79 | C | 91 | B |
+| 52 | C | 69 | B | 80 | B | 92 | B |
+| 53 | C | 70 | C | 81 | B | 93 | C |
+| 54 | B | 72 | B | 82 | B | 94 | B |
+| 55 | B | 73 | C | 83 | B | 95 | B |
+| 57 | B | 74 | B | 84 | C | 96 | B |
+| 64 | B | 75 | B | 85 | B | 97 | B |
+| 65 | B | 76 | C | 86 | B | 98 | B |
+| 66 | C | 77 | B | 87 | B | 99 | B |
+| 67 | D | 78 | C | 88 | B | 100 | B |
 
 ---
 

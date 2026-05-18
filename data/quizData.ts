@@ -45,11 +45,8 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
   { id: 'D6', number: 6, section: 'Introduzione alla Modellistica', text: 'Cosa si intende per calibrazione di un modello? E per validazione? Qual è la differenza?' },
   { id: 'D7', number: 7, section: 'Fenologia e Sviluppo', text: 'Dare la definizione di fenologia e scrivere la formula della DTU (Daily Temperature Unit).' },
   { id: 'D8', number: 8, section: 'Fenologia e Sviluppo', text: "Cos'è il fillocrono (PHYL)? Scrivere la formula per calcolare INODE." },
-  { id: 'D9', number: 9, section: 'Fenologia e Sviluppo', text: 'Con DTU = 15 °C e PHYL = 90 °C (assumendo DTU costante nel periodo), quanti giorni occorrono per emettere un nuovo nodo? Mostrare il calcolo.' },
   { id: 'D10', number: 10, section: 'Fenologia e Sviluppo', text: 'Scrivere la formula per la somma cumulata dei nodi fogliari (MSNN) giorno per giorno.' },
-  { id: 'D11', number: 11, section: 'Fenologia e Sviluppo', text: 'Qual è la temperatura base (TBD) del mais? E quella del frumento? E quella della barbabietola?' },
   { id: 'D12', number: 12, section: 'Fenologia e Sviluppo', text: 'Descrivere brevemente i due metodi di calcolo GDD quando Tmin è inferiore a Tbase. Qual è la differenza nei risultati?' },
-  { id: 'D13', number: 13, section: 'Fenologia e Sviluppo', text: 'Con Tmin = 5 °C, Tmax = 28 °C e Tbase = 8 °C (mais), calcolare i GDD giornalieri con entrambi i metodi.' },
   { id: 'D14', number: 14, section: 'Fenologia e Sviluppo', text: "Cos'è la vernalizzazione? Cosa indica il parametro VDSAT nel modello?" },
   { id: 'D15', number: 15, section: 'Fenologia e Sviluppo', text: 'Qual è la differenza tra risposta quantitativa e qualitativa alla vernalizzazione?' },
   { id: 'D16', number: 16, section: 'Fenologia e Sviluppo', text: 'Quali sono i cinque parametri della funzione Tempfun? Qual è il valore della funzione quando TMP < TBD?' },
@@ -58,10 +55,8 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
   { id: 'D19', number: 19, section: 'Assimilazione – RUE e Fotosintesi', text: 'Definire la Radiation Use Efficiency (RUE) e scrivere la formula per calcolare la biomassa giornaliera.' },
   { id: 'D20', number: 20, section: 'Assimilazione – RUE e Fotosintesi', text: "Qual è l'unità di misura della RUE? Spiegarne il significato fisico." },
   { id: 'D21', number: 21, section: 'Assimilazione – RUE e Fotosintesi', text: 'Scrivere la formula FINT e spiegare a cosa serve il coefficiente K_PAR.' },
-  { id: 'D22', number: 22, section: 'Assimilazione – RUE e Fotosintesi', text: 'Se LAI = 3 e K_PAR = 0.5, calcolare la frazione di luce intercettata FINT.' },
   { id: 'D23', number: 23, section: 'Assimilazione – RUE e Fotosintesi', text: "Qual è la differenza principale tra l'approccio RUE e un modello meccanicistico come Gecros o Daisy?" },
   { id: 'D24', number: 24, section: 'Assimilazione – RUE e Fotosintesi', text: "Cosa si intende per approccio 'basato sul carbonio' per lo sviluppo del LAI? E per approccio 'basato sulla temperatura'?" },
-  { id: 'D25', number: 25, section: 'Assimilazione – RUE e Fotosintesi', text: 'Descrivere la crescita esponenziale di una coltura nelle prime fasi. Qual è il valore tipico di rm e a cosa dipende?' },
   { id: 'D26', number: 26, section: 'Assimilazione – RUE e Fotosintesi', text: "Cos'è la funzione expolineare (Goudriaan & Monteith, 1990)? Quali parametri la caratterizzano?" },
   { id: 'D27', number: 27, section: 'Traspirazione e ETP', text: "Dare la definizione di evapotraspirazione potenziale (ETP)." },
   { id: 'D28', number: 28, section: 'Traspirazione e ETP', text: "Citare tre variabili meteorologiche necessarie per calcolare l'ETP con il metodo Penman-Monteith." },
@@ -77,11 +72,8 @@ export const OPEN_QUESTIONS: OpenQuestion[] = [
   { id: 'D38', number: 38, section: 'Acqua nel Suolo', text: 'Spiegare come lo stress idrico viene calcolato in relazione ai parametri DUL e LL del suolo.' },
   { id: 'D39', number: 39, section: 'Azoto nel Suolo', text: 'Citare i quattro principali processi del ciclo dell\'azoto nel suolo simulati nei Modelli colturali.' },
   { id: 'D40', number: 40, section: 'Azoto nel Suolo', text: 'In quale condizione avviene la denitrificazione? Quali tre variabili la governano nei modelli?' },
-  { id: 'D41', number: 41, section: 'Azoto nel Suolo', text: 'Qual è il valore limite di N solubile (NCON) usato nel calcolo della denitrificazione e perché viene imposto?' },
-  { id: 'D42', number: 42, section: 'Azoto nel Suolo', text: 'Qual è il valore tipico di accumulo stagionale massimo di azoto per una coltura non leguminosa come il mais?' },
   { id: 'D43', number: 43, section: 'Azoto nel Suolo', text: 'Come influisce una carenza di azoto sulla crescita della biomassa rispetto allo sviluppo fenologico?' },
   { id: 'D44', number: 44, section: 'Azoto nel Suolo', text: "Cos'è la Nitrogen Use Efficiency (NUE)? Come si calcola a partire dagli output di un modello?" },
-  { id: 'D45', number: 45, section: 'Ripartizione dei Fotosintetati e Senescenza', text: "Cos'è l'Harvest Index (HI)? Scrivere la formula e indicare valori tipici per mais e frumento." },
   { id: 'D46', number: 46, section: 'Ripartizione dei Fotosintetati e Senescenza', text: 'Quali sono le due principali cause di senescenza fogliare simulate nei Modelli colturali?' },
   { id: 'D47', number: 47, section: 'Ripartizione dei Fotosintetati e Senescenza', text: 'Cos\'è il LAI critico (LAICR) e cosa accade quando il LAI lo supera nei modelli?' },
   { id: 'D48', number: 48, section: 'Ripartizione dei Fotosintetati e Senescenza', text: 'Descrivere il meccanismo con cui il gelo (temperature negative) distrugge l\'area fogliare nei modelli. Da quali variabili dipende?' },
@@ -133,24 +125,13 @@ Versione corretta dalla funzione di risposta: DTU = (TP1D − TBD) · Tempfun(T_
   D8: `Fillocrono (PHYL): tempo termico (gradi giorno, °C·d) necessario per emettere un nuovo nodo/foglia sul fusto principale.
 INODE = DTU / PHYL  [nodi/giorno] = tasso di emissione di nodi al giorno.`,
 
-  D9: `INODE = DTU / PHYL = 15 / 90 = 0,167 nodi/giorno.
-Giorni per emettere un nodo = 1 / INODE = PHYL / DTU = 90 / 15 = 6 giorni.`,
-
   D10: `Somma cumulata dei nodi giorno per giorno (MSNN = Main Stem Node Number):
 MSNN(t+1) = MSNN(t) + INODE(t)
 oppure equivalentemente MSNN(t) = Σ INODE(i) per i = 1 ... t.`,
 
-  D11: `T_base per lo sviluppo:
-• Mais ≈ 8 °C (in letteratura anche 10 °C).
-• Frumento ≈ 0 °C.
-• Barbabietola da zucchero ≈ 3 °C (3–4 °C).`,
-
   D12: `Metodo 1 (semplice): GDD = max(0, (T_min + T_max)/2 − T_base). Si usa T_min reale anche quando è < T_base.
 Metodo 2 (corretto): se T_min < T_base, si sostituisce T_min con T_base, poi GDD = ((max(T_min, T_base) + T_max)/2) − T_base.
 Differenza: il Metodo 2 non penalizza la coltura per le notti fredde (sotto T_base la pianta non "perde" sviluppo, semplicemente non avanza). Risulta sempre GDD_Metodo2 ≥ GDD_Metodo1.`,
-
-  D13: `Metodo 1: T_media = (5 + 28)/2 = 16,5 °C → GDD = 16,5 − 8 = 8,5 °C·d.
-Metodo 2: T_min sostituita con T_base = 8 → T_media = (8 + 28)/2 = 18 °C → GDD = 18 − 8 = 10 °C·d.`,
 
   D14: `Vernalizzazione: esposizione obbligata (o facilitante) di certe colture (frumento autunnale, barbabietola, colza) a basse temperature (≈ 0–10 °C) per indurre/accelerare la fioritura.
 VDSAT: numero di giorni di vernalizzazione necessari per SATURARE la risposta. Oltre VDSAT la pianta è completamente vernalizzata e il freddo aggiuntivo non accelera ulteriormente la fioritura.`,
@@ -189,9 +170,6 @@ Valori tipici: 1,5–2,5 g/MJ per C3, 3,0–4,0 g/MJ per C4 (mais).`,
 K_PAR è il coefficiente di estinzione della luce PAR: quantifica quanto rapidamente la chioma "assorbe" la luce all'aumentare del LAI.
 Dipende dall'architettura fogliare: foglie erette → K basso (~0,4), foglie orizzontali → K alto (~0,8).`,
 
-  D22: `FINT = 1 − exp(−0,5 · 3) = 1 − exp(−1,5) = 1 − 0,2231 ≈ 0,777
-La chioma intercetta circa il 77,7 % della PAR incidente.`,
-
   D23: `Approccio RUE: empirico, una sola equazione (B = RUE · PAR intercettata) che riassume in un coefficiente l'effetto netto di fotosintesi e respirazione. Pochi parametri, rapido da calibrare.
 Modello meccanicistico (Gecros, Daisy): calcola esplicitamente la fotosintesi lorda (es. Farquhar a livello fogliare integrato sulla canopy), la respirazione (mantenimento + crescita) e gestisce un pool di assimilati ripartito tra organi. Più dati e parametri, ma più trasferibile e sensibile a [CO₂], stress, ecc.`,
 
@@ -199,11 +177,6 @@ Modello meccanicistico (Gecros, Daisy): calcola esplicitamente la fotosintesi lo
 dLAI/dt = SLA · dW_foglia/dt.
 Se mancano assimilati, la canopy si espande meno.
 Approccio "basato sulla temperatura": lo sviluppo del LAI è guidato dai gradi giorno (DTU) e segue una traiettoria prefissata; si assume che gli assimilati non siano mai limitanti.`,
-
-  D25: `Nelle prime fasi, con LAI piccolo e chioma non chiusa, la biomassa cresce esponenzialmente:
-dW/dt = r_m · W   ⇒   W(t) = W₀ · exp(r_m · t).
-Valore tipico (Goudriaan & Van Laar, 1994): r_m ≈ 0,1 g g⁻¹ d⁻¹.
-Dipende da: temperatura, efficienza fotosintetica delle foglie giovani, allocazione verso foglie, specie (C3 vs C4).`,
 
   D26: `Funzione expolineare (Goudriaan & Monteith, 1990): descrive la transizione dalla fase esponenziale (chioma aperta) alla fase lineare (chioma chiusa, intercettazione satura).
 W(t) = (c_m / r_m) · ln[ 1 + exp(r_m · (t − t_b)) ]
@@ -274,11 +247,6 @@ Tre variabili governano il processo:
 2) Temperatura (attività microbica).
 3) Concentrazione di NO₃⁻ (substrato).`,
 
-  D41: `NCON ≈ 400 mg N/litro di acqua (≈ 0,0004 g/g acqua).
-È un valore di SATURAZIONE: oltre questa concentrazione la dipendenza della denitrificazione dalla [NO₃⁻] viene troncata. Serve per evitare valori irrealisticamente alti quando, in suoli molto asciutti, la concentrazione locale calcolata diventerebbe non fisica.`,
-
-  D42: `Per una coltura non leguminosa ad alta resa (es. mais): accumulo stagionale massimo di N ≈ 25 g/m², equivalenti a circa 250 kg N/ha.`,
-
   D43: `Una carenza di azoto riduce principalmente:
 • la crescita della biomassa (per riduzione di RUE, del contenuto di clorofilla e dell'area fogliare);
 • l'espansione fogliare (LAI più basso).
@@ -289,11 +257,6 @@ Definizioni operative comuni:
 • NUE agronomica = (Resa − Resa non concimato) / N apportato.
 • NUE fisiologica = Biomassa (o Resa) / N totale assorbito.
 Da un modello: si prendono i pool simulati di N nella biomassa e si rapportano alla biomassa/resa.`,
-
-  D45: `HI (Harvest Index) = Resa granella / Biomassa aerea totale.
-Valori tipici:
-• Mais: HI ≈ 0,45–0,55.
-• Frumento: HI ≈ 0,40–0,50.`,
 
   D46: `Due cause principali di senescenza fogliare nei modelli:
 1) Auto-ombreggiamento: quando LAI > LAI critico (LAICR), le foglie basali ricevono troppa poca luce e senescono.
@@ -326,14 +289,7 @@ export const CLOSED_QUESTIONS: ClosedQuestion[] = [
   mc('D53', 53, 'Introduzione alla Modellistica', 'Quale delle seguenti NON è un input tipico di un Modello colturale?', ['Dati meteorologici giornalieri', 'Profilo del suolo', "Resa della coltura dell'anno precedente", 'Data di semina'], 2),
   mc('D54', 54, 'Introduzione alla Modellistica', "Nella situazione produttiva 'potenziale' (Rabbinge, 1993) la crescita è limitata solo da:", ['Disponibilità di acqua e azoto', 'Radiazione solare e temperatura', 'Infestanti e parassiti', 'Disponibilità di fosforo'], 1),
   mc('D55', 55, 'Introduzione alla Modellistica', 'La calibrazione di un modello consiste nel:', ['Testare il modello su dati indipendenti non usati per la messa a punto', 'Regolare i parametri del modello per riprodurre dati osservati', 'Calcolare la biomassa potenziale massima', 'Convertire le unità di misura dei dati di input'], 1),
-  mc('D56', 56, 'Introduzione alla Modellistica', 'Secondo Goudriaan & Van Laar (1994), un tipico valore del tasso di crescita relativo (rm) nella fase esponenziale è:', ['0.01 g g⁻¹ d⁻¹', '0.1 g g⁻¹ d⁻¹', '1.0 g g⁻¹ d⁻¹', '10.0 g g⁻¹ d⁻¹'], 1),
   mc('D57', 57, 'Fenologia e Sviluppo', 'La formula per calcolare la DTU (Daily Temperature Unit) è:', ['DTU = TMAX − TMIN', 'DTU = (TMIN + TMAX) / 2 − TBD', 'DTU = TMAX − TBD', 'DTU = TMIN × PHYL'], 1),
-  mc('D58', 58, 'Fenologia e Sviluppo', 'Con DTU = 12 °C e PHYL = 60 °C, il valore di INODE è:', ['0.10', '0.20', '0.50', '5.0'], 1),
-  mc('D59', 59, 'Fenologia e Sviluppo', 'La temperatura base per lo sviluppo (TBD) del mais vale:', ['0 °C', '5 °C', '8 °C', '15 °C'], 2),
-  mc('D60', 60, 'Fenologia e Sviluppo', 'Le temperature cardinali (TBD / TP1D / TP2D / TCD) del frumento sono:', ['0 – 25 – 28 – 40 °C', '8 – 30 – 37 – 45 °C', '5 – 20 – 30 – 42 °C', '0 – 15 – 25 – 38 °C'], 0),
-  mc('D61', 61, 'Fenologia e Sviluppo', 'Le temperature cardinali (TBD / TP1D / TP2D / TCD) del mais sono:', ['0 – 25 – 28 – 40 °C', '8 – 30 – 37 – 45 °C', '5 – 20 – 30 – 42 °C', '0 – 15 – 25 – 38 °C'], 1),
-  mc('D62', 62, 'Fenologia e Sviluppo', 'Nel Metodo 2 di calcolo dei GDD (quando Tmin < Tbase, Tmin viene sostituita con Tbase per evitare GDD negativi): se Tmin osservata = 3 °C e Tbase = 8 °C (mais), quale valore di Tmin si usa nel calcolo?', ['3 °C (valore osservato)', '5.5 °C (media tra 3 e 8)', '8 °C (sostituito con Tbase)', '0 °C'], 2),
-  mc('D63', 63, 'Fenologia e Sviluppo', 'Il valore tipico del fillocrono (PHYL) per la maggior parte delle colture è tra:', ['5 – 20 °C', '40 – 120 °C', '200 – 400 °C', '500 – 1000 °C'], 1),
   mc('D64', 64, 'Fenologia e Sviluppo', 'Il parametro VDSAT nella vernalizzazione indica:', ['La temperatura minima soglia per la vernalizzazione', 'I giorni di vernalizzazione necessari per saturare la risposta', 'Il tasso giornaliero di sviluppo al freddo', 'La durata totale del ciclo colturale'], 1),
   mc('D65', 65, 'Fenologia e Sviluppo', 'In una risposta QUALITATIVA alla vernalizzazione, la pianta:', ['Fiorisce comunque, ma più lentamente senza freddo', 'Non fiorisce affatto senza il necessario periodo di freddo', 'Aumenta la RUE in assenza di freddo', 'Sviluppa foglie più grandi in assenza di freddo'], 1),
   mc('D66', 66, 'Fenologia e Sviluppo', 'Nella funzione Tempfun, se TMP < TBD il valore della funzione è:', ['1', '0.5', '0', 'Dipende da TP1D'], 2),
@@ -341,7 +297,6 @@ export const CLOSED_QUESTIONS: ClosedQuestion[] = [
   mc('D68', 68, 'Fenologia e Sviluppo', 'La funzione beta per la risposta alla temperatura è preferita rispetto alla funzione lineare perché:', ['Richiede meno parametri', 'Produce curve lisce e realistiche', 'Non dipende dalla temperatura ottimale', 'È più semplice da implementare in Excel'], 1),
   mc('D69', 69, 'Assimilazione – RUE e Fotosintesi', "L'unità di misura della Radiation Use Efficiency (RUE) è:", ['g m⁻² d⁻¹', 'g MJ⁻¹', 'MJ m⁻²', 'kg ha⁻¹'], 1),
   mc('D70', 70, 'Assimilazione – RUE e Fotosintesi', 'La formula per la frazione di luce intercettata è:', ['FINT = K × LAI', 'FINT = 1 − K × e^LAI', 'FINT = 1 − e^(−K · LAI)', 'FINT = LAI / K'], 2),
-  mc('D71', 71, 'Assimilazione – RUE e Fotosintesi', 'Se LAI = 0 in una coltura appena emersa, il valore di FINT è:', ['1', '0.5', '0', 'Uguale a K_PAR'], 2),
   mc('D72', 72, 'Assimilazione – RUE e Fotosintesi', 'Un valore più alto di K_PAR indica che la chioma:', ['Intercetta la luce più lentamente', 'Intercetta la luce più rapidamente per unità di LAI', 'Ha una maggiore respirazione notturna', 'Ha radici più profonde'], 1),
   mc('D73', 73, 'Assimilazione – RUE e Fotosintesi', "Nell'approccio basato sulla TEMPERATURA per il LAI si assume che:", ['Gli assimilati siano sempre il fattore limitante', "Lo sviluppo fogliare dipenda solo dall'acqua", 'Ci siano sempre abbastanza assimilati e lo sviluppo dipenda dai gradi giorno', 'Il LAI non cambi durante la stagione'], 2),
   mc('D74', 74, 'Assimilazione – RUE e Fotosintesi', "Rispetto all'approccio RUE, un modello meccanicistico calcola esplicitamente:", ['Solo la temperatura del suolo', 'La fotosintesi lorda, la respirazione e il pool di assimilati', 'Solo i parametri genetici della cultivar', 'Solo il bilancio idrico del suolo'], 1),
@@ -359,8 +314,6 @@ export const CLOSED_QUESTIONS: ClosedQuestion[] = [
   mc('D86', 86, 'Acqua nel Suolo', 'Il drenaggio profondo nel bilancio idrico avviene quando il contenuto idrico del suolo supera:', ['Il punto di appassimento (LL)', 'La capacità di campo (DUL)', 'La metà di AWC', 'Il valore di SAT diviso 2'], 1),
   mc('D87', 87, 'Acqua nel Suolo', 'SAT (saturazione) nel modello idrico del suolo si calcola come:', ['SAT = DUL + EXTR', 'SAT = PO − e  (porosità totale meno aria intrappolata)', 'SAT = DUL × BD', 'SAT = LL + AWC'], 1),
   mc('D88', 88, 'Azoto nel Suolo', 'La denitrificazione nel suolo avviene principalmente quando:', ['La temperatura è sotto 0 °C', "Il suolo è saturo d'acqua (condizioni anaerobiche)", "C'è eccesso di radiazione solare", 'Il pH del suolo è molto acido'], 1),
-  mc('D89', 89, 'Azoto nel Suolo', 'Il valore massimo di N solubile (NCON) usato nel calcolo della denitrificazione è circa:', ['4 g N / litro', '400 mg N / litro (0.0004 g/g acqua)', '40 mg N / litro', '4 mg N / litro'], 1),
-  mc('D90', 90, 'Azoto nel Suolo', 'Il tipico accumulo stagionale massimo di N per una coltura non leguminosa è circa:', ['100 g m⁻²', '2.5 g m⁻²', '25 g m⁻²', '250 g m⁻²'], 2),
   mc('D91', 91, 'Azoto nel Suolo', 'Una carenza di azoto in una coltura influenza principalmente:', ['Lo sviluppo fenologico (fioritura anticipata)', 'La crescita della biomassa e il tasso fotosintetico', "L'assorbimento di acqua dalle radici", 'La temperatura del suolo'], 1),
   mc('D92', 92, 'Azoto nel Suolo', "Il processo di mineralizzazione dell'azoto organico è favorito da:", ['Suolo freddo e secco', 'Temperatura elevata e suolo umido', 'Alte concentrazioni di N minerale', 'Condizioni di anaerobiosi'], 1),
   mc('D93', 93, 'Azoto nel Suolo', 'Il principale gas serra prodotto dalla denitrificazione nel suolo agricolo è:', ['CO₂', 'CH₄', 'N₂O', 'NH₃'], 2),
