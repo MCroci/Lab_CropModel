@@ -98,6 +98,228 @@ const mc = (
   correctIndex: number
 ): ClosedQuestion => ({ id, number, section, text, options, correctIndex });
 
+/**
+ * Risposte di riferimento per le domande aperte (D1–D50).
+ * Sono soluzioni indicative: il professore può accettare formulazioni equivalenti.
+ */
+export const OPEN_ANSWERS: Record<string, string> = {
+  D1: `Un modello colturale è una rappresentazione matematica semplificata dei principali processi fisiologici di una coltura (fenologia, intercettazione della luce, fotosintesi, traspirazione, ripartizione degli assimilati) e delle sue interazioni con suolo, clima e gestione.
+Permette di simulare nel tempo crescita, sviluppo, resa e bilanci di acqua e nutrienti.`,
+
+  D2: `Variabile di stato: quantità accumulata che descrive lo stato del sistema in un dato istante (es. biomassa totale [g m⁻²], contenuto idrico del suolo [mm], CTU [°C·d]).
+Variabile di tasso (flusso): velocità di variazione di una variabile di stato nel tempo (es. dB/dt [g m⁻² d⁻¹], traspirazione giornaliera [mm d⁻¹]).
+Relazione: state(t+1) = state(t) + rate · Δt.`,
+
+  D3: `Variabile di stato: cambia nel tempo durante la simulazione (es. LAI giornaliero, biomassa).
+Parametro: coefficiente fisso che descrive una proprietà della coltura/suolo/sistema e non cambia durante la singola simulazione (es. RUE, T_base, K_PAR).`,
+
+  D4: `Tre esempi tipici:
+1) Dati meteo giornalieri (T_min, T_max, radiazione solare, precipitazione, umidità, vento).
+2) Caratteristiche del suolo (tessitura, profondità, contenuto idrico iniziale, sostanza organica).
+3) Gestione agronomica (data di semina, densità, irrigazioni, concimazioni).`,
+
+  D5: `Situazione "potenziale" (Rabbinge, 1993): la crescita è limitata SOLO dalla cultivar, dalla radiazione solare e dalla temperatura.
+Si assumono: acqua e nutrienti abbondanti, nessuno stress biotico (parassiti, malattie, infestanti).
+Le situazioni successive sono "limitata da acqua", "limitata da nutrienti" e "ridotta da stress biotici".`,
+
+  D6: `Calibrazione: regolazione dei parametri del modello (per tentativi o con metodi automatici come grid search/ottimizzazione) per riprodurre al meglio dati sperimentali osservati.
+Validazione: verifica delle prestazioni del modello calibrato su un set di dati INDIPENDENTE, non usato in calibrazione, tramite metriche statistiche (RMSE, R², nRMSE).
+Differenza: la calibrazione aggiusta il modello; la validazione lo mette alla prova.`,
+
+  D7: `Fenologia: studio delle fasi di sviluppo della coltura (emergenza, foglie, fioritura, maturazione) in funzione del tempo termico accumulato.
+Formula semplificata: DTU = max(0, (T_min + T_max)/2 − T_base).
+Versione corretta dalla funzione di risposta: DTU = (TP1D − TBD) · Tempfun(T_media).`,
+
+  D8: `Fillocrono (PHYL): tempo termico (gradi giorno, °C·d) necessario per emettere un nuovo nodo/foglia sul fusto principale.
+INODE = DTU / PHYL  [nodi/giorno] = tasso di emissione di nodi al giorno.`,
+
+  D9: `INODE = DTU / PHYL = 15 / 90 = 0,167 nodi/giorno.
+Giorni per emettere un nodo = 1 / INODE = PHYL / DTU = 90 / 15 = 6 giorni.`,
+
+  D10: `Somma cumulata dei nodi giorno per giorno (MSNN = Main Stem Node Number):
+MSNN(t+1) = MSNN(t) + INODE(t)
+oppure equivalentemente MSNN(t) = Σ INODE(i) per i = 1 ... t.`,
+
+  D11: `T_base per lo sviluppo:
+• Mais ≈ 8 °C (in letteratura anche 10 °C).
+• Frumento ≈ 0 °C.
+• Barbabietola da zucchero ≈ 3 °C (3–4 °C).`,
+
+  D12: `Metodo 1 (semplice): GDD = max(0, (T_min + T_max)/2 − T_base). Si usa T_min reale anche quando è < T_base.
+Metodo 2 (corretto): se T_min < T_base, si sostituisce T_min con T_base, poi GDD = ((max(T_min, T_base) + T_max)/2) − T_base.
+Differenza: il Metodo 2 non penalizza la coltura per le notti fredde (sotto T_base la pianta non "perde" sviluppo, semplicemente non avanza). Risulta sempre GDD_Metodo2 ≥ GDD_Metodo1.`,
+
+  D13: `Metodo 1: T_media = (5 + 28)/2 = 16,5 °C → GDD = 16,5 − 8 = 8,5 °C·d.
+Metodo 2: T_min sostituita con T_base = 8 → T_media = (8 + 28)/2 = 18 °C → GDD = 18 − 8 = 10 °C·d.`,
+
+  D14: `Vernalizzazione: esposizione obbligata (o facilitante) di certe colture (frumento autunnale, barbabietola, colza) a basse temperature (≈ 0–10 °C) per indurre/accelerare la fioritura.
+VDSAT: numero di giorni di vernalizzazione necessari per SATURARE la risposta. Oltre VDSAT la pianta è completamente vernalizzata e il freddo aggiuntivo non accelera ulteriormente la fioritura.`,
+
+  D15: `Risposta quantitativa: il freddo ACCELERA la fioritura ma non è strettamente necessario. La pianta fiorisce anche senza vernalizzazione, solo più tardi.
+Risposta qualitativa: il freddo è OBBLIGATORIO. Senza il periodo di vernalizzazione la pianta non fiorisce affatto (resta vegetativa).`,
+
+  D16: `I cinque elementi della funzione Tempfun(T) sono:
+1) TMP = temperatura media giornaliera (input)
+2) TBD = temperatura base
+3) TP1D = temperatura ottimale inferiore
+4) TP2D = temperatura ottimale superiore
+5) TCD = temperatura critica massima
+Quando TMP < TBD ⇒ Tempfun = 0 (nessuno sviluppo / crescita nulla).`,
+
+  D17: `Funzione beta: funzione non lineare a campana asimmetrica definita tra TBD e TCD con massimo a Topt:
+f(T) = [(T − TBD)/(Topt − TBD)]^a · [(TCD − T)/(TCD − Topt)]^b
+Vantaggi rispetto alla trapezoidale:
+• curva liscia, biologicamente più realistica (transizioni graduali);
+• derivata continua, utile per metodi di ottimizzazione;
+• un solo Topt invece di due ottimali (TP1D, TP2D).`,
+
+  D18: `BVP (Basic Vegetative Phase): fase vegetativa di base, sviluppo guidato SOLO dalla temperatura (insensibile al fotoperiodo).
+PIP (Photoperiod-Induced Phase): fase indotta dal fotoperiodo; lo sviluppo procede solo quando il fotoperiodo scende sotto una soglia critica (la canapa è una specie brevidiurna).
+FDP (Flower Development Phase): sviluppo dei fiori fino alla maturazione, di nuovo guidato dal tempo termico.`,
+
+  D19: `RUE (Radiation Use Efficiency): efficienza di conversione della PAR intercettata in biomassa secca.
+Formula: dB/dt = RUE · FINT · PAR_incidente
+dove FINT è la frazione di PAR intercettata dalla chioma.`,
+
+  D20: `Unità: g MJ⁻¹ (grammi di biomassa secca per MJ di PAR intercettata).
+Significato fisico: quanti grammi di sostanza secca la coltura produce per ogni MJ di luce intercettata.
+Valori tipici: 1,5–2,5 g/MJ per C3, 3,0–4,0 g/MJ per C4 (mais).`,
+
+  D21: `FINT = 1 − exp(−K_PAR · LAI)   (legge di Beer–Lambert applicata alla chioma).
+K_PAR è il coefficiente di estinzione della luce PAR: quantifica quanto rapidamente la chioma "assorbe" la luce all'aumentare del LAI.
+Dipende dall'architettura fogliare: foglie erette → K basso (~0,4), foglie orizzontali → K alto (~0,8).`,
+
+  D22: `FINT = 1 − exp(−0,5 · 3) = 1 − exp(−1,5) = 1 − 0,2231 ≈ 0,777
+La chioma intercetta circa il 77,7 % della PAR incidente.`,
+
+  D23: `Approccio RUE: empirico, una sola equazione (B = RUE · PAR intercettata) che riassume in un coefficiente l'effetto netto di fotosintesi e respirazione. Pochi parametri, rapido da calibrare.
+Modello meccanicistico (Gecros, Daisy): calcola esplicitamente la fotosintesi lorda (es. Farquhar a livello fogliare integrato sulla canopy), la respirazione (mantenimento + crescita) e gestisce un pool di assimilati ripartito tra organi. Più dati e parametri, ma più trasferibile e sensibile a [CO₂], stress, ecc.`,
+
+  D24: `Approccio "basato sul carbonio": l'area fogliare cresce in proporzione alla biomassa fogliare prodotta tramite SLA (Specific Leaf Area):
+dLAI/dt = SLA · dW_foglia/dt.
+Se mancano assimilati, la canopy si espande meno.
+Approccio "basato sulla temperatura": lo sviluppo del LAI è guidato dai gradi giorno (DTU) e segue una traiettoria prefissata; si assume che gli assimilati non siano mai limitanti.`,
+
+  D25: `Nelle prime fasi, con LAI piccolo e chioma non chiusa, la biomassa cresce esponenzialmente:
+dW/dt = r_m · W   ⇒   W(t) = W₀ · exp(r_m · t).
+Valore tipico (Goudriaan & Van Laar, 1994): r_m ≈ 0,1 g g⁻¹ d⁻¹.
+Dipende da: temperatura, efficienza fotosintetica delle foglie giovani, allocazione verso foglie, specie (C3 vs C4).`,
+
+  D26: `Funzione expolineare (Goudriaan & Monteith, 1990): descrive la transizione dalla fase esponenziale (chioma aperta) alla fase lineare (chioma chiusa, intercettazione satura).
+W(t) = (c_m / r_m) · ln[ 1 + exp(r_m · (t − t_b)) ]
+Parametri caratteristici:
+• r_m = tasso relativo nella fase esponenziale [g g⁻¹ d⁻¹]
+• c_m = tasso massimo di crescita lineare [g m⁻² d⁻¹]
+• t_b = tempo base (intercetta temporale)`,
+
+  D27: `ETP (evapotraspirazione potenziale): quantità massima di acqua che può essere persa per evaporazione dal suolo + traspirazione dalla coltura quando l'acqua è abbondante e non c'è limitazione stomatica/idrica.
+Dipende solo dai fattori climatici (radiazione netta, temperatura, umidità, vento) e dalle caratteristiche della superficie evaporante.`,
+
+  D28: `Quattro variabili tipicamente richieste (tre qualsiasi):
+1) Radiazione netta (o globale + albedo);
+2) Temperatura dell'aria;
+3) Umidità relativa (o pressione di vapore);
+4) Velocità del vento a 2 m.`,
+
+  D29: `La partizione di ETP fra traspirazione (T) ed evaporazione del suolo (E) è regolata dal LAI, che è la variabile di stato centrale:
+• LAI piccolo → la radiazione raggiunge il suolo → E domina.
+• LAI alto → la chioma intercetta la radiazione → T domina.
+Formulazione tipica: T = ET · (1 − exp(−K · LAI));  E = ET · exp(−K · LAI).`,
+
+  D30: `Nel modello Daisy, quando il contenuto idrico del suolo cala, la pianta CHIUDE GLI STOMI per limitare le perdite. La chiusura stomatica aumenta la resistenza al passaggio di CO₂ verso il mesofillo, riducendo l'assimilazione fotosintetica.`,
+
+  D31: `WUE (Water Use Efficiency): efficienza con cui la coltura converte l'acqua usata in biomassa o resa.
+WUE = Biomassa (o Resa) / Acqua evapotraspirata   [g/kg oppure kg/m³]`,
+
+  D32: `Resistenza stomatica (r_s): controllata dalla pianta; regola l'apertura/chiusura degli stomi in risposta a luce, CO₂, deficit idrico. Bassa con stomi aperti, alta con stomi chiusi.
+Resistenza aerodinamica (r_a): legata al rimescolamento dell'aria sopra la canopy; dipende da velocità del vento e altezza della coltura. Bassa con vento forte/coltura alta, alta con aria ferma.
+Insieme determinano il flusso di vapore: T ∝ ΔVPD / (r_a + r_s) nell'equazione di Penman–Monteith.`,
+
+  D33: `SAT: contenuto idrico a saturazione (pori pieni, salvo aria intrappolata).
+DUL (Drained Upper Limit): contenuto idrico dopo che l'acqua gravitazionale è defluita. CORRISPONDE ALLA CAPACITÀ DI CAMPO.
+LL (Lower Limit): contenuto idrico oltre cui la pianta non riesce più a estrarre acqua (= punto di appassimento permanente).
+Ordine: LL < DUL < SAT.`,
+
+  D34: `LL = DUL − EXTR
+AWC = DUL − LL  (= EXTR)
+EXTR (Extractable Water): quantità di acqua estraibile dalla pianta tra capacità di campo e punto di appassimento. Rappresenta la riserva utile.`,
+
+  D35: `Input di acqua: precipitazione, irrigazione, eventuale risalita capillare dalla falda.
+Vie di perdita: evaporazione dal suolo (E), traspirazione della coltura (T), scorrimento superficiale (runoff), drenaggio profondo (oltre la profondità radicale).
+Equazione: ΔS = (P + I) − (E + T + Runoff + Drainage).`,
+
+  D36: `Equazione di Richards: PDE non lineare per il moto dell'acqua in un mezzo poroso non saturo, ottenuta combinando Darcy + continuità:
+∂θ/∂t = ∂/∂z [ K(θ) · (∂ψ/∂z + 1) ].
+Usata nei modelli MECCANICISTICI (Hydrus, Daisy) per profili idrici dettagliati.
+Approccio a "benne" (tipping bucket): discretizza il suolo in strati e usa regole semplici (overflow oltre DUL → strato sottostante). È veloce, parsimonioso in parametri, ma trascura la dinamica capillare.`,
+
+  D37: `Il drenaggio profondo si verifica quando il contenuto idrico del suolo (o di uno strato) SUPERA LA CAPACITÀ DI CAMPO (DUL): l'acqua in eccesso percola per gravità verso strati inferiori finché lo strato torna a DUL.`,
+
+  D38: `Si definisce la frazione di acqua trasferibile per la pianta:
+FTSW = (θ − LL) / (DUL − LL)
+• FTSW ≥ soglia (es. 0,5): nessuno stress (f_stress = 1).
+• FTSW = 0: stress massimo (f_stress = 0, appassimento).
+• Tra le due: f_stress varia tipicamente in modo lineare o non lineare.
+Il fattore di stress (0–1) moltiplica il tasso potenziale di crescita o di traspirazione.`,
+
+  D39: `Quattro processi del ciclo dell'N:
+1) Mineralizzazione (N organico → NH₄⁺), e immobilizzazione (inverso).
+2) Nitrificazione (NH₄⁺ → NO₂⁻ → NO₃⁻).
+3) Denitrificazione (NO₃⁻ → N₂O, N₂; perdita gassosa in condizioni anaerobiche).
+4) Lisciviazione di NO₃⁻ verso le acque profonde (e/o assorbimento da parte della coltura).`,
+
+  D40: `La denitrificazione avviene in condizioni ANAEROBICHE (suolo saturo o quasi). I batteri denitrificanti riducono NO₃⁻ a N₂O e N₂ usando il nitrato come accettore di elettroni in assenza di O₂.
+Tre variabili governano il processo:
+1) Contenuto idrico del suolo (proxy dell'anaerobiosi).
+2) Temperatura (attività microbica).
+3) Concentrazione di NO₃⁻ (substrato).`,
+
+  D41: `NCON ≈ 400 mg N/litro di acqua (≈ 0,0004 g/g acqua).
+È un valore di SATURAZIONE: oltre questa concentrazione la dipendenza della denitrificazione dalla [NO₃⁻] viene troncata. Serve per evitare valori irrealisticamente alti quando, in suoli molto asciutti, la concentrazione locale calcolata diventerebbe non fisica.`,
+
+  D42: `Per una coltura non leguminosa ad alta resa (es. mais): accumulo stagionale massimo di N ≈ 25 g/m², equivalenti a circa 250 kg N/ha.`,
+
+  D43: `Una carenza di azoto riduce principalmente:
+• la crescita della biomassa (per riduzione di RUE, del contenuto di clorofilla e dell'area fogliare);
+• l'espansione fogliare (LAI più basso).
+Lo sviluppo fenologico è poco influenzato: le tappe (emergenza, fioritura, maturazione) dipendono soprattutto dalla temperatura. Una coltura carente di N è più piccola ma matura ai tempi soliti.`,
+
+  D44: `NUE (Nitrogen Use Efficiency): efficienza con cui la coltura usa l'azoto per produrre biomassa o resa.
+Definizioni operative comuni:
+• NUE agronomica = (Resa − Resa non concimato) / N apportato.
+• NUE fisiologica = Biomassa (o Resa) / N totale assorbito.
+Da un modello: si prendono i pool simulati di N nella biomassa e si rapportano alla biomassa/resa.`,
+
+  D45: `HI (Harvest Index) = Resa granella / Biomassa aerea totale.
+Valori tipici:
+• Mais: HI ≈ 0,45–0,55.
+• Frumento: HI ≈ 0,40–0,50.`,
+
+  D46: `Due cause principali di senescenza fogliare nei modelli:
+1) Auto-ombreggiamento: quando LAI > LAI critico (LAICR), le foglie basali ricevono troppa poca luce e senescono.
+2) Età/stress: senescenza ontogenetica (specie dopo la fioritura) o indotta da stress idrico, termico (gelo, caldo) e nutrizionale.`,
+
+  D47: `LAICR è il valore di LAI oltre il quale la canopy si auto-ombreggia: le foglie basali ricevono meno luce della loro soglia di compensazione.
+Quando LAI > LAICR il modello attiva un tasso di senescenza proporzionale all'eccesso, ad esempio dLAI/dt_sen = k · (LAI − LAICR), in modo che il LAI converga verso LAICR.`,
+
+  D48: `Quando T_min scende sotto una soglia critica (specie-specifica, es. −2 °C), il modello rimuove una frazione del LAI proporzionale a:
+• intensità del gelo (T_crit − T_min): più freddo = più danno;
+• LAI attuale (più foglie esposte = più area persa in valore assoluto).
+Formulazione tipica: ΔLAI_gelo = −LAI · f(T_min), con f(T_min) crescente al diminuire di T_min.
+Dipende quindi da T_min e LAI attuale.`,
+
+  D49: `Source limitation: la produzione di assimilati (la "sorgente": foglie/fotosintesi) è il fattore limitante. La pianta produce troppo poco e gli organi di accumulo restano sotto-riempiti (es. coltura giovane, ombreggiata, in stress).
+Sink limitation: la capacità degli organi di accumulo (la "destinazione": numero/dimensione massima delle granella) è il fattore limitante. La pianta produce assimilati ma non ha "dove metterli".
+In una coltura ben gestita, sorgente e destinazione sono bilanciate.`,
+
+  D50: `I fattori di stress sono implementati come MOLTIPLICATORI compresi tra 0 e 1 che riducono il tasso potenziale:
+dB/dt_attuale = dB/dt_potenziale · f_idrico · f_N · f_T
+• f = 1 → nessuno stress (crescita = potenziale).
+• f = 0 → stress massimo (crescita = 0).
+• 0 < f < 1 → crescita ridotta proporzionalmente.
+Spesso si applica il principio del fattore limitante (legge di Liebig): si usa il minimo tra i moltiplicatori, oppure il loro prodotto in caso di interazione tra stress.`,
+};
+
 export const CLOSED_QUESTIONS: ClosedQuestion[] = [
   mc('D51', 51, 'Introduzione alla Modellistica', 'Quale delle seguenti è una variabile di STATO in un Modello colturale?', ['Temperatura massima giornaliera', 'Biomassa totale della coltura (g m⁻²)', 'Quantità di fertilizzante applicata', 'Radiazione solare incidente'], 1),
   mc('D52', 52, 'Introduzione alla Modellistica', "Un 'parametro' in un modello di simulazione è:", ['Una variabile che cambia ogni giorno', 'Un valore misurato direttamente in campo ogni stagione', 'Un coefficiente fisso che descrive proprietà della coltura o del suolo', 'Il risultato finale della simulazione'], 2),

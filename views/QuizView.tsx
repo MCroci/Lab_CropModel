@@ -3,11 +3,21 @@ import { Card, Button } from '../components/UI';
 import {
   OPEN_QUESTIONS,
   CLOSED_QUESTIONS,
+  OPEN_ANSWERS,
   QUIZ_SECTIONS,
   QuizSection,
   ClosedQuestion,
 } from '../data/quizData';
-import { CheckCircle, ChevronLeft, ChevronRight, HelpCircle, BookOpen, ListChecks } from 'lucide-react';
+import {
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  HelpCircle,
+  BookOpen,
+  ListChecks,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
 
 type Part = 'A' | 'B';
 
@@ -29,6 +39,7 @@ export const QuizView: React.FC = () => {
   const [sectionFilter, setSectionFilter] = useState<QuizSection | 'tutte'>('tutte');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [openAnswers, setOpenAnswers] = useState<Record<string, string>>({});
+  const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({});
   const [selectedOptions, setSelectedOptions] = useState<Record<string, number>>({});
   const [checkedClosed, setCheckedClosed] = useState<Record<string, boolean>>({});
 
@@ -125,6 +136,11 @@ export const QuizView: React.FC = () => {
             questionId={current.id}
             value={openAnswers[current.id] ?? ''}
             onChange={v => setOpenAnswers(prev => ({ ...prev, [current.id]: v }))}
+            referenceAnswer={OPEN_ANSWERS[current.id]}
+            revealed={revealedAnswers[current.id] ?? false}
+            onToggleReveal={() =>
+              setRevealedAnswers(prev => ({ ...prev, [current.id]: !prev[current.id] }))
+            }
           />
         ) : (
           <ClosedAnswerBlock
@@ -249,7 +265,10 @@ const OpenAnswerBlock: React.FC<{
   questionId: string;
   value: string;
   onChange: (v: string) => void;
-}> = ({ questionId, value, onChange }) => (
+  referenceAnswer?: string;
+  revealed: boolean;
+  onToggleReveal: () => void;
+}> = ({ questionId, value, onChange, referenceAnswer, revealed, onToggleReveal }) => (
   <div>
     <label htmlFor={`answer-${questionId}`} className="block text-sm font-medium text-gray-700 mb-2">
       La tua risposta
@@ -263,8 +282,42 @@ const OpenAnswerBlock: React.FC<{
       className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-y min-h-[120px]"
     />
     <p className="text-xs text-gray-500 mt-2">
-      Le risposte aperte non vengono valutate automaticamente: confronta con gli appunti del corso.
+      Le risposte aperte non vengono valutate automaticamente: confronta con la soluzione di riferimento.
     </p>
+
+    {referenceAnswer && (
+      <div className="mt-4">
+        <button
+          type="button"
+          onClick={onToggleReveal}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition-colors"
+          aria-expanded={revealed}
+        >
+          {revealed ? <EyeOff size={15} /> : <Eye size={15} />}
+          {revealed ? 'Nascondi soluzione di riferimento' : 'Mostra soluzione di riferimento'}
+        </button>
+
+        {revealed && (
+          <div className="mt-3 p-4 rounded-lg border border-emerald-200 bg-emerald-50">
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-2">
+              Soluzione di riferimento
+            </p>
+            <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+              {referenceAnswer}
+            </p>
+            <p className="text-xs text-emerald-700 mt-3 italic">
+              Soluzione indicativa: il professore può accettare formulazioni equivalenti.
+            </p>
+          </div>
+        )}
+      </div>
+    )}
+
+    {!referenceAnswer && (
+      <p className="text-xs text-amber-700 mt-2 italic">
+        Soluzione di riferimento non disponibile per questa domanda.
+      </p>
+    )}
   </div>
 );
 
