@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import logoUnicatt from '@/logo-unicatt.svg';
 import { 
   Compass, BookOpen, Calendar, Leaf, Activity, Droplet, Layers,
   Download, Info, Menu, X, CloudRain, Code, Sun, Sliders, Zap, Microscope, Sprout,
@@ -61,10 +62,17 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-brand-50 flex flex-col md:flex-row">
       {/* Mobile Header */}
       <div className="md:hidden bg-brand-700 text-white p-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
-        <h1 className="font-bold text-lg">CropModel Lab</h1>
+        <div className="flex items-center gap-3 min-w-0">
+          <img
+            src={logoUnicatt}
+            alt="Università Cattolica del Sacro Cuore"
+            className="h-8 w-auto shrink-0 bg-white rounded px-1.5 py-1 object-contain"
+          />
+          <h1 className="font-bold text-lg truncate">CropModel Lab</h1>
+        </div>
         <button 
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 -mr-2 touch-manipulation"
@@ -84,19 +92,24 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-40 w-72 sm:w-64 bg-slate-900 text-slate-100 transition-transform transform 
+        fixed inset-y-0 left-0 z-40 w-72 sm:w-64 bg-brand-900 text-brand-100 transition-transform transform 
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
         md:translate-x-0 md:static md:block
         shadow-xl md:shadow-none
       `}>
-        <div className="p-4 md:p-6 border-b border-slate-700">
-          <h1 className="text-xl md:text-2xl font-bold text-brand-500">CropModel Lab</h1>
-          <p className="text-xs text-slate-400 mt-1">Modellistica delle colture erbacee</p>
+        <div className="p-4 md:p-6 border-b border-brand-800">
+          <img
+            src={logoUnicatt}
+            alt="Università Cattolica del Sacro Cuore"
+            className="h-10 w-auto mb-4 bg-white rounded-md px-2 py-1.5 object-contain"
+          />
+          <h1 className="text-xl md:text-2xl font-bold text-white">CropModel Lab</h1>
+          <p className="text-xs text-brand-300 mt-1">Modellistica delle colture erbacee</p>
         </div>
         <nav className="mt-4 px-2 overflow-y-auto max-h-[calc(100vh-120px)] pb-4">
           {/* INTRODUZIONE */}
           <div className="mb-4">
-            <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="px-4 py-2 text-xs font-semibold text-brand-400 uppercase tracking-wider">
               Introduzione
             </div>
             {menuItems.filter(item => ['overview', 'learning_path', 'exercises', 'quiz', 'concepts', 'response_functions', 'manuale'].includes(item.id)).map((item) => {
@@ -108,7 +121,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   onClick={() => handleTabClick(item.id)}
                   className={`
                     w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    ${isActive ? 'bg-brand-600 text-white shadow-sm' : 'text-brand-200 hover:bg-brand-800 hover:text-white active:bg-brand-700'}
                     min-h-[44px] text-left
                   `}
                 >
@@ -121,7 +134,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
 
           {/* INPUT E FONDAMENTI */}
           <div className="mb-4">
-            <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="px-4 py-2 text-xs font-semibold text-brand-400 uppercase tracking-wider">
               Input e Fondamenti
             </div>
             {menuItems.filter(item => ['crop_inputs', 'weather', 'weather_management'].includes(item.id)).map((item) => {
@@ -133,7 +146,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   onClick={() => handleTabClick(item.id)}
                   className={`
                     w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    ${isActive ? 'bg-brand-600 text-white shadow-sm' : 'text-brand-200 hover:bg-brand-800 hover:text-white active:bg-brand-700'}
                     min-h-[44px] text-left
                   `}
                 >
@@ -146,7 +159,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
 
           {/* PROCESSI FISIOLOGICI */}
           <div className="mb-4">
-            <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="px-4 py-2 text-xs font-semibold text-brand-400 uppercase tracking-wider">
               Processi Fisiologici
             </div>
             {menuItems.filter(item => ['emergence', 'phenology', 'lai', 'biomass', 'water', 'soil', 'photosynthesis'].includes(item.id)).map((item) => {
@@ -158,7 +171,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   onClick={() => handleTabClick(item.id)}
                   className={`
                     w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    ${isActive ? 'bg-brand-600 text-white shadow-sm' : 'text-brand-200 hover:bg-brand-800 hover:text-white active:bg-brand-700'}
                     min-h-[44px] text-left
                   `}
                 >
@@ -171,7 +184,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
 
           {/* ANALISI E VALIDAZIONE */}
           <div className="mb-4">
-            <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="px-4 py-2 text-xs font-semibold text-brand-400 uppercase tracking-wider">
               Analisi e Validazione
             </div>
             {menuItems.filter(item => ['scenario', 'calibration', 'validation'].includes(item.id)).map((item) => {
@@ -183,7 +196,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   onClick={() => handleTabClick(item.id)}
                   className={`
                     w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    ${isActive ? 'bg-brand-600 text-white shadow-sm' : 'text-brand-200 hover:bg-brand-800 hover:text-white active:bg-brand-700'}
                     min-h-[44px] text-left
                   `}
                 >
@@ -196,7 +209,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
 
           {/* APPLICAZIONI AVANZATE */}
           <div className="mb-4">
-            <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="px-4 py-2 text-xs font-semibold text-brand-400 uppercase tracking-wider">
               Applicazioni Avanzate
             </div>
             {menuItems.filter(item => ['agrivoltaics', 'energy_balance'].includes(item.id)).map((item) => {
@@ -208,7 +221,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   onClick={() => handleTabClick(item.id)}
                   className={`
                     w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    ${isActive ? 'bg-brand-600 text-white shadow-sm' : 'text-brand-200 hover:bg-brand-800 hover:text-white active:bg-brand-700'}
                     min-h-[44px] text-left
                   `}
                 >
@@ -221,7 +234,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
 
           {/* INFO */}
           <div className="mb-4">
-            <div className="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <div className="px-4 py-2 text-xs font-semibold text-brand-400 uppercase tracking-wider">
               Info
             </div>
             {menuItems.filter(item => ['about', 'functions', 'bibliography', 'export'].includes(item.id)).map((item) => {
@@ -233,7 +246,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, childre
                   onClick={() => handleTabClick(item.id)}
                   className={`
                     w-full flex items-center space-x-3 px-4 py-3.5 mb-1 rounded-lg transition-colors touch-manipulation
-                    ${isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'}
+                    ${isActive ? 'bg-brand-600 text-white shadow-sm' : 'text-brand-200 hover:bg-brand-800 hover:text-white active:bg-brand-700'}
                     min-h-[44px] text-left
                   `}
                 >

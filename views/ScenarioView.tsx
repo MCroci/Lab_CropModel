@@ -182,7 +182,7 @@ export const ScenarioView: React.FC = () => {
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="B_Base" stroke="#94a3b8" strokeWidth={2} name="Baseline" dot={false} />
-                <Line type="monotone" dataKey="B_Scen" stroke="#16a34a" strokeWidth={3} name="Scenario" dot={false} strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="B_Scen" stroke="#2c4a6e" strokeWidth={3} name="Scenario" dot={false} strokeDasharray="5 5" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -201,7 +201,7 @@ export const ScenarioView: React.FC = () => {
                 <Tooltip />
                 <Legend />
                 <Line type="monotone" dataKey="W_Base" stroke="#94a3b8" strokeWidth={2} name="Baseline" dot={false} />
-                <Line type="monotone" dataKey="W_Scen" stroke="#2563eb" strokeWidth={3} name="Scenario" dot={false} strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="W_Scen" stroke="#3d5a80" strokeWidth={3} name="Scenario" dot={false} strokeDasharray="5 5" />
               </LineChart>
             </ResponsiveContainer>
           </div>

@@ -4,8 +4,8 @@ export { LoadingSpinner } from './LoadingSpinner';
 
 export const Card: React.FC<{ title: string; children: React.ReactNode; className?: string, headerAction?: React.ReactNode }> = memo(({ title, children, className = "", headerAction }) => (
   <div className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-visible ${className}`}>
-    <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-      <h3 className="font-semibold text-gray-800 text-sm sm:text-base">{title}</h3>
+    <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-brand-100 flex justify-between items-center bg-brand-50">
+      <h3 className="font-semibold text-brand-900 text-sm sm:text-base">{title}</h3>
       {headerAction && <div>{headerAction}</div>}
     </div>
     <div className="p-4 sm:p-6">
@@ -120,7 +120,7 @@ export const Button: React.FC<ButtonProps> = ({ onClick, children, variant = 'pr
   const baseClasses = "px-4 py-3 md:py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 touch-manipulation min-h-[44px] md:min-h-0";
   const variants = {
     primary: "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 focus:ring-brand-500",
-    secondary: "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 focus:ring-blue-500",
+    secondary: "bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700 focus:ring-brand-400",
     outline: "border border-gray-300 text-gray-700 hover:bg-gray-50 active:bg-gray-100 focus:ring-gray-300",
   };
 

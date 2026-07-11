@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import logoUnicatt from '@/logo-unicatt.svg';
 import { Card, Select, Button, LoadingSpinner } from '../components/UI';
 import { useSimulation } from '../context/SimulationContext';
 import { CropParams } from '../types';
@@ -113,86 +114,104 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
 
   return (
     <div className="space-y-6">
+      <section className="rounded-xl bg-brand-800 text-white p-6 sm:p-8 shadow-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-brand-300 mb-2">
+            Laboratorio didattico
+          </p>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3">CropModel Lab</h2>
+          <p className="text-brand-100 max-w-2xl text-sm sm:text-base leading-relaxed">
+            Modellistica dinamica delle colture erbacee: fenologia, LAI, biomassa e bilancio idrico
+            con passo giornaliero e scenari interattivi.
+          </p>
+        </div>
+        <img
+          src={logoUnicatt}
+          alt="Università Cattolica del Sacro Cuore"
+          className="h-12 sm:h-14 w-auto shrink-0 bg-white rounded-lg px-3 py-2 object-contain self-start sm:self-center"
+        />
+      </section>
+
       {isSimulating && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-3">
+        <div className="bg-brand-100 border border-brand-200 rounded-lg p-3 flex items-center gap-3">
           <LoadingSpinner size="sm" />
-          <span className="text-sm text-blue-800">Simulazione in corso...</span>
+          <span className="text-sm text-brand-800">Simulazione in corso...</span>
         </div>
       )}
 
       {/* Guida ai nuovi concetti teorici */}
-      <Card title="Nuovi concetti teorici" className="border-l-4 border-l-cyan-500 bg-cyan-50/30">
+      <Card title="Nuovi concetti teorici" className="border-l-4 border-l-brand-500 bg-brand-50/50">
         <p className="text-gray-700 mb-4">
           Sono stati aggiunti nuovi concetti ed equazioni in diverse sezioni. Clicca sui link per esplorarli:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {onNavigate ? (
             <>
-              <button onClick={() => onNavigate('concepts')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <BookOpen size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('concepts')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <BookOpen size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">Concetti Base</div>
                   <div className="text-xs text-gray-600">Expolinear, Bilancio di Massa</div>
                 </div>
               </button>
-              <button onClick={() => onNavigate('response_functions')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <LineChart size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('response_functions')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <LineChart size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">Funzioni di Risposta</div>
                   <div className="text-xs text-gray-600">tempfun, FTSW, Beer-Lambert, SCS</div>
                 </div>
               </button>
-              <button onClick={() => onNavigate('phenology')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <Calendar size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('phenology')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <Calendar size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">Fenologia</div>
                   <div className="text-xs text-gray-600">Fillocrono (PHYL, INODE)</div>
                 </div>
               </button>
-              <button onClick={() => onNavigate('lai')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <Leaf size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('lai')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <Leaf size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">LAI & Radiazione</div>
                   <div className="text-xs text-gray-600">SLA, modello allometrico PLA</div>
                 </div>
               </button>
-              <button onClick={() => onNavigate('biomass')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <Activity size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('biomass')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <Activity size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">Biomassa</div>
                   <div className="text-xs text-gray-600">Effetto CO₂ sulla RUE</div>
                 </div>
               </button>
-              <button onClick={() => onNavigate('water')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <Droplet size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('water')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <Droplet size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">Bilancio Idrico</div>
                   <div className="text-xs text-gray-600">FTSW (frazione acqua transpirabile)</div>
                 </div>
               </button>
-              <button onClick={() => onNavigate('soil')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <Layers size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('soil')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <Layers size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">Suolo e Aggregati</div>
                   <div className="text-xs text-gray-600">Porosità, box counting, capillari</div>
                 </div>
               </button>
-              <button onClick={() => onNavigate('functions')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <Code size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('functions')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <Code size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">Logica & Codice</div>
                   <div className="text-xs text-gray-600">Funzione Expolinear</div>
                 </div>
               </button>
-              <button onClick={() => onNavigate('bibliography')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <Library size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('bibliography')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <Library size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">Bibliografia</div>
                   <div className="text-xs text-gray-600">Goudriaan & Monteith, Arnold</div>
                 </div>
               </button>
-              <button onClick={() => onNavigate('manuale')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-cyan-200 hover:bg-cyan-50 text-left transition-colors">
-                <BookOpen size={18} className="text-cyan-600 flex-shrink-0" />
+              <button onClick={() => onNavigate('manuale')} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-brand-200 hover:bg-brand-50 text-left transition-colors">
+                <BookOpen size={18} className="text-brand-600 flex-shrink-0" />
                 <div>
                   <div className="font-semibold text-gray-900">Manuale Teoria</div>
                   <div className="text-xs text-gray-600">Documento completo con tutte le equazioni</div>
@@ -235,12 +254,12 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
         </Card>
       </div>
       <div className="lg:col-span-1">
-        <Card title="Configurazione Rapida" className="h-full bg-blue-50 border-blue-100">
-          <p className="text-sm text-blue-900 mb-3">
+        <Card title="Configurazione Rapida" className="h-full bg-brand-100 border-brand-200">
+          <p className="text-sm text-brand-900 mb-3">
             Gli <strong>input colturali</strong> (preset, data di semina e parametri) sono stati spostati nella pagina dedicata
             <strong> Input Colturali</strong>, per tenere la Panoramica più pulita.
           </p>
-          <div className="space-y-2 text-sm text-blue-800 mb-4">
+          <div className="space-y-2 text-sm text-brand-800 mb-4">
             <p>Da lì puoi modificare direttamente fenologia, LAI, RUE, risposta termica e soglia di stress idrico.</p>
             <p>In Panoramica trovi solo il quadro generale e i collegamenti rapidi alle sezioni del modello.</p>
           </div>

@@ -107,7 +107,7 @@ export const CropInputsView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <Card title="Input Colturali (Preset + Parametri)" className="border-l-4 border-l-green-600">
+      <Card title="Input Colturali (Preset + Parametri)" className="border-l-4 border-l-brand-600">
         <p className="text-sm text-gray-700 mb-4">
           In questa pagina puoi impostare la coltura (preset), la data di semina e modificare tutti i principali parametri fisiologici.
         </p>
@@ -144,12 +144,12 @@ export const CropInputsView: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm">
-            <div className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+          <div className="bg-brand-50 border border-brand-200 rounded-lg p-4 text-sm">
+            <div className="font-semibold text-brand-900 mb-2 flex items-center gap-2">
               <Sprout size={16} />
               Parametri attivi (riepilogo rapido)
             </div>
-            <div className="grid grid-cols-2 gap-2 text-green-900/90">
+            <div className="grid grid-cols-2 gap-2 text-brand-900/90">
               <div>Tbase: <strong>{cropParams.Tbase}</strong> °C</div>
               <div>tuHAR: <strong>{cropParams.tuHAR}</strong> °C·d</div>
               <div>RUE: <strong>{cropParams.RUE}</strong> g/MJ</div>

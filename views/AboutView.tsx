@@ -1,10 +1,18 @@
 
 import React from 'react';
+import logoUnicatt from '@/logo-unicatt.svg';
 import { Card } from '../components/UI';
 
 export const AboutView: React.FC = () => {
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto space-y-6">
+      <div className="flex justify-center">
+        <img
+          src={logoUnicatt}
+          alt="Università Cattolica del Sacro Cuore"
+          className="h-14 w-auto object-contain"
+        />
+      </div>
       <Card title="Note Metodologiche & Riferimenti">
         <p className="mb-4 text-gray-700">
           Questa dashboard è costruita per esercizi su modelli dinamici discreti (passo giornaliero).

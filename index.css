@@ -1,5 +1,13 @@
 @import 'katex/dist/katex.min.css';
 
+:root {
+  --brand-navy-50: #eef2f7;
+  --brand-navy-600: #2c4a6e;
+  --brand-navy-800: #1a2333;
+  --brand-navy-900: #0f1419;
+  --brand-accent: #3b82f6;
+}
+
 /* Mobile optimizations */
 @media (max-width: 640px) {
   /* Improve touch targets */
